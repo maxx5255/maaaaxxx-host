@@ -71,6 +71,10 @@
             width:380px;
             margin:0 auto;
         }
+
+        /* UPTIME LIVE PULSE (only for console stat card) */
+        .uptime-live { animation: pulseGreen 2s ease-in-out infinite; }
+        @keyframes pulseGreen { 0%,100%{opacity:1} 50%{opacity:0.55} }
     </style>
 </head>
 <body>
@@ -98,6 +102,7 @@
                 <span class="text-gray-400">ID: <span class="text-blue-400 font-mono">{{ current_server.server_id[:8] }}</span></span>
                 <span class="text-gray-400">CPU Limit: <span class="text-yellow-400">{{ current_server.cpu_limit | default(80) }}%</span></span>
                 <span class="text-gray-400">Expires: <span class="text-yellow-500">{{ current_server.expiry[:10] if current_server.expiry else 'N/A' }}</span></span>
+                <!-- UPTIME REMOVED FROM HEADER -->
             </div>
             <div class="flex gap-2">
                 <button onclick="runServer()" class="bg-green-600 hover:bg-green-500 px-3 py-1.5 rounded-lg text-xs btn"><i class="fas fa-play"></i> START</button>
@@ -129,7 +134,8 @@
                 </button>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-4">
+            <!-- STATS GRID – UPTIME CARD KEPT HERE (console only) -->
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mt-4">
                 <div class="stat-card">
                     <p class="text-[10px] text-gray-500 mb-1"><i class="fas fa-link mr-1"></i>ADDRESS</p>
                     <p class="text-xs text-blue-400 font-mono truncate" id="serverAddr" title="Server Address"></p>
@@ -149,6 +155,10 @@
                 <div class="stat-card">
                     <p class="text-[10px] text-gray-500 mb-1"><i class="fas fa-upload mr-1"></i>NET OUT</p>
                     <p class="text-sm font-bold text-orange-400" id="netOutDisplay">0 KB</p>
+                </div>
+                <div class="stat-card">
+                    <p class="text-[10px] text-gray-500 mb-1"><i class="fas fa-clock mr-1"></i>UPTIME</p>
+                    <p class="text-sm font-bold text-gray-500 font-mono" id="uptimeDisplay">—</p>
                 </div>
                 <div class="stat-card">
                     <p class="text-[10px] text-gray-500 mb-1">STATUS</p>
@@ -287,8 +297,9 @@
                         <h4 class="text-xs text-gray-400 mb-2">System Info</h4>
                         <div class="space-y-2 text-xs">
                             <div class="text-green-400"><span class="status-dot" style="background:#10b981;"></span> Node Status: Active</div>
+                            <!-- UPTIME REMOVED FROM PROFILE -->
                             <div class="text-blue-400"><i class="fas fa-shield-alt mr-1"></i> Security: Encrypted</div>
-                            <div class="text-gray-400"><i class="fas fa-code-branch mr-1"></i> Version: v3.1 Stable</div>
+                            <div class="text-gray-400"><i class="fas fa-code-branch mr-1"></i> Version: v3.2 Stable</div>
                         </div>
                     </div>
 
@@ -424,18 +435,113 @@
             fetch('/api/command', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({cmd:val, server_id:currentServerId})}).then(()=>{inp.value='';});
         }
 
+        /* ================= UPTIME TRACKER (console only) ================= */
+        let apiUptimeSec   = null;   // uptime from backend (seconds)
+        let apiUptimeAt    = 0;      // timestamp when apiUptimeSec was received
+        let localUptimeStart = null; // fallback local start timestamp (ms)
+        let lastStatus = null;
+        const UPTIME_KEY = 'maxx_uptime_start_' + currentServerId;
+
+        function formatUptime(totalSec) {
+            totalSec = Math.max(0, Math.floor(totalSec));
+            const d = Math.floor(totalSec / 86400);
+            const h = Math.floor((totalSec % 86400) / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+            const hh = String(h).padStart(2,'0');
+            const mm = String(m).padStart(2,'0');
+            const ss = String(s).padStart(2,'0');
+            return d > 0 ? `${d}d ${hh}:${mm}:${ss}` : `${hh}:${mm}:${ss}`;
+        }
+
+        // Accepts "01:23:45", "1:23:45", "2d 3h 10m 5s", etc.
+        function parseUptimeString(str) {
+            if (!str) return null;
+            str = String(str).trim();
+            if (/^\d+(:\d{1,2}){1,2}$/.test(str)) {
+                let sec = 0;
+                str.split(':').forEach(p => { sec = sec * 60 + parseInt(p, 10); });
+                return sec;
+            }
+            let total = 0, matched = false, m;
+            const re = /(\d+(?:\.\d+)?)\s*(d|h|m|s)/gi;
+            while ((m = re.exec(str)) !== null) {
+                matched = true;
+                const v = parseFloat(m[1]);
+                const u = m[2].toLowerCase();
+                total += u === 'd' ? v * 86400 : u === 'h' ? v * 3600 : u === 'm' ? v * 60 : v;
+            }
+            return matched ? total : null;
+        }
+
+        function getUptimeSeconds() {
+            if (apiUptimeSec !== null) return apiUptimeSec + (Date.now() - apiUptimeAt) / 1000;
+            if (localUptimeStart) return (Date.now() - localUptimeStart) / 1000;
+            return null;
+        }
+
+        function renderUptime() {
+            const secs = getUptimeSeconds();
+            const running = lastStatus === 'RUNNING';
+            const txt = (secs === null || secs < 0) ? '—' : formatUptime(secs);
+
+            const el = document.getElementById('uptimeDisplay');
+            if (el) {
+                el.innerText = txt;
+                el.className = running
+                    ? 'text-sm font-bold text-emerald-400 font-mono uptime-live'
+                    : 'text-sm font-bold text-gray-500 font-mono';
+            }
+        }
+
+        function updateUptimeLogic(data, isRunning) {
+            if (!isRunning) {
+                apiUptimeSec = null;
+                localUptimeStart = null;
+                localStorage.removeItem(UPTIME_KEY);
+            } else {
+                let parsed = null;
+                if (data.uptime_seconds !== undefined && data.uptime_seconds !== null && data.uptime_seconds !== '') {
+                    parsed = parseFloat(data.uptime_seconds);
+                } else if (typeof data.uptime === 'number') {
+                    parsed = data.uptime;
+                } else if (typeof data.uptime === 'string') {
+                    parsed = parseUptimeString(data.uptime);
+                }
+
+                if (parsed !== null && !isNaN(parsed)) {
+                    apiUptimeSec = parsed;
+                    apiUptimeAt = Date.now();
+                    localUptimeStart = null;
+                } else {
+                    apiUptimeSec = null;
+                    if (!localUptimeStart) {
+                        const stored = parseInt(localStorage.getItem(UPTIME_KEY) || '0', 10);
+                        localUptimeStart = stored > 0 ? stored : Date.now();
+                        localStorage.setItem(UPTIME_KEY, String(localUptimeStart));
+                    }
+                }
+            }
+            renderUptime();
+        }
+        /* ================= END UPTIME TRACKER ================= */
+
         function updateStats() {
             fetch(`/api/stats/${currentServerId}`).then(r=>r.json()).then(data => {
                 document.getElementById('cpuDisplay').innerText = data.cpu || '0%';
                 document.getElementById('ramDisplay').innerText = data.ram || '0 MB';
                 document.getElementById('netInDisplay').innerText = data.net_in || '0 KB';
                 document.getElementById('netOutDisplay').innerText = data.net_out || '0 KB';
-                const status = (data.status||'stopped').toUpperCase();
+
+                const status = (data.status || 'stopped').toUpperCase();
                 const isRunning = status === 'RUNNING';
                 const color = isRunning ? '#10b981' : '#ef4444';
                 const textColor = isRunning ? 'text-green-400' : 'text-red-400';
                 document.getElementById('statusDisplay').innerHTML = `<span class="${textColor}"><span class="status-dot" style="background:${color};"></span>${status}</span>`;
-            });
+
+                lastStatus = status;
+                updateUptimeLogic(data, isRunning);
+            }).catch(() => {});
         }
 
         function loadLogs() {
@@ -738,8 +844,18 @@
             .catch(() => showToast('Connection failed!', 'error'));
         }
 
-        loadLogs(); updateStats();
-        setInterval(() => { if(activeTab==='console') loadLogs(); updateStats(); if(activeTab==='github') loadGitLogs(); }, 3000);
+        // ============ INIT ============
+        loadLogs();
+        updateStats();
+
+        // Smooth uptime ticking (every second) – only console card
+        setInterval(renderUptime, 1000);
+
+        setInterval(() => {
+            if(activeTab==='console') loadLogs();
+            updateStats();
+            if(activeTab==='github') loadGitLogs();
+        }, 3000);
     </script>
 </body>
 </html>
