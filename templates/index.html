@@ -30,21 +30,19 @@ html { scroll-behavior: smooth; }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 .float { animation: float 3s ease-in-out infinite; }
 
-/* Modal */
-.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px; overflow-y: auto; }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px; overflow-y: auto; }
 .modal.show { display: flex; animation: fadeIn 0.22s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.modal-card { background: linear-gradient(170deg, #12141c, #0a0c14); border: 1px solid rgba(59,130,246,0.3); border-radius: 22px; width: 100%; max-width: 430px; padding: 28px; box-shadow: 0 40px 100px -20px rgba(59,130,246,0.4), 0 0 0 1px rgba(255,255,255,0.03) inset; animation: slideUp 0.32s cubic-bezier(.2,.8,.3,1); margin: auto; }
+.modal-card { background: linear-gradient(170deg, #12141c, #0a0c14); border: 1px solid rgba(59,130,246,0.3); border-radius: 22px; width: 100%; max-width: 440px; padding: 26px; box-shadow: 0 40px 100px -20px rgba(59,130,246,0.4), 0 0 0 1px rgba(255,255,255,0.03) inset; animation: slideUp 0.32s cubic-bezier(.2,.8,.3,1); margin: auto; position: relative; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(24px) scale(0.96); } to { opacity: 1; transform: none; } }
 .auth-input { width: 100%; background: #0a0c14; border: 1px solid #2a2d37; border-radius: 11px; padding: 12px 14px; color: white; font-size: 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
 .auth-input::placeholder { color: #4d586b; }
 .auth-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
 .auth-tab { flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; color: #7b869b; transition: all 0.2s; background: transparent; border: none; }
 .auth-tab.active { background: rgba(59,130,246,0.15); color: #3b82f6; }
-.close-x { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: #7b869b; cursor: pointer; transition: all 0.2s; }
+.close-x { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: #7b869b; cursor: pointer; transition: all 0.2s; z-index: 10; }
 .close-x:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
-/* Toast */
 .toast-wrap { position: fixed; top: 80px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 10px; }
 .toast { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 13px; font-size: 13px; font-weight: 500; background: rgba(19,24,36,0.98); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 45px -18px #000; backdrop-filter: blur(14px); min-width: 260px; max-width: 380px; animation: toastIn 0.35s cubic-bezier(.2,.8,.3,1); }
 .toast.success { border-left: 3px solid #10b981; }
@@ -55,7 +53,6 @@ html { scroll-behavior: smooth; }
 .toast.out { animation: toastOut 0.3s ease forwards; }
 @keyframes toastOut { to { opacity: 0; transform: translateX(40px) scale(0.96); } }
 
-/* User Menu */
 .user-menu { position: relative; }
 .user-menu-panel { position: absolute; right: 0; top: calc(100% + 8px); background: #12141c; border: 1px solid #2a2d37; border-radius: 14px; min-width: 220px; padding: 6px; box-shadow: 0 20px 45px -12px #000; display: none; z-index: 60; }
 .user-menu-panel.show { display: block; animation: fadeIn 0.2s ease; }
@@ -63,13 +60,20 @@ html { scroll-behavior: smooth; }
 .user-menu-panel a:hover, .user-menu-panel button:hover { background: rgba(255,255,255,0.06); color: #fff; }
 .user-menu-panel i { width: 14px; text-align: center; }
 
-/* Plan modal */
 .plan-highlight { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.08)); border: 1px solid rgba(59,130,246,0.3); border-radius: 14px; padding: 16px; }
+
+.upi-method-btn { width: 100%; text-align: left; padding: 12px; border-radius: 12px; border: 1px solid #2a2d37; background: rgba(0,0,0,0.2); transition: all 0.2s; cursor: pointer; }
+.upi-method-btn:hover { background: rgba(0,0,0,0.4); }
+.upi-method-btn.selected { border-color: #3b82f6; background: rgba(59,130,246,0.1); }
+
+.upload-zone { border: 2px dashed #2a2d37; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.upload-zone:hover { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
+
+.step-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(59,130,246,0.2); color: #3b82f6; font-size: 11px; font-weight: 700; flex-shrink: 0; }
 </style>
 </head>
 <body>
 
-<!-- Toast -->
 <div class="toast-wrap" id="toastWrap"></div>
 
 <!-- Navbar -->
@@ -87,8 +91,6 @@ html { scroll-behavior: smooth; }
             <a href="#how" class="text-gray-400 hover:text-white transition">How It Works</a>
             <a href="#faq" class="text-gray-400 hover:text-white transition">FAQ</a>
         </div>
-
-        <!-- Auth-aware right side -->
         <div id="navGuest" class="flex items-center gap-2">
             <button onclick="openAuth('login')" class="text-gray-400 hover:text-white text-xs md:text-sm px-3 py-2 hidden sm:block">Login</button>
             <button onclick="openAuth('register')" class="btn-blue text-xs md:text-sm !py-2 !px-4 md:!py-2.5 md:!px-5">
@@ -109,7 +111,6 @@ html { scroll-behavior: smooth; }
                     <div class="px-3 py-2 border-b border-gray-800 mb-1">
                         <p class="text-sm font-bold" id="menuUsername">User</p>
                         <p class="text-[11px] text-gray-500 truncate" id="menuEmail">user@mail.com</p>
-                        <span id="menuPlanBadge" class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">Free Plan</span>
                     </div>
                     <button onclick="gotoPanel()"><i class="fas fa-gauge text-blue-400"></i> My Panel</button>
                     <button onclick="openMyOrders()"><i class="fas fa-receipt text-violet-400"></i> My Orders</button>
@@ -143,7 +144,7 @@ html { scroll-behavior: smooth; }
             </a>
         </div>
         <div class="grid grid-cols-3 gap-4 md:gap-6 mt-12 md:mt-16 max-w-lg mx-auto">
-            <div><div class="stat-number" id="statPanels">500+</div><div class="text-gray-500 text-[10px] md:text-xs">Active Panels</div></div>
+            <div><div class="stat-number">500+</div><div class="text-gray-500 text-[10px] md:text-xs">Active Panels</div></div>
             <div><div class="stat-number">24/7</div><div class="text-gray-500 text-[10px] md:text-xs">Uptime</div></div>
             <div><div class="stat-number">Free</div><div class="text-gray-500 text-[10px] md:text-xs">Forever</div></div>
         </div>
@@ -174,13 +175,13 @@ html { scroll-behavior: smooth; }
         <h2 class="text-2xl md:text-4xl font-bold mb-12 md:mb-16">How It <span class="gradient-text">Works</span></h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
             <div><div class="w-14 h-14 md:w-16 md:h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mb-3 md:mb-4">1</div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Create Account</h3><p class="text-gray-400 text-xs md:text-sm">Register free in seconds — no credit card needed.</p></div>
-            <div><div class="w-14 h-14 md:w-16 md:h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mb-3 md:mb-4">2</div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Choose a Plan</h3><p class="text-gray-400 text-xs md:text-sm">Pick free, standard, or premium — upgrade anytime.</p></div>
+            <div><div class="w-14 h-14 md:w-16 md:h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mb-3 md:mb-4">2</div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Choose a Plan</h3><p class="text-gray-400 text-xs md:text-sm">Pick free, standard, or premium — pay via UPI.</p></div>
             <div><div class="w-14 h-14 md:w-16 md:h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mb-3 md:mb-4">3</div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Deploy &amp; Run</h3><p class="text-gray-400 text-xs md:text-sm">Upload your bot file and hit Start. Done!</p></div>
         </div>
     </div>
 </section>
 
-<!-- Pricing (dynamic) -->
+<!-- Pricing -->
 <section id="pricing" class="py-16 md:py-20 px-4 md:px-6">
     <div class="container mx-auto max-w-5xl">
         <div class="text-center mb-12 md:mb-16">
@@ -197,10 +198,9 @@ html { scroll-behavior: smooth; }
         <div class="text-center mb-12 md:mb-16"><h2 class="text-2xl md:text-4xl font-bold mb-3 md:mb-4">Frequently <span class="gradient-text">Asked Questions</span></h2></div>
         <div class="space-y-3 md:space-y-4">
             <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">🤔 How do I get a free panel?</h3><p class="text-gray-400 text-xs md:text-sm">Register an account and pick the Free plan. You can unlock more by sharing your referral link with 5 friends!</p></div>
-            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">⚡ How fast is the setup?</h3><p class="text-gray-400 text-xs md:text-sm">Instant! As soon as you create a panel, it's ready to use. Just upload your bot file and click Start.</p></div>
-            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">🔄 What happens after expiry?</h3><p class="text-gray-400 text-xs md:text-sm">Your panel expires. But you can get another one by referring 5 more people! Or buy a longer plan.</p></div>
+            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">⚡ How fast is the setup?</h3><p class="text-gray-400 text-xs md:text-sm">Instant! As soon as admin verifies your payment, server activates. Upload your bot file and click Start.</p></div>
+            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">💳 How do I pay for a plan?</h3><p class="text-gray-400 text-xs md:text-sm">Click "Buy Now" on any plan → pay via UPI (QR or ID) → upload screenshot + UTR → admin verifies within minutes.</p></div>
             <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">🐍 What Python version?</h3><p class="text-gray-400 text-xs md:text-sm">Python 3.12+ with auto pip install support. All your requirements.txt packages will be installed automatically!</p></div>
-            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">💳 How do I pay for a plan?</h3><p class="text-gray-400 text-xs md:text-sm">After registering, click "Buy Now" on any paid plan. Contact @styen18 on Telegram with your order ID to complete payment.</p></div>
         </div>
     </div>
 </section>
@@ -232,11 +232,9 @@ html { scroll-behavior: smooth; }
                 <li><a href="https://t.me/zip_extrctor_bot" target="_blank" class="hover:text-blue-400">Telegram Bot</a></li>
                 <li><a href="https://t.me/styen18" target="_blank" class="hover:text-blue-400">Support</a></li>
                 <li><a href="https://t.me/styen18" target="_blank" class="hover:text-blue-400">Channel</a></li>
-                <li><a href="https://t.me/fflike1" target="_blank" class="hover:text-blue-400">Group</a></li>
             </ul></div>
             <div><h4 class="font-bold text-sm md:text-base mb-3 md:mb-4">Contact</h4><ul class="text-gray-500 text-xs md:text-sm space-y-1.5 md:space-y-2">
                 <li><i class="fab fa-telegram-plane mr-2"></i> @styen18</li>
-                <li><i class="fas fa-globe mr-2"></i> MAXX-hosting.onrender.com</li>
             </ul></div>
         </div>
         <div class="border-t border-gray-800 pt-4 md:pt-6 text-center text-gray-600 text-[10px] md:text-xs">&copy; 2026 MAXX HOSTING. All rights reserved.</div>
@@ -245,7 +243,7 @@ html { scroll-behavior: smooth; }
 
 <!-- ═══════════ AUTH MODAL ═══════════ -->
 <div id="authModal" class="modal">
-    <div class="modal-card relative" style="max-width:440px">
+    <div class="modal-card" style="max-width:440px">
         <button onclick="closeAuth()" class="close-x"><i class="fas fa-times text-sm"></i></button>
         <div class="text-center mb-5">
             <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-blue-600 to-blue-400 grid place-items-center mb-3 shadow-lg">
@@ -254,13 +252,10 @@ html { scroll-behavior: smooth; }
             <h3 class="text-xl font-extrabold">MAXX <span class="text-blue-400">HOSTING</span></h3>
             <p class="text-gray-500 text-xs mt-1" id="authSubtitle">Welcome back! Login to continue.</p>
         </div>
-
         <div class="flex gap-1 p-1 bg-black/30 rounded-xl mb-4">
             <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')"><i class="fas fa-right-to-bracket mr-1.5 text-xs"></i>Login</button>
             <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')"><i class="fas fa-user-plus mr-1.5 text-xs"></i>Register</button>
         </div>
-
-        <!-- LOGIN FORM -->
         <form id="loginForm" onsubmit="submitLogin(event)" class="space-y-3">
             <div>
                 <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Username or Email</label>
@@ -274,70 +269,138 @@ html { scroll-behavior: smooth; }
                 </div>
             </div>
             <button type="submit" class="btn-blue w-full justify-center !py-3 text-sm"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</button>
-            <p class="text-center text-xs text-gray-500">Don't have an account? <button type="button" onclick="switchAuthTab('register')" class="text-blue-400 hover:underline font-semibold">Register now</button></p>
+            <p class="text-center text-xs text-gray-500">No account? <button type="button" onclick="switchAuthTab('register')" class="text-blue-400 hover:underline font-semibold">Register now</button></p>
         </form>
-
-        <!-- REGISTER FORM -->
         <form id="registerForm" onsubmit="submitRegister(event)" class="space-y-3 hidden">
             <div>
                 <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Username</label>
-                <input type="text" id="regUsername" class="auth-input" placeholder="Choose a username" minlength="3" maxlength="20" autocomplete="username" required>
+                <input type="text" id="regUsername" class="auth-input" placeholder="Choose a username" minlength="3" maxlength="20" required>
             </div>
             <div>
                 <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Email</label>
-                <input type="email" id="regEmail" class="auth-input" placeholder="you@example.com" autocomplete="email" required>
+                <input type="email" id="regEmail" class="auth-input" placeholder="you@example.com" required>
             </div>
             <div>
                 <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Password</label>
                 <div class="relative">
-                    <input type="password" id="regPassword" class="auth-input pr-10" placeholder="Min 6 characters" minlength="6" autocomplete="new-password" required>
+                    <input type="password" id="regPassword" class="auth-input pr-10" placeholder="Min 6 characters" minlength="6" required>
                     <button type="button" onclick="togglePass('regPassword',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"><i class="fas fa-eye text-xs"></i></button>
                 </div>
             </div>
             <div>
                 <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Confirm Password</label>
-                <input type="password" id="regConfirm" class="auth-input" placeholder="Re-enter password" autocomplete="new-password" required>
+                <input type="password" id="regConfirm" class="auth-input" placeholder="Re-enter password" required>
             </div>
             <label class="flex items-start gap-2 text-[11px] text-gray-500 cursor-pointer pt-1">
                 <input type="checkbox" id="regTerms" class="mt-0.5 accent-blue-500" required>
-                <span>I agree to the <a href="#" class="text-blue-400">Terms of Service</a> and <a href="#" class="text-blue-400">Privacy Policy</a>.</span>
+                <span>I agree to the <a href="#" class="text-blue-400">Terms</a> and <a href="#" class="text-blue-400">Privacy Policy</a>.</span>
             </label>
             <button type="submit" class="btn-blue w-full justify-center !py-3 text-sm"><i class="fas fa-user-plus"></i> Create Account</button>
-            <p class="text-center text-xs text-gray-500">Already registered? <button type="button" onclick="switchAuthTab('login')" class="text-blue-400 hover:underline font-semibold">Login here</button></p>
         </form>
     </div>
 </div>
 
-<!-- ═══════════ BUY MODAL ═══════════ -->
-<div id="buyModal" class="modal">
-    <div class="modal-card relative">
-        <button onclick="closeBuy()" class="close-x"><i class="fas fa-times text-sm"></i></button>
-        <h3 class="text-lg font-extrabold mb-1"><i class="fas fa-shopping-cart text-blue-400 mr-2"></i>Confirm Purchase</h3>
-        <p class="text-gray-500 text-xs mb-4">Review your plan before confirming</p>
-        <div id="buyDetails" class="plan-highlight mb-4"></div>
-        <div class="bg-black/30 rounded-xl p-3 mb-4 text-[11px] text-gray-400 space-y-1">
-            <p><i class="fas fa-info-circle text-blue-400 mr-1.5"></i>Payment is completed manually via Telegram.</p>
-            <p><i class="fab fa-telegram text-blue-400 mr-1.5"></i>Contact <a href="https://t.me/styen18" target="_blank" class="text-blue-400 font-semibold">@styen18</a> with your Order ID.</p>
+<!-- ═══════════ PAYMENT MODAL ═══════════ -->
+<div id="paymentModal" class="modal">
+    <div class="modal-card" style="max-width:540px;max-height:92vh;overflow-y:auto">
+        <button onclick="closePayment()" class="close-x"><i class="fas fa-times text-sm"></i></button>
+
+        <!-- STEP 1: Payment -->
+        <div id="payStep1">
+            <h3 class="text-lg font-extrabold mb-1"><i class="fas fa-shopping-cart text-blue-400 mr-2"></i>Complete Payment</h3>
+            <p class="text-gray-500 text-xs mb-4">Pay via UPI, then upload proof</p>
+
+            <div id="payPlanSummary" class="plan-highlight mb-4"></div>
+
+            <div class="mb-3">
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">
+                    <i class="fas fa-mobile-screen-button mr-1"></i> Select Payment Method
+                </label>
+                <div id="upiMethodList" class="space-y-2"></div>
+            </div>
+
+            <div id="paymentDetails" class="bg-black/30 rounded-xl p-4 mb-4"></div>
+
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 mb-4">
+                <p class="text-[11px] font-bold text-amber-400 mb-2"><i class="fas fa-triangle-exclamation mr-1"></i> Payment Instructions</p>
+                <div class="text-[11px] text-gray-300 space-y-1.5">
+                    <div class="flex gap-2 items-start"><span class="step-badge">1</span><span>Scan the QR code or use the UPI ID above</span></div>
+                    <div class="flex gap-2 items-start"><span class="step-badge">2</span><span>Pay the exact amount shown</span></div>
+                    <div class="flex gap-2 items-start"><span class="step-badge">3</span><span>Take a screenshot of successful payment</span></div>
+                    <div class="flex gap-2 items-start"><span class="step-badge">4</span><span>Upload the screenshot and enter UTR/TXN below</span></div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">
+                    <i class="fas fa-image mr-1"></i> Payment Screenshot *
+                </label>
+                <div class="upload-zone" onclick="document.getElementById('proofFile').click()">
+                    <input type="file" id="proofFile" accept="image/*" class="hidden" onchange="handleProofFile(this)">
+                    <div id="proofPreview" class="hidden">
+                        <img id="proofImg" class="max-h-40 mx-auto rounded-lg shadow-lg" />
+                        <p class="text-[10px] text-green-400 mt-2 font-semibold"><i class="fas fa-check-circle mr-1"></i><span id="proofName">Uploaded</span></p>
+                        <p class="text-[10px] text-gray-500 mt-1">Click to change</p>
+                    </div>
+                    <div id="proofEmpty">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-gray-600 mb-2 block"></i>
+                        <p class="text-sm font-semibold text-gray-300">Click to upload screenshot</p>
+                        <p class="text-[10px] text-gray-500 mt-0.5">PNG, JPG · Max 5MB</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">
+                    <i class="fas fa-hashtag mr-1"></i> UTR / Transaction ID *
+                </label>
+                <input type="text" id="txnId" placeholder="e.g. 401234567890" class="auth-input font-mono text-[13px]" spellcheck="false">
+                <p class="text-[10px] text-gray-500 mt-1.5"><i class="fas fa-info-circle mr-1"></i>Find this in your UPI app's transaction history</p>
+            </div>
+
+            <button onclick="submitPaymentOrder()" id="paySubmitBtn" class="btn-blue w-full justify-center !py-3 text-sm">
+                <i class="fas fa-paper-plane"></i> Submit Payment Proof
+            </button>
+            <button onclick="closePayment()" class="btn-dark w-full justify-center !py-2.5 text-sm mt-2">Cancel</button>
         </div>
-        <button onclick="confirmPurchase()" class="btn-blue w-full justify-center !py-3 text-sm"><i class="fas fa-check"></i> Confirm Order</button>
-        <button onclick="closeBuy()" class="btn-dark w-full justify-center !py-2.5 text-sm mt-2">Cancel</button>
+
+        <!-- STEP 2: Success -->
+        <div id="payStep2" class="hidden text-center py-4">
+            <div class="w-20 h-20 mx-auto rounded-full bg-green-500/20 grid place-items-center mb-4">
+                <i class="fas fa-check text-4xl text-green-400"></i>
+            </div>
+            <h3 class="text-xl font-extrabold mb-2">🎉 Order Submitted!</h3>
+            <p class="text-gray-400 text-xs mb-4">Your payment proof has been received. Admin will verify and activate your plan shortly.</p>
+
+            <div id="orderSummarySuccess" class="bg-black/40 rounded-xl p-4 text-left text-xs mb-4"></div>
+
+            <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 mb-4 text-left">
+                <p class="text-[11px] font-bold text-blue-400 mb-1"><i class="fas fa-info-circle mr-1"></i> Next Steps</p>
+                <p class="text-[11px] text-gray-300 leading-relaxed">Admin will review your payment and activate your plan. You'll get your server panel ready within minutes. Contact support if it takes longer.</p>
+            </div>
+
+            <button onclick="closePayment();gotoPanel()" class="btn-blue w-full justify-center !py-2.5 text-sm mb-2">
+                <i class="fas fa-gauge"></i> Go to My Panel
+            </button>
+            <button onclick="closePayment()" class="btn-dark w-full justify-center !py-2.5 text-sm">Close</button>
+        </div>
     </div>
 </div>
 
 <!-- ═══════════ ORDERS MODAL ═══════════ -->
 <div id="ordersModal" class="modal">
-    <div class="modal-card relative" style="max-width:520px">
+    <div class="modal-card" style="max-width:520px;max-height:88vh;overflow-y:auto">
         <button onclick="closeOrders()" class="close-x"><i class="fas fa-times text-sm"></i></button>
         <h3 class="text-lg font-extrabold mb-1"><i class="fas fa-receipt text-violet-400 mr-2"></i>My Orders</h3>
         <p class="text-gray-500 text-xs mb-4">Your purchase history</p>
-        <div id="ordersList" class="space-y-2 max-h-[400px] overflow-y-auto"></div>
+        <div id="ordersList" class="space-y-2"></div>
     </div>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   STORAGE HELPERS
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   STORAGE
+   ═══════════════════════════════════════════ */
 const DEFAULT_PLANS = [
     { id: 'free',     name: 'Free',     icon: '🆓', price: 0, period: 'Via Referrals',   ram: '1GB', disk: '1GB', cpu: '30%', validDays: 3,  features: ['5 Referrals Required','3 Days Validity','1GB RAM / 1GB Disk','30% CPU Limit'], popular: false, active: true },
     { id: 'standard', name: 'Standard', icon: '⭐', price: 2, period: '7 Days Panel',    ram: '1GB', disk: '1GB', cpu: '50%', validDays: 7,  features: ['No Referrals Needed','7 Days Validity','1GB RAM / 1GB Disk','50% CPU Limit'],   popular: true,  active: true },
@@ -358,16 +421,32 @@ function clearSession(){ localStorage.removeItem('maxx_session'); }
 function getOrders(){ return store.get('maxx_orders', []); }
 function saveOrders(o){ store.set('maxx_orders', o); }
 
-/* hash (client-side only — not for production) */
+/* ═══ UPI METHODS ═══ */
+function getUpiMethods(){
+    const raw = localStorage.getItem('maxx_upi_methods');
+    if(raw === null){
+        const defaults = [{
+            id: 'upi-default',
+            label: 'Primary UPI',
+            upi_id: 'maxx@paytm',
+            holder_name: 'MAXX Hosting',
+            qr_url: '',
+            active: true,
+            createdAt: new Date().toISOString()
+        }];
+        localStorage.setItem('maxx_upi_methods', JSON.stringify(defaults));
+        return defaults;
+    }
+    try { return JSON.parse(raw); } catch(e) { return []; }
+}
+
 async function hashPwd(p){
     const buf = new TextEncoder().encode(p);
     const h = await crypto.subtle.digest('SHA-256', buf);
     return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-/* ═══════════════════════════════════════════════════════
-   TOAST
-   ═══════════════════════════════════════════════════════ */
+/* ═══ TOAST ═══ */
 function toast(msg, type='info', dur=3500){
     const icons = { success:'fa-check', error:'fa-xmark', info:'fa-circle-info', warn:'fa-triangle-exclamation' };
     const colors = { success:'#10b981', error:'#ef4444', info:'#3b82f6', warn:'#f59e0b' };
@@ -379,9 +458,16 @@ function toast(msg, type='info', dur=3500){
     setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, dur);
 }
 
-/* ═══════════════════════════════════════════════════════
+function escapeHtml(t){ const d = document.createElement('div'); d.textContent = t == null ? '' : t; return d.innerHTML; }
+
+function copyText(txt){
+    if(!txt) return;
+    navigator.clipboard.writeText(txt).then(() => toast('Copied!', 'success')).catch(() => toast('Copy failed', 'error'));
+}
+
+/* ═══════════════════════════════════════════
    RENDER PLANS
-   ═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════ */
 function renderPlans(){
     const plans = getPlans().filter(p => p.active !== false);
     const grid = document.getElementById('pricingGrid');
@@ -406,9 +492,9 @@ function renderPlans(){
     }).join('');
 }
 
-/* ═══════════════════════════════════════════════════════
-   AUTH MODAL
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   AUTH
+   ═══════════════════════════════════════════ */
 let pendingPlanId = null;
 
 function openAuth(tab='login'){
@@ -425,9 +511,7 @@ function switchAuthTab(tab){
     document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
     document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
     document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
-    document.getElementById('authSubtitle').textContent = tab === 'login'
-        ? 'Welcome back! Login to continue.'
-        : 'Create your free account in seconds.';
+    document.getElementById('authSubtitle').textContent = tab === 'login' ? 'Welcome back! Login to continue.' : 'Create your free account in seconds.';
 }
 function togglePass(id, btn){
     const i = document.getElementById(id);
@@ -458,13 +542,12 @@ async function submitRegister(e){
     saveUsers(users);
 
     saveSession({ username: newUser.username, email: newUser.email, plan: newUser.plan, loginAt: Date.now() });
-    toast('🎉 Account created! Welcome to MAXX HOSTING', 'success');
+    toast('🎉 Account created!', 'success');
     closeAuth();
     refreshAuthUI();
     e.target.reset();
 
-    // If there's a pending plan to buy, open buy modal
-    if(pendingPlanId){ setTimeout(() => { openBuy(pendingPlanId); pendingPlanId = null; }, 400); }
+    if(pendingPlanId){ setTimeout(() => { openPayment(pendingPlanId); pendingPlanId = null; }, 400); }
 }
 
 async function submitLogin(e){
@@ -485,7 +568,7 @@ async function submitLogin(e){
     refreshAuthUI();
     e.target.reset();
 
-    if(pendingPlanId){ setTimeout(() => { openBuy(pendingPlanId); pendingPlanId = null; }, 400); }
+    if(pendingPlanId){ setTimeout(() => { openPayment(pendingPlanId); pendingPlanId = null; }, 400); }
 }
 
 function logout(){
@@ -495,9 +578,6 @@ function logout(){
     toast('Logged out successfully','info');
 }
 
-/* ═══════════════════════════════════════════════════════
-   AUTH UI STATE
-   ═══════════════════════════════════════════════════════ */
 function refreshAuthUI(){
     const session = getSession();
     const navGuest = document.getElementById('navGuest');
@@ -507,13 +587,10 @@ function refreshAuthUI(){
         navGuest.classList.add('hidden');
         navUser.classList.remove('hidden');
         navUser.classList.add('flex');
-        const letter = session.username[0].toUpperCase();
-        document.getElementById('navAvatar').textContent = letter;
+        document.getElementById('navAvatar').textContent = session.username[0].toUpperCase();
         document.getElementById('navUsername').textContent = session.username;
         document.getElementById('menuUsername').textContent = session.username;
         document.getElementById('menuEmail').textContent = session.email;
-        const badge = document.getElementById('menuPlanBadge');
-        badge.textContent = (session.plan || 'free').charAt(0).toUpperCase() + (session.plan || 'free').slice(1) + ' Plan';
     } else {
         navGuest.classList.remove('hidden');
         navUser.classList.add('hidden');
@@ -530,16 +607,17 @@ document.addEventListener('click', e => {
     if(!e.target.closest('.user-menu')) closeUserMenu();
 });
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    BUY FLOW
-   ═══════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════ */
+let currentPayment = { planId: null, upiMethodId: null, proofBase64: null };
+
 function buyPlan(planId){
     const plan = getPlans().find(p => p.id === planId);
     if(!plan){ toast('Plan not found','error'); return; }
 
     const session = getSession();
     if(!session){
-        // Free plan → prompt register, others → prompt auth too
         pendingPlanId = planId;
         openAuth('register');
         toast('Create an account to continue','info');
@@ -547,109 +625,226 @@ function buyPlan(planId){
     }
 
     if(Number(plan.price) === 0){
-        // Free plan — no purchase needed, direct to Telegram bot
-        toast('Free plan activated! Visit our Telegram bot to set it up.','success');
+        toast('Free plan activated! Visit our Telegram bot to set up.','success');
         setTimeout(() => window.open('https://t.me/zip_extrctor_bot','_blank'), 1200);
         return;
     }
 
-    openBuy(planId);
+    openPayment(planId);
 }
 
-function openBuy(planId){
+function openPayment(planId){
     const plan = getPlans().find(p => p.id === planId);
     if(!plan) return;
-    const session = getSession();
-    if(!session){ pendingPlanId = planId; openAuth('login'); return; }
 
-    document.getElementById('buyDetails').innerHTML = `
-        <div class="flex items-center gap-3 mb-3">
-            <div class="text-3xl">${plan.icon}</div>
-            <div>
-                <p class="font-bold text-base">${plan.name}</p>
-                <p class="text-[11px] text-gray-400">${plan.period}</p>
+    const methods = getUpiMethods().filter(m => m.active !== false);
+    if(!methods.length){
+        Swal.fire? Swal.fire({title:'No Payment Methods', text:'Admin has not set up any UPI methods yet. Please contact support.', icon:'warning', background:'#12141c', color:'#fff'}) : alert('No payment methods available. Contact support.');
+        return;
+    }
+
+    currentPayment = { planId, upiMethodId: methods[0].id, proofBase64: null };
+
+    document.getElementById('payStep1').classList.remove('hidden');
+    document.getElementById('payStep2').classList.add('hidden');
+    document.getElementById('txnId').value = '';
+    document.getElementById('proofPreview').classList.add('hidden');
+    document.getElementById('proofEmpty').classList.remove('hidden');
+    document.getElementById('proofFile').value = '';
+
+    document.getElementById('payPlanSummary').innerHTML = `
+        <div class="flex items-center gap-3">
+            <div class="text-3xl">${plan.icon || '🎁'}</div>
+            <div class="flex-1 min-w-0">
+                <p class="font-bold text-base truncate">${escapeHtml(plan.name)}</p>
+                <p class="text-[11px] text-gray-400">${escapeHtml(plan.period || '')}</p>
             </div>
-            <div class="ml-auto text-right">
+            <div class="text-right flex-none">
                 <p class="text-2xl font-extrabold text-blue-400">$${plan.price}</p>
+                <p class="text-[10px] text-gray-500">Total</p>
             </div>
         </div>
-        <ul class="text-xs text-gray-300 space-y-1.5">
-            ${(plan.features||[]).map(f => `<li><i class="fas fa-check text-green-400 mr-2"></i>${f}</li>`).join('')}
-        </ul>
     `;
-    document.getElementById('buyModal').classList.add('show');
-    document.getElementById('buyModal').dataset.planId = planId;
+
+    renderUpiMethodList(methods);
+    renderPaymentDetails(methods[0], plan);
+
+    document.getElementById('paymentModal').classList.add('show');
     document.body.style.overflow = 'hidden';
 }
 
-function closeBuy(){
-    document.getElementById('buyModal').classList.remove('show');
+function renderUpiMethodList(methods){
+    document.getElementById('upiMethodList').innerHTML = methods.map(m => `
+        <button onclick="selectUpiMethod('${m.id}')"
+            class="upi-method-btn ${m.id === currentPayment.upiMethodId ? 'selected' : ''}">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-blue-500/20 grid place-items-center flex-none">
+                    <i class="fas fa-mobile-alt text-blue-400 text-xs"></i>
+                </div>
+                <div class="min-w-0 flex-1 text-left">
+                    <p class="font-semibold text-[13px] truncate">${escapeHtml(m.label)}</p>
+                    <p class="text-[11px] text-gray-400 font-mono truncate">${escapeHtml(m.upi_id)}</p>
+                </div>
+                ${m.id === currentPayment.upiMethodId ? '<i class="fas fa-check-circle text-blue-400"></i>' : ''}
+            </div>
+        </button>
+    `).join('');
+}
+
+function selectUpiMethod(methodId){
+    const methods = getUpiMethods().filter(m => m.active !== false);
+    const method = methods.find(m => m.id === methodId);
+    if(!method) return;
+    currentPayment.upiMethodId = methodId;
+    renderUpiMethodList(methods);
+    const plan = getPlans().find(p => p.id === currentPayment.planId);
+    renderPaymentDetails(method, plan);
+}
+
+function renderPaymentDetails(method, plan){
+    const amount = Number(plan.price).toFixed(2);
+    document.getElementById('paymentDetails').innerHTML = `
+        <div class="text-center mb-3">
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Amount to Pay</p>
+            <p class="text-3xl font-extrabold text-green-400">$${amount}</p>
+        </div>
+        ${method.qr_url ? `
+            <div class="text-center mb-3">
+                <img src="${method.qr_url}" alt="QR Code" class="max-h-56 mx-auto rounded-xl border border-gray-700 bg-white p-2" style="cursor:pointer" onclick="this.requestFullscreen && this.requestFullscreen()" onerror="this.parentNode.innerHTML='<p class=\\'text-[10px] text-red-400 py-4\\'>QR image failed to load</p>'">
+                <p class="text-[10px] text-gray-500 mt-2"><i class="fas fa-expand mr-1"></i>Scan with any UPI app</p>
+            </div>
+        ` : `
+            <div class="text-center mb-3 py-6 bg-gray-800/30 rounded-xl">
+                <i class="fas fa-qrcode text-4xl text-gray-600 mb-2 block"></i>
+                <p class="text-[11px] text-gray-400">Use UPI ID below</p>
+            </div>
+        `}
+        <div class="bg-gray-900/50 rounded-xl p-3 flex items-center gap-2">
+            <div class="flex-1 min-w-0">
+                <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">UPI ID</p>
+                <p class="font-mono font-bold text-sm text-blue-400 truncate">${escapeHtml(method.upi_id)}</p>
+                ${method.holder_name ? `<p class="text-[10px] text-gray-500 mt-0.5">${escapeHtml(method.holder_name)}</p>` : ''}
+            </div>
+            <button onclick="copyText('${escapeHtml(method.upi_id)}')" class="btn-blue !py-2 !px-3 !text-[11px] flex-shrink-0">
+                <i class="fas fa-copy text-[10px]"></i> Copy
+            </button>
+        </div>
+    `;
+}
+
+function closePayment(){
+    document.getElementById('paymentModal').classList.remove('show');
     document.body.style.overflow = '';
 }
 
-function confirmPurchase(){
-    const planId = document.getElementById('buyModal').dataset.planId;
-    const plan = getPlans().find(p => p.id === planId);
-    const session = getSession();
-    if(!plan || !session) return;
+/* ═══ FILE HANDLING ═══ */
+async function handleProofFile(input){
+    const file = input.files[0];
+    if(!file) return;
+    if(file.size > 5 * 1024 * 1024){ toast('File too large (max 5MB)', 'error'); input.value = ''; return; }
+    if(!file.type.startsWith('image/')){ toast('Please upload an image file', 'error'); input.value = ''; return; }
 
-    const orderId = 'MAX-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
-    const order = {
-        id: orderId,
-        username: session.username,
-        email: session.email,
-        planId: plan.id,
-        planName: plan.name,
-        price: plan.price,
-        purchasedAt: new Date().toISOString(),
-        status: 'pending'
-    };
-
-    const orders = getOrders();
-    orders.push(order);
-    saveOrders(orders);
-
-    // Update user's current plan
-    const users = getUsers();
-    const idx = users.findIndex(u => u.username === session.username);
-    if(idx >= 0){ users[idx].plan = plan.id; saveUsers(users); }
-    session.plan = plan.id;
-    saveSession(session);
-    refreshAuthUI();
-
-    closeBuy();
-
-    // Show order summary
-    const html = `
-        <div class="text-center py-2">
-            <div class="w-14 h-14 mx-auto rounded-full bg-green-500/20 grid place-items-center mb-3">
-                <i class="fas fa-check text-2xl text-green-400"></i>
-            </div>
-            <h3 class="text-lg font-extrabold mb-1">Order Confirmed!</h3>
-            <p class="text-gray-400 text-xs mb-4">Your order has been created successfully.</p>
-            <div class="bg-black/40 rounded-xl p-3 text-left text-xs font-mono mb-4">
-                <p class="text-gray-500 mb-1">Order ID:</p>
-                <p class="text-blue-400 font-bold break-all">${orderId}</p>
-                <p class="text-gray-500 mt-2 mb-1">Plan:</p>
-                <p class="text-white">${plan.name} — $${plan.price}</p>
-            </div>
-            <p class="text-[11px] text-gray-500 mb-4">Send this Order ID to <a href="https://t.me/styen18" target="_blank" class="text-blue-400 font-semibold">@styen18</a> on Telegram to complete payment &amp; activate your plan.</p>
-            <a href="https://t.me/styen18" target="_blank" class="btn-blue w-full justify-center !py-2.5 text-sm"><i class="fab fa-telegram"></i> Open Telegram</a>
-        </div>
-    `;
-
-    // Reuse buy modal for confirmation
-    const modalCard = document.querySelector('#buyModal .modal-card');
-    const originalHTML = modalCard.innerHTML;
-    modalCard.innerHTML = '<button onclick="closeBuy();location.reload()" class="close-x"><i class="fas fa-times text-sm"></i></button>' + html;
-
-    document.getElementById('buyModal').classList.add('show');
-    toast('Order created successfully!','success',4000);
+    try {
+        const base64 = await compressImage(file, 800, 0.7);
+        currentPayment.proofBase64 = base64;
+        document.getElementById('proofImg').src = base64;
+        document.getElementById('proofName').textContent = file.name.length > 30 ? file.name.slice(0, 27) + '...' : file.name;
+        document.getElementById('proofPreview').classList.remove('hidden');
+        document.getElementById('proofEmpty').classList.add('hidden');
+        toast('Screenshot uploaded', 'success');
+    } catch(e){
+        toast('Upload failed', 'error');
+    }
 }
 
-/* ═══════════════════════════════════════════════════════
-   ORDERS MODAL
-   ═══════════════════════════════════════════════════════ */
+function compressImage(file, maxWidth = 800, quality = 0.7){
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let w = img.width, h = img.height;
+                if(w > maxWidth){ h = h * maxWidth / w; w = maxWidth; }
+                canvas.width = w;
+                canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = () => reject(new Error('Invalid image'));
+            img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Read failed'));
+        reader.readAsDataURL(file);
+    });
+}
+
+/* ═══ SUBMIT ORDER ═══ */
+function submitPaymentOrder(){
+    if(!currentPayment.proofBase64){ toast('Please upload payment screenshot', 'error'); return; }
+
+    const txnId = document.getElementById('txnId').value.trim();
+    if(!txnId){ toast('Please enter UTR / Transaction ID', 'error'); return; }
+    if(txnId.length < 4){ toast('Transaction ID looks too short', 'error'); return; }
+
+    const plan = getPlans().find(p => p.id === currentPayment.planId);
+    const method = getUpiMethods().find(m => m.id === currentPayment.upiMethodId);
+    const session = getSession();
+
+    if(!plan || !method || !session){ toast('Session expired. Please try again.', 'error'); return; }
+
+    const btn = document.getElementById('paySubmitBtn');
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting...';
+    btn.disabled = true;
+
+    setTimeout(() => {
+        const orderId = 'MAX-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+        const order = {
+            id: orderId,
+            username: session.username,
+            email: session.email,
+            planId: plan.id,
+            plan_name: plan.name,
+            price: plan.price,
+            valid_days: plan.validDays || 30,
+            ram: plan.ram,
+            disk: plan.disk,
+            cpu: plan.cpu,
+            purchased_at: new Date().toISOString(),
+            status: 'pending',
+            payment_status: 'pending_review',
+            txn_id: txnId,
+            payment_proof: currentPayment.proofBase64,
+            upi_method_used: { id: method.id, label: method.label, upi_id: method.upi_id }
+        };
+
+        const orders = getOrders();
+        orders.push(order);
+        saveOrders(orders);
+
+        document.getElementById('payStep1').classList.add('hidden');
+        document.getElementById('payStep2').classList.remove('hidden');
+
+        document.getElementById('orderSummarySuccess').innerHTML = `
+            <div class="space-y-2">
+                <div class="flex justify-between items-start gap-2"><span class="text-gray-500">Order ID</span><span class="font-mono text-blue-400 text-[11px] text-right break-all">${orderId}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Plan</span><span class="font-semibold">${escapeHtml(plan.name)}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Amount</span><span class="font-semibold">$${plan.price}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">UTR/TXN</span><span class="font-mono text-emerald-400 text-[11px]">${escapeHtml(txnId)}</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Status</span><span class="text-amber-400 font-bold">Pending Review</span></div>
+            </div>
+            <button onclick="copyText('${orderId}')" class="mt-3 text-blue-400 text-[11px] hover:underline w-full text-center">
+                <i class="fas fa-copy mr-1"></i>Copy Order ID
+            </button>
+        `;
+
+        toast('Order submitted successfully!', 'success', 4000);
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Payment Proof';
+        btn.disabled = false;
+    }, 600);
+}
+
+/* ═══ ORDERS ═══ */
 function openMyOrders(){
     closeUserMenu();
     const session = getSession();
@@ -657,25 +852,24 @@ function openMyOrders(){
     const orders = getOrders().filter(o => o.username === session.username);
     const list = document.getElementById('ordersList');
     if(!orders.length){
-        list.innerHTML = `<div class="text-center py-10 text-gray-500">
-            <i class="fas fa-receipt text-3xl mb-2 block opacity-40"></i>
-            <p class="text-sm">No orders yet</p>
-            <p class="text-xs mt-1">Purchase a plan to see it here.</p>
-        </div>`;
+        list.innerHTML = `<div class="text-center py-10 text-gray-500"><i class="fas fa-receipt text-3xl mb-2 block opacity-40"></i><p class="text-sm">No orders yet</p><p class="text-xs mt-1">Purchase a plan to see it here.</p></div>`;
     } else {
-        list.innerHTML = orders.slice().reverse().map(o => `
+        list.innerHTML = orders.slice().reverse().map(o => {
+            const statusColor = o.status === 'pending' ? 'amber' : o.status === 'active' ? 'green' : 'red';
+            return `
             <div class="bg-black/30 rounded-xl p-3 text-xs">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="font-bold text-white">${o.planName}</span>
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="font-bold text-white">${escapeHtml(o.plan_name)}</span>
                     <span class="font-mono text-blue-400 font-semibold">$${o.price}</span>
                 </div>
-                <p class="text-gray-500 font-mono text-[10px] break-all mb-1">${o.id}</p>
+                <p class="text-gray-500 font-mono text-[10px] break-all mb-1">${escapeHtml(o.id)}</p>
+                ${o.txn_id ? `<p class="text-gray-500 text-[10px] mb-1">UTR: <span class="font-mono text-gray-400">${escapeHtml(o.txn_id)}</span></p>` : ''}
                 <div class="flex justify-between items-center">
-                    <span class="text-gray-500 text-[10px]">${new Date(o.purchasedAt).toLocaleDateString()}</span>
-                    <span class="pill text-[9px] px-2 py-0.5 rounded-full font-bold ${o.status === 'pending' ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}">${o.status.toUpperCase()}</span>
+                    <span class="text-gray-500 text-[10px]">${new Date(o.purchased_at).toLocaleDateString()}</span>
+                    <span class="text-[9px] px-2 py-0.5 rounded-full font-bold bg-${statusColor}-500/20 text-${statusColor}-400">${o.status.toUpperCase()}</span>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
     document.getElementById('ordersModal').classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -689,35 +883,26 @@ function gotoPanel(){
     closeUserMenu();
     const session = getSession();
     if(!session){ openAuth('login'); return; }
-    // Redirect to user panel (adjust path if different)
     window.location.href = '/panel';
 }
 
-/* ═══════════════════════════════════════════════════════
-   MODAL CLOSE ON OVERLAY
-   ═══════════════════════════════════════════════════════ */
-['authModal','buyModal','ordersModal'].forEach(id => {
+/* ═══ MODAL CLICK OUTSIDE ═══ */
+['authModal','paymentModal','ordersModal'].forEach(id => {
     document.getElementById(id).addEventListener('click', e => {
         if(e.target.id === id){
             if(id === 'authModal') closeAuth();
-            if(id === 'buyModal') closeBuy();
+            if(id === 'paymentModal') closePayment();
             if(id === 'ordersModal') closeOrders();
         }
     });
 });
 document.addEventListener('keydown', e => {
-    if(e.key === 'Escape'){
-        closeAuth(); closeBuy(); closeOrders(); closeUserMenu();
-    }
+    if(e.key === 'Escape'){ closeAuth(); closePayment(); closeOrders(); closeUserMenu(); }
 });
 
-/* ═══════════════════════════════════════════════════════
-   INIT
-   ═══════════════════════════════════════════════════════ */
+/* ═══ INIT ═══ */
 renderPlans();
 refreshAuthUI();
-
-// Sync across tabs — if admin updates plans, refresh landing
 window.addEventListener('storage', e => {
     if(e.key === 'maxx_plans') renderPlans();
     if(e.key === 'maxx_session') refreshAuthUI();
