@@ -25,8 +25,6 @@ tailwind.config = {
   :root{
     --accent: 59 130 246;
     --bg: #06080f;
-    --panel: #0d1018;
-    --panel2: #131824;
     --line: rgba(255,255,255,.07);
     --muted: #7b869b;
   }
@@ -34,9 +32,7 @@ tailwind.config = {
   html{ scroll-behavior:smooth; }
   body{
     font-family:'Inter',sans-serif;
-    background: var(--bg);
-    color:#e9edf7;
-    overflow-x:hidden;
+    background: var(--bg); color:#e9edf7; overflow-x:hidden;
   }
   body::before{
     content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
@@ -53,10 +49,8 @@ tailwind.config = {
 
   .card{
     background: linear-gradient(170deg, rgba(22,27,40,.92), rgba(13,16,24,.92));
-    border:1px solid var(--line);
-    border-radius:18px;
-    position:relative;
-    backdrop-filter: blur(12px);
+    border:1px solid var(--line); border-radius:18px;
+    position:relative; backdrop-filter: blur(12px);
   }
   .card-glow::after{
     content:''; position:absolute; inset:-1px; border-radius:18px; padding:1px;
@@ -81,6 +75,8 @@ tailwind.config = {
   .btn-ghost:hover{ background:rgba(255,255,255,.09); color:#fff; border-color:rgba(255,255,255,.16); }
   .btn-danger{ background:rgba(239,68,68,.13); border-color:rgba(239,68,68,.3); color:#f87171; }
   .btn-danger:hover{ background:rgba(239,68,68,.22); color:#fca5a5; }
+  .btn-success{ background:linear-gradient(135deg,#10b981,#059669); color:#fff; box-shadow:0 8px 22px -12px rgba(16,185,129,.9); }
+  .btn-success:hover{ filter:brightness(1.1); }
 
   .field{
     width:100%; background:#0a0d14; border:1px solid #212836; border-radius:12px;
@@ -148,6 +144,14 @@ tailwind.config = {
   .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px); z-index:70; opacity:0; pointer-events:none; transition:opacity .35s; }
   .overlay.show{ opacity:1; pointer-events:auto; }
 
+  .modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.82); backdrop-filter:blur(6px); z-index:120;
+                  display:none; align-items:center; justify-content:center; padding:1rem; overflow-y:auto; }
+  .modal-overlay.show{ display:flex; animation: fadeIn .25s ease; }
+  .modal-card{ background:linear-gradient(170deg,#12141c,#0a0d14); border:1px solid rgba(255,255,255,.09);
+               border-radius:20px; width:100%; max-width:560px; padding:1.5rem;
+               box-shadow: 0 40px 100px -20px rgba(0,0,0,.9); animation: slideUp .32s cubic-bezier(.2,.8,.3,1); margin:auto; }
+  @keyframes slideUp{ from{opacity:0; transform: translateY(24px) scale(.96);} to{opacity:1; transform:none;} }
+
   .tab{ padding:.5rem .9rem; border-radius:10px; font-size:.8rem; font-weight:600; color:#8d97ab; cursor:pointer; transition:.2s; }
   .tab:hover{ background:rgba(255,255,255,.05); color:#fff; }
   .tab.active{ background: rgb(var(--accent) / .18); color: rgb(var(--accent)); }
@@ -160,10 +164,23 @@ tailwind.config = {
                border:1px solid rgba(255,255,255,.09); border-radius:22px; padding:2.2rem;
                box-shadow: 0 40px 100px -40px rgb(var(--accent) / .8), 0 0 0 1px rgba(255,255,255,.03) inset; }
 
-  .skel{ background:linear-gradient(90deg,#161b26,#1e2534,#161b26); background-size:200% 100%; animation:sk 1.3s infinite; }
-  @keyframes sk{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+  /* Plan card preview */
+  .plan-card{
+    border:1px solid var(--line); border-radius:16px; padding:1.1rem;
+    background: linear-gradient(170deg, rgba(22,27,40,.7), rgba(13,16,24,.7));
+    transition: all .25s;
+  }
+  .plan-card:hover{ border-color: rgb(var(--accent) / .4); transform: translateY(-2px); }
+  .plan-card.popular{
+    border-color: rgb(var(--accent) / .6);
+    background: linear-gradient(170deg, rgb(var(--accent) / .1), rgba(13,16,24,.9));
+    box-shadow: 0 20px 50px -20px rgb(var(--accent) / .4);
+  }
+  .plan-card.hidden-plan{ opacity:.5; }
 
-  .bar{ transition: height .9s cubic-bezier(.2,.8,.3,1); }
+  /* Feature list */
+  .feat-item{ display:flex; align-items:flex-start; gap:.4rem; font-size:.72rem; color:#c3cbdb; padding:.25rem 0; }
+  .feat-item i{ color:#34d399; margin-top:.15rem; font-size:.6rem; flex:none; }
 
   @media (max-width:1023px){
     #sidebar{ transform: translateX(-105%); }
@@ -174,7 +191,7 @@ tailwind.config = {
 
 <body class="antialiased">
 
-<!-- ══════════════════ LOGIN SCREEN ══════════════════ -->
+<!-- LOGIN SCREEN -->
 <div id="loginScreen">
   <div class="login-card fade-in">
     <div class="flex flex-col items-center text-center mb-7">
@@ -191,46 +208,39 @@ tailwind.config = {
         <label class="lbl">Username</label>
         <div class="relative">
           <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-sm"></i>
-          <input id="loginUser" type="text" autocomplete="username" placeholder="Enter username"
-                 class="field pl-10" spellcheck="false">
+          <input id="loginUser" type="text" autocomplete="username" placeholder="Enter username" class="field pl-10" spellcheck="false">
         </div>
       </div>
       <div>
         <label class="lbl">Password</label>
         <div class="relative">
           <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-sm"></i>
-          <input id="loginPass" type="password" autocomplete="current-password" placeholder="Enter password"
-                 class="field pl-10 pr-10">
+          <input id="loginPass" type="password" autocomplete="current-password" placeholder="Enter password" class="field pl-10 pr-10">
           <button type="button" onclick="toggleLoginPass()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] hover:text-white transition">
             <i id="eyeIcon" class="fas fa-eye text-sm"></i>
           </button>
         </div>
       </div>
-
       <div class="flex items-center justify-between text-xs pt-1">
         <label class="flex items-center gap-2 text-[#7b869b] cursor-pointer select-none">
-          <input type="checkbox" id="rememberMe" class="accent-accent w-3.5 h-3.5 rounded">
-          Remember me
+          <input type="checkbox" id="rememberMe" class="accent-accent w-3.5 h-3.5 rounded"> Remember me
         </label>
         <span id="attemptInfo" class="text-[#4d586b]"></span>
       </div>
-
       <button onclick="doLogin()" id="loginBtn" class="btn btn-primary w-full !py-3 !text-sm mt-2">
         <i class="fas fa-arrow-right-to-bracket"></i> Sign In Securely
       </button>
-
       <p class="text-center text-[10px] text-[#4d586b] pt-2 leading-relaxed">
-        Protected by MAXX Shield&trade; &bull; Session encrypted<br>
-        Unauthorized access is strictly prohibited
+        Protected by MAXX Shield&trade; &bull; Session encrypted<br>Unauthorized access is strictly prohibited
       </p>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════ APP ══════════════════ -->
+<!-- APP -->
 <div id="app" class="hidden relative z-10">
 
-  <!-- ░░ SIDEBAR ░░ -->
+  <!-- SIDEBAR -->
   <aside id="sidebar"
     class="fixed top-0 left-0 h-full w-[260px] z-50 flex flex-col bg-[#0a0d14]/95 backdrop-blur-xl border-r border-[var(--line)] transition-transform duration-300">
     <div class="px-5 py-5 flex items-center gap-3 border-b border-[var(--line)]">
@@ -257,6 +267,16 @@ tailwind.config = {
       </div>
       <div class="nav-item" data-page="create" onclick="gotoPage('create')">
         <i class="fas fa-plus-circle"></i> Create Server
+      </div>
+
+      <p class="px-3 pt-4 pb-2 text-[10px] font-bold tracking-[.14em] text-[#4d586b] uppercase">Commerce</p>
+      <div class="nav-item" data-page="plans" onclick="gotoPage('plans')">
+        <i class="fas fa-crown"></i> Plans
+        <span id="plansCount" class="ml-auto text-[10px] font-bold bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-md">0</span>
+      </div>
+      <div class="nav-item" data-page="orders" onclick="gotoPage('orders')">
+        <i class="fas fa-receipt"></i> Orders
+        <span id="ordersCount" class="ml-auto text-[10px] font-bold bg-violet-500/20 text-violet-400 px-2 py-0.5 rounded-md">0</span>
       </div>
 
       <p class="px-3 pt-4 pb-2 text-[10px] font-bold tracking-[.14em] text-[#4d586b] uppercase">System</p>
@@ -291,7 +311,7 @@ tailwind.config = {
 
   <div id="sidebarOverlay" onclick="closeSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
 
-  <!-- ░░ MAIN ░░ -->
+  <!-- MAIN -->
   <div class="lg:ml-[260px] min-h-screen flex flex-col">
 
     <!-- TOPBAR -->
@@ -300,17 +320,13 @@ tailwind.config = {
         <button onclick="openSidebar()" class="lg:hidden text-[#8d97ab] hover:text-white text-lg">
           <i class="fas fa-bars"></i>
         </button>
-
         <div class="relative flex-1 max-w-md hidden sm:block">
           <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-xs"></i>
-          <input id="globalSearch" type="text" placeholder="Search users, servers, IDs…"
-                 oninput="globalSearchHandler(this.value)"
+          <input id="globalSearch" type="text" placeholder="Search users, servers, IDs…" oninput="globalSearchHandler(this.value)"
                  class="field !py-2 !pl-9 !text-[13px] !rounded-xl">
           <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-[#4d586b] border border-[#2a3244] rounded px-1.5 py-0.5 hidden md:block">/</kbd>
         </div>
-
         <div class="flex items-center gap-2 ml-auto">
-          <!-- accent picker -->
           <div class="hidden md:flex items-center gap-1.5 bg-white/[.04] border border-[var(--line)] rounded-xl px-2 py-1.5">
             <span class="text-[9px] font-bold text-[#4d586b] tracking-wider mr-0.5">THEME</span>
             <button onclick="setAccent(59,130,246)" class="w-4 h-4 rounded-full bg-blue-500 ring-2 ring-white/0 hover:ring-white/60 transition"></button>
@@ -319,11 +335,9 @@ tailwind.config = {
             <button onclick="setAccent(244,63,94)" class="w-4 h-4 rounded-full bg-rose-500 ring-2 ring-white/0 hover:ring-white/60 transition"></button>
             <button onclick="setAccent(245,158,11)" class="w-4 h-4 rounded-full bg-amber-500 ring-2 ring-white/0 hover:ring-white/60 transition"></button>
           </div>
-
           <button onclick="gotoPage('create')" class="btn btn-primary !py-2 !px-3.5 hidden sm:inline-flex">
             <i class="fas fa-plus text-xs"></i> New Server
           </button>
-
           <div class="relative">
             <button onclick="toggleNotif()" class="w-9 h-9 rounded-xl bg-white/[.04] border border-[var(--line)] grid place-items-center text-[#8d97ab] hover:text-white hover:bg-white/[.08] transition relative">
               <i class="fas fa-bell text-sm"></i>
@@ -333,7 +347,7 @@ tailwind.config = {
               <p class="px-2 py-1.5 text-[10px] font-bold tracking-widest text-[#4d586b] uppercase">Notifications</p>
               <div class="px-2 py-2.5 rounded-lg hover:bg-white/[.04] flex gap-2.5 items-start">
                 <div class="w-7 h-7 rounded-lg bg-emerald-500/15 grid place-items-center flex-none"><i class="fas fa-check text-emerald-400 text-[10px]"></i></div>
-                <div><p class="text-[11px] font-semibold">Panel upgraded</p><p class="text-[10px] text-[#7b869b]">Premium UI/UX applied successfully.</p></div>
+                <div><p class="text-[11px] font-semibold">Panel upgraded</p><p class="text-[10px] text-[#7b869b]">Plans & Orders management added.</p></div>
               </div>
               <div class="px-2 py-2.5 rounded-lg hover:bg-white/[.04] flex gap-2.5 items-start">
                 <div class="w-7 h-7 rounded-lg bg-accent/15 grid place-items-center flex-none"><i class="fas fa-server text-accent text-[10px]"></i></div>
@@ -341,7 +355,6 @@ tailwind.config = {
               </div>
             </div>
           </div>
-
           <div class="relative">
             <button onclick="toggleProfile()" class="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-xl bg-white/[.04] border border-[var(--line)] hover:bg-white/[.08] transition">
               <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-accent to-accent/50 grid place-items-center text-[11px] font-bold" id="avatarLetter">A</div>
@@ -372,12 +385,12 @@ tailwind.config = {
     <!-- CONTENT -->
     <main class="flex-1 p-4 sm:p-6 max-w-[1500px] w-full mx-auto">
 
-      <!-- ══════ PAGE : DASHBOARD ══════ -->
+      <!-- ══════ DASHBOARD ══════ -->
       <section id="page-dashboard" class="page active">
         <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
           <div>
             <h2 class="text-2xl font-extrabold tracking-tight">Dashboard Overview</h2>
-            <p class="text-[13px] text-[#7b869b] mt-0.5">Real-time infrastructure &amp; server analytics</p>
+            <p class="text-[13px] text-[#7b869b] mt-0.5">Real-time infrastructure &amp; commerce analytics</p>
           </div>
           <div class="flex gap-2">
             <button onclick="location.reload()" class="btn btn-ghost"><i class="fas fa-rotate text-xs"></i> Refresh</button>
@@ -385,7 +398,6 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- STAT CARDS -->
         <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
           <div class="card card-glow lift p-4 sm:p-5">
             <div class="flex items-start justify-between">
@@ -397,7 +409,6 @@ tailwind.config = {
               <div class="stat-ico bg-accent/15 text-accent"><i class="fas fa-users"></i></div>
             </div>
           </div>
-
           <div class="card card-glow lift p-4 sm:p-5">
             <div class="flex items-start justify-between">
               <div>
@@ -408,31 +419,28 @@ tailwind.config = {
               <div class="stat-ico bg-emerald-500/15 text-emerald-400"><i class="fas fa-server"></i></div>
             </div>
           </div>
-
           <div class="card card-glow lift p-4 sm:p-5">
             <div class="flex items-start justify-between">
               <div>
-                <p class="text-[11px] font-semibold tracking-wide text-[#7b869b] uppercase">Running</p>
-                <p class="text-3xl font-extrabold mt-1.5 text-emerald-400 tabular-nums">{{ total_running }}</p>
-                <p class="text-[10px] text-emerald-400/80 mt-1.5 font-semibold"><span class="dot bg-emerald-400 inline-block pulse-ring"></span> Live now</p>
+                <p class="text-[11px] font-semibold tracking-wide text-[#7b869b] uppercase">Active Plans</p>
+                <p class="text-3xl font-extrabold mt-1.5 text-amber-400 tabular-nums" id="dashPlansCount">—</p>
+                <p class="text-[10px] text-[#7b869b] mt-1.5 font-semibold"><i class="fas fa-crown mr-1"></i>Offered</p>
               </div>
-              <div class="stat-ico bg-emerald-500/15 text-emerald-400"><i class="fas fa-play"></i></div>
+              <div class="stat-ico bg-amber-500/15 text-amber-400"><i class="fas fa-crown"></i></div>
             </div>
           </div>
-
           <div class="card card-glow lift p-4 sm:p-5">
             <div class="flex items-start justify-between">
               <div>
-                <p class="text-[11px] font-semibold tracking-wide text-[#7b869b] uppercase">Stopped</p>
-                <p class="text-3xl font-extrabold mt-1.5 text-rose-400 tabular-nums">{{ total_servers - total_running }}</p>
-                <p class="text-[10px] text-[#7b869b] mt-1.5 font-semibold"><i class="fas fa-pause mr-1"></i>Idle instances</p>
+                <p class="text-[11px] font-semibold tracking-wide text-[#7b869b] uppercase">Pending Orders</p>
+                <p class="text-3xl font-extrabold mt-1.5 text-violet-400 tabular-nums" id="dashOrdersCount">—</p>
+                <p class="text-[10px] text-[#7b869b] mt-1.5 font-semibold"><i class="fas fa-hourglass-half mr-1"></i>Awaiting activation</p>
               </div>
-              <div class="stat-ico bg-rose-500/15 text-rose-400"><i class="fas fa-stop"></i></div>
+              <div class="stat-ico bg-violet-500/15 text-violet-400"><i class="fas fa-receipt"></i></div>
             </div>
           </div>
         </div>
 
-        <!-- CHARTS -->
         <div class="grid lg:grid-cols-3 gap-4 mb-6">
           <div class="card p-5 lg:col-span-2">
             <div class="flex items-center justify-between mb-5">
@@ -442,17 +450,13 @@ tailwind.config = {
               </div>
               <i class="fas fa-chart-simple text-accent"></i>
             </div>
-            <div id="typeChart" class="flex items-end justify-around gap-4 h-44 px-2">
-              <!-- injected -->
-            </div>
+            <div id="typeChart" class="flex items-end justify-around gap-4 h-44 px-2"></div>
           </div>
-
           <div class="card p-5">
             <h3 class="font-bold text-[15px] mb-1">Status Split</h3>
             <p class="text-[11px] text-[#7b869b] mb-4">Live fleet health</p>
             <div class="relative grid place-items-center h-40">
-              <div id="donut" class="w-36 h-36 rounded-full transition-all duration-700"
-                   style="background: conic-gradient(#334155 0 100%)">
+              <div id="donut" class="w-36 h-36 rounded-full transition-all duration-700" style="background: conic-gradient(#334155 0 100%)">
                 <div class="absolute inset-0 grid place-items-center">
                   <div class="w-[104px] h-[104px] rounded-full bg-[#0d1018] grid place-items-center">
                     <div class="text-center">
@@ -471,7 +475,6 @@ tailwind.config = {
           </div>
         </div>
 
-        <!-- RECENT -->
         <div class="card overflow-hidden">
           <div class="p-5 border-b border-[var(--line)] flex items-center justify-between">
             <div>
@@ -486,14 +489,12 @@ tailwind.config = {
               {% for server in user.servers %}
                 {% if ns.count < 6 %}
                   {% set ns.count = ns.count + 1 %}
-                  <div class="rounded-xl border border-[var(--line)] bg-white/[.02] p-3.5 hover:bg-white/[.05] transition cursor-pointer"
-                       onclick="gotoPage('servers')">
+                  <div class="rounded-xl border border-[var(--line)] bg-white/[.02] p-3.5 hover:bg-white/[.05] transition cursor-pointer" onclick="gotoPage('servers')">
                     <div class="flex items-center gap-2 mb-2">
                       <div class="w-7 h-7 rounded-lg bg-accent/15 grid place-items-center text-[10px] font-bold text-accent">{{ user.username[0]|upper }}</div>
                       <span class="font-mono text-[12px] truncate">{{ user.username }}</span>
                       <span class="ml-auto pill {% if server.status == 'running' %}bg-emerald-500/15 text-emerald-400{% else %}bg-rose-500/15 text-rose-400{% endif %}">
-                        <span class="dot {% if server.status == 'running' %}bg-emerald-400{% else %}bg-rose-400{% endif %}"></span>
-                        {{ server.status|capitalize }}
+                        <span class="dot {% if server.status == 'running' %}bg-emerald-400{% else %}bg-rose-400{% endif %}"></span>{{ server.status|capitalize }}
                       </span>
                     </div>
                     <p class="font-mono text-[10px] text-[#4d586b] truncate">{{ server.server_id }}</p>
@@ -516,7 +517,7 @@ tailwind.config = {
         </div>
       </section>
 
-      <!-- ══════ PAGE : SERVERS ══════ -->
+      <!-- ══════ SERVERS ══════ -->
       <section id="page-servers" class="page">
         <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
           <div>
@@ -526,12 +527,10 @@ tailwind.config = {
           <button onclick="gotoPage('create')" class="btn btn-primary"><i class="fas fa-plus text-xs"></i> Create Server</button>
         </div>
 
-        <!-- toolbar -->
         <div class="card p-3.5 mb-4 flex flex-wrap items-center gap-2.5">
           <div class="relative flex-1 min-w-[180px]">
             <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-xs"></i>
-            <input id="tableSearch" type="text" placeholder="Filter by user, ID or type…" oninput="filterTable()"
-                   class="field !py-2 !pl-9 !text-[13px]">
+            <input id="tableSearch" type="text" placeholder="Filter by user, ID or type…" oninput="filterTable()" class="field !py-2 !pl-9 !text-[13px]">
           </div>
           <select id="filterStatus" onchange="filterTable()" class="field !py-2 !text-[13px] !w-auto">
             <option value="">All Status</option>
@@ -571,73 +570,43 @@ tailwind.config = {
               </thead>
               <tbody class="text-[13px]">
                 {% if users|length == 0 %}
-                <tr>
-                  <td colspan="9" class="p-14 text-center">
-                    <div class="inline-grid place-items-center w-16 h-16 rounded-2xl bg-white/[.04] mb-3">
-                      <i class="fas fa-server text-2xl text-[#3b465c]"></i>
-                    </div>
-                    <p class="text-sm text-[#7b869b]">No servers found</p>
-                    <p class="text-[11px] text-[#4d586b] mt-1">Create your first server to get started</p>
-                  </td>
-                </tr>
+                <tr><td colspan="9" class="p-14 text-center">
+                  <div class="inline-grid place-items-center w-16 h-16 rounded-2xl bg-white/[.04] mb-3"><i class="fas fa-server text-2xl text-[#3b465c]"></i></div>
+                  <p class="text-sm text-[#7b869b]">No servers found</p>
+                  <p class="text-[11px] text-[#4d586b] mt-1">Create your first server to get started</p>
+                </td></tr>
                 {% endif %}
-
                 {% for user in users %}
                   {% for server in user.servers %}
                   {% set cl = server.cpu_limit | default(80) %}
                   <tr class="row-in border-t border-[var(--line)] hover:bg-white/[.035] transition group"
-                      data-user="{{ user.username }}"
-                      data-server="{{ server.server_id }}"
-                      data-pass="{{ user.password }}"
-                      data-type="{{ server.type }}"
-                      data-ram="{{ server.ram }}"
-                      data-disk="{{ server.disk }}"
-                      data-cpu="{{ cl }}"
+                      data-user="{{ user.username }}" data-server="{{ server.server_id }}" data-pass="{{ user.password }}"
+                      data-type="{{ server.type }}" data-ram="{{ server.ram }}" data-disk="{{ server.disk }}" data-cpu="{{ cl }}"
                       data-status="{% if server.rate_limit_exceeded %}limited{% elif server.status == 'running' %}running{% else %}stopped{% endif %}"
-                      data-expiry="{{ server.expiry[:10] if server.expiry else 'N/A' }}"
-                      data-url="{{ server.login_url }}"
+                      data-expiry="{{ server.expiry[:10] if server.expiry else 'N/A' }}" data-url="{{ server.login_url }}"
                       style="animation-delay:{{ loop.index0 * 22 }}ms">
-
-                    <td class="p-3.5">
-                      <input type="checkbox" onchange="updateBulk()" class="rowCheck accent-accent w-3.5 h-3.5 rounded cursor-pointer">
-                    </td>
-
-                    <!-- USER -->
+                    <td class="p-3.5"><input type="checkbox" onchange="updateBulk()" class="rowCheck accent-accent w-3.5 h-3.5 rounded cursor-pointer"></td>
                     <td class="p-3.5">
                       <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/25 grid place-items-center text-[11px] font-bold text-accent flex-none">
-                          {{ user.username[0] | upper }}
-                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/25 grid place-items-center text-[11px] font-bold text-accent flex-none">{{ user.username[0] | upper }}</div>
                         <div class="min-w-0">
                           <p class="font-semibold truncate">{{ user.username }}</p>
                           <p class="text-[10px] text-[#4d586b] md:hidden font-mono">{{ server.server_id[:10] }}…</p>
                         </div>
                       </div>
                     </td>
-
-                    <!-- PASSWORD -->
                     <td class="p-3.5 hidden md:table-cell">
                       <div class="flex items-center gap-2">
                         <span class="font-mono text-[12px] text-[#8d97ab]" id="pass-{{ server.server_id }}">••••••••</span>
-                        <button onclick="togglePassword('{{ server.server_id }}', this)" class="text-[#4d586b] hover:text-accent transition text-[11px]">
-                          <i class="fas fa-eye"></i>
-                        </button>
-                        <button onclick="copyText('{{ user.password }}')" class="text-[#4d586b] hover:text-emerald-400 transition text-[11px]">
-                          <i class="fas fa-copy"></i>
-                        </button>
+                        <button onclick="togglePassword('{{ server.server_id }}', this)" class="text-[#4d586b] hover:text-accent transition text-[11px]"><i class="fas fa-eye"></i></button>
+                        <button onclick="copyText('{{ user.password }}')" class="text-[#4d586b] hover:text-emerald-400 transition text-[11px]"><i class="fas fa-copy"></i></button>
                       </div>
                     </td>
-
-                    <!-- SERVER ID -->
                     <td class="p-3.5 hidden lg:table-cell">
-                      <a href="{{ server.login_url }}" target="_blank"
-                         class="inline-flex items-center gap-1.5 text-accent hover:text-accent/70 font-mono text-[11px] transition">
-                        <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
-                        {{ server.server_id[:14] }}…
+                      <a href="{{ server.login_url }}" target="_blank" class="inline-flex items-center gap-1.5 text-accent hover:text-accent/70 font-mono text-[11px] transition">
+                        <i class="fas fa-arrow-up-right-from-square text-[9px]"></i> {{ server.server_id[:14] }}…
                       </a>
                     </td>
-
-                    <!-- CONFIG -->
                     <td class="p-3.5 hidden xl:table-cell">
                       <div class="flex flex-wrap gap-1">
                         <span class="pill bg-accent/10 text-accent">{{ server.type }}</span>
@@ -645,24 +614,15 @@ tailwind.config = {
                         <span class="pill bg-white/[.06] text-[#8d97ab]"><i class="fas fa-hard-drive text-[8px]"></i> {{ server.disk }}</span>
                       </div>
                     </td>
-
-                    <!-- CPU -->
                     <td class="p-3.5">
                       <button onclick="changeCPULimit('{{ server.server_id }}', {{ cl }})" class="flex items-center gap-2 group/cpu">
                         <div class="w-14 h-1.5 rounded-full bg-white/[.08] overflow-hidden">
-                          <div class="h-full rounded-full transition-all duration-500"
-                               style="width: {{ cl }}%;
-                               background: {% if cl <= 30 %}#10b981{% elif cl <= 60 %}#f59e0b{% elif cl <= 80 %}#f97316{% else %}#ef4444{% endif %}"></div>
+                          <div class="h-full rounded-full transition-all duration-500" style="width: {{ cl }}%;background: {% if cl <= 30 %}#10b981{% elif cl <= 60 %}#f59e0b{% elif cl <= 80 %}#f97316{% else %}#ef4444{% endif %}"></div>
                         </div>
-                        <span class="text-[11px] font-bold tabular-nums
-                          {% if cl <= 30 %}text-emerald-400{% elif cl <= 60 %}text-amber-400{% elif cl <= 80 %}text-orange-400{% else %}text-rose-400{% endif %}">
-                          {{ cl }}%
-                        </span>
+                        <span class="text-[11px] font-bold tabular-nums {% if cl <= 30 %}text-emerald-400{% elif cl <= 60 %}text-amber-400{% elif cl <= 80 %}text-orange-400{% else %}text-rose-400{% endif %}">{{ cl }}%</span>
                         <i class="fas fa-pen text-[9px] text-[#3b465c] group-hover/cpu:text-accent transition"></i>
                       </button>
                     </td>
-
-                    <!-- STATUS -->
                     <td class="p-3.5">
                       {% if server.rate_limit_exceeded %}
                         <span class="pill bg-amber-500/15 text-amber-400"><i class="fas fa-triangle-exclamation text-[9px]"></i> Limited</span>
@@ -672,30 +632,14 @@ tailwind.config = {
                         <span class="pill bg-rose-500/15 text-rose-400"><span class="dot bg-rose-400"></span> Stopped</span>
                       {% endif %}
                     </td>
-
-                    <!-- EXPIRY -->
                     <td class="p-3.5 hidden lg:table-cell">
-                      <span class="text-[11px] text-[#8d97ab] font-medium">
-                        <i class="far fa-calendar mr-1 text-[10px] text-[#4d586b]"></i>
-                        {{ server.expiry[:10] if server.expiry else 'N/A' }}
-                      </span>
+                      <span class="text-[11px] text-[#8d97ab] font-medium"><i class="far fa-calendar mr-1 text-[10px] text-[#4d586b]"></i> {{ server.expiry[:10] if server.expiry else 'N/A' }}</span>
                     </td>
-
-                    <!-- ACTIONS -->
                     <td class="p-3.5">
                       <div class="flex items-center justify-end gap-1.5">
-                        <button onclick="openDrawer(this)" title="Details"
-                          class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-accent/20 hover:text-accent text-[#8d97ab] grid place-items-center transition text-[11px]">
-                          <i class="fas fa-ellipsis"></i>
-                        </button>
-                        <button onclick="changeCPULimit('{{ server.server_id }}', {{ cl }})" title="CPU Limit"
-                          class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-accent/20 hover:text-accent text-[#8d97ab] grid place-items-center transition text-[11px]">
-                          <i class="fas fa-gauge-high"></i>
-                        </button>
-                        <button onclick="deleteServer('{{ user.username }}', '{{ server.server_id }}')" title="Delete"
-                          class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-rose-500/20 hover:text-rose-400 text-[#8d97ab] grid place-items-center transition text-[11px]">
-                          <i class="fas fa-trash"></i>
-                        </button>
+                        <button onclick="openDrawer(this)" title="Details" class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-accent/20 hover:text-accent text-[#8d97ab] grid place-items-center transition text-[11px]"><i class="fas fa-ellipsis"></i></button>
+                        <button onclick="changeCPULimit('{{ server.server_id }}', {{ cl }})" title="CPU Limit" class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-accent/20 hover:text-accent text-[#8d97ab] grid place-items-center transition text-[11px]"><i class="fas fa-gauge-high"></i></button>
+                        <button onclick="deleteServer('{{ user.username }}', '{{ server.server_id }}')" title="Delete" class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-rose-500/20 hover:text-rose-400 text-[#8d97ab] grid place-items-center transition text-[11px]"><i class="fas fa-trash"></i></button>
                       </div>
                     </td>
                   </tr>
@@ -711,7 +655,7 @@ tailwind.config = {
         </div>
       </section>
 
-      <!-- ══════ PAGE : CREATE ══════ -->
+      <!-- ══════ CREATE ══════ -->
       <section id="page-create" class="page">
         <div class="mb-6">
           <h2 class="text-2xl font-extrabold tracking-tight">Create New Server</h2>
@@ -719,10 +663,7 @@ tailwind.config = {
         </div>
 
         <div class="grid lg:grid-cols-3 gap-4">
-          <!-- main form -->
           <div class="lg:col-span-2 space-y-4">
-
-            <!-- credentials -->
             <div class="card card-glow p-5">
               <h3 class="font-bold text-[15px] mb-4 flex items-center gap-2">
                 <span class="w-6 h-6 rounded-lg bg-accent/15 grid place-items-center"><i class="fas fa-user-lock text-accent text-[10px]"></i></span>
@@ -742,9 +683,7 @@ tailwind.config = {
                   </label>
                   <div class="relative">
                     <input id="newPassword" type="text" placeholder="Strong password" class="field pr-10 font-mono !text-[12px]" spellcheck="false">
-                    <button onclick="copyText(document.getElementById('newPassword').value)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#4d586b] hover:text-emerald-400 transition text-xs">
-                      <i class="fas fa-copy"></i>
-                    </button>
+                    <button onclick="copyText(document.getElementById('newPassword').value)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#4d586b] hover:text-emerald-400 transition text-xs"><i class="fas fa-copy"></i></button>
                   </div>
                   <div class="flex gap-1 mt-1.5" id="strengthBars">
                     <div class="h-1 flex-1 rounded-full bg-white/10"></div>
@@ -756,7 +695,6 @@ tailwind.config = {
               </div>
             </div>
 
-            <!-- runtime -->
             <div class="card card-glow p-5">
               <h3 class="font-bold text-[15px] mb-4 flex items-center gap-2">
                 <span class="w-6 h-6 rounded-lg bg-emerald-500/15 grid place-items-center"><i class="fas fa-microchip text-emerald-400 text-[10px]"></i></span>
@@ -776,7 +714,7 @@ tailwind.config = {
                 <div>
                   <label class="lbl">Deployment Node / Region</label>
                   <select id="region" class="field">
-                    <option value="in-mumbai">🇮🇳 India — Mumbai (Low latency)</option>
+                    <option value="in-mumbai">🇮🇳 India — Mumbai</option>
                     <option value="sg-singapore">🇸🇬 Singapore</option>
                     <option value="us-east">🇺🇸 US East (Virginia)</option>
                     <option value="eu-frankfurt">🇩🇪 EU — Frankfurt</option>
@@ -793,7 +731,6 @@ tailwind.config = {
               </div>
             </div>
 
-            <!-- resources -->
             <div class="card card-glow p-5">
               <h3 class="font-bold text-[15px] mb-4 flex items-center gap-2">
                 <span class="w-6 h-6 rounded-lg bg-violet-500/15 grid place-items-center"><i class="fas fa-gauge-high text-violet-400 text-[10px]"></i></span>
@@ -834,115 +771,54 @@ tailwind.config = {
                 </div>
               </div>
 
-              <!-- CPU LIMIT -->
               <div class="mt-5 pt-5 border-t border-[var(--line)]">
                 <label class="lbl flex items-center justify-between">
                   <span><i class="fas fa-tachometer-alt text-accent mr-1.5"></i> CPU Rate Limit</span>
                   <span id="cpuLimitValue" class="text-accent font-extrabold text-base tracking-normal normal-case">80%</span>
                 </label>
-                <input type="range" id="cpuLimit" min="10" max="100" value="80"
-                       oninput="document.getElementById('cpuLimitValue').innerText = this.value + '%'">
+                <input type="range" id="cpuLimit" min="10" max="100" value="80" oninput="document.getElementById('cpuLimitValue').innerText = this.value + '%'">
                 <div class="flex gap-2 mt-3 flex-wrap">
                   <button onclick="setQuickCPU(30)" class="btn btn-ghost !py-1 !px-2.5 !text-[10px] !text-emerald-400 !border-emerald-500/25">30%</button>
                   <button onclick="setQuickCPU(50)" class="btn btn-ghost !py-1 !px-2.5 !text-[10px] !text-amber-400 !border-amber-500/25">50%</button>
                   <button onclick="setQuickCPU(80)" class="btn btn-ghost !py-1 !px-2.5 !text-[10px] !text-accent !border-accent/25">80%</button>
                   <button onclick="setQuickCPU(100)" class="btn btn-ghost !py-1 !px-2.5 !text-[10px] !text-rose-400 !border-rose-500/25">100%</button>
                 </div>
-                <p class="text-[10px] text-[#4d586b] mt-2.5">
-                  <i class="fas fa-circle-info mr-1"></i>
-                  Container auto-stops if CPU usage exceeds this limit for 10 seconds.
-                </p>
               </div>
             </div>
 
-            <!-- advanced options -->
-            <div class="card card-glow p-5">
-              <h3 class="font-bold text-[15px] mb-4 flex items-center gap-2">
-                <span class="w-6 h-6 rounded-lg bg-amber-500/15 grid place-items-center"><i class="fas fa-sliders text-amber-400 text-[10px]"></i></span>
-                Advanced Options
-              </h3>
-
-              <div class="space-y-3">
-                <div class="flex items-center justify-between py-1.5">
-                  <div><p class="text-[13px] font-semibold">Auto Restart</p><p class="text-[10px] text-[#7b869b]">Restart automatically on crash</p></div>
-                  <div class="switch on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="flex items-center justify-between py-1.5">
-                  <div><p class="text-[13px] font-semibold">Daily Backups</p><p class="text-[10px] text-[#7b869b]">Automatic snapshot every 24h</p></div>
-                  <div class="switch on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="flex items-center justify-between py-1.5">
-                  <div><p class="text-[13px] font-semibold">Public Access</p><p class="text-[10px] text-[#7b869b]">Expose port to the internet</p></div>
-                  <div class="switch on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="flex items-center justify-between py-1.5">
-                  <div><p class="text-[13px] font-semibold">Free SSL Certificate</p><p class="text-[10px] text-[#7b869b]">Let's Encrypt auto-provisioning</p></div>
-                  <div class="switch" onclick="this.classList.toggle('on')"></div>
-                </div>
-              </div>
-
-              <!-- env vars -->
-              <div class="mt-5 pt-5 border-t border-[var(--line)]">
-                <div class="flex items-center justify-between mb-2.5">
-                  <label class="lbl !mb-0">Environment Variables</label>
-                  <button onclick="addEnvRow()" class="text-accent hover:text-accent/70 text-[10px] font-bold">
-                    <i class="fas fa-plus mr-0.5"></i> Add
-                  </button>
-                </div>
-                <div id="envRows" class="space-y-2"></div>
-                <p class="text-[10px] text-[#4d586b] mt-2">Secrets are encrypted at rest (AES-256).</p>
-              </div>
-            </div>
-
-            <!-- submit -->
             <div class="card p-4 flex flex-wrap items-center gap-3">
-              <button onclick="createServer()" class="btn btn-primary !py-2.5 flex-1 sm:flex-none">
-                <i class="fas fa-rocket text-xs"></i> Deploy Server
-              </button>
-              <button onclick="resetForm()" class="btn btn-ghost !py-2.5">
-                <i class="fas fa-rotate-left text-xs"></i> Reset
-              </button>
-              <p class="text-[10px] text-[#4d586b] sm:ml-auto">
-                <i class="fas fa-shield-halved mr-1"></i> Deployment usually takes 10–25 seconds
-              </p>
+              <button onclick="createServer()" class="btn btn-primary !py-2.5 flex-1 sm:flex-none"><i class="fas fa-rocket text-xs"></i> Deploy Server</button>
+              <button onclick="resetForm()" class="btn btn-ghost !py-2.5"><i class="fas fa-rotate-left text-xs"></i> Reset</button>
+              <p class="text-[10px] text-[#4d586b] sm:ml-auto"><i class="fas fa-shield-halved mr-1"></i> Deployment usually takes 10–25 seconds</p>
             </div>
           </div>
 
-          <!-- sidebar -->
           <div class="space-y-4">
-            <!-- templates -->
             <div class="card p-5">
               <h3 class="font-bold text-[14px] mb-1">Quick Templates</h3>
               <p class="text-[11px] text-[#7b869b] mb-3.5">One-click pre-configuration</p>
               <div class="grid grid-cols-2 gap-2">
                 <button onclick="quickTemplate('discord')" class="rounded-xl border border-indigo-500/25 bg-indigo-500/10 hover:bg-indigo-500/20 p-2.5 text-center transition">
-                  <i class="fab fa-discord text-indigo-400 text-lg mb-1 block"></i>
-                  <span class="text-[10px] font-semibold">Discord Bot</span>
+                  <i class="fab fa-discord text-indigo-400 text-lg mb-1 block"></i><span class="text-[10px] font-semibold">Discord</span>
                 </button>
                 <button onclick="quickTemplate('telegram')" class="rounded-xl border border-sky-500/25 bg-sky-500/10 hover:bg-sky-500/20 p-2.5 text-center transition">
-                  <i class="fab fa-telegram text-sky-400 text-lg mb-1 block"></i>
-                  <span class="text-[10px] font-semibold">Telegram Bot</span>
+                  <i class="fab fa-telegram text-sky-400 text-lg mb-1 block"></i><span class="text-[10px] font-semibold">Telegram</span>
                 </button>
                 <button onclick="quickTemplate('flask')" class="rounded-xl border border-emerald-500/25 bg-emerald-500/10 hover:bg-emerald-500/20 p-2.5 text-center transition">
-                  <i class="fas fa-flask text-emerald-400 text-lg mb-1 block"></i>
-                  <span class="text-[10px] font-semibold">Flask App</span>
+                  <i class="fas fa-flask text-emerald-400 text-lg mb-1 block"></i><span class="text-[10px] font-semibold">Flask</span>
                 </button>
                 <button onclick="quickTemplate('node')" class="rounded-xl border border-lime-500/25 bg-lime-500/10 hover:bg-lime-500/20 p-2.5 text-center transition">
-                  <i class="fab fa-node-js text-lime-400 text-lg mb-1 block"></i>
-                  <span class="text-[10px] font-semibold">Node.js App</span>
+                  <i class="fab fa-node-js text-lime-400 text-lg mb-1 block"></i><span class="text-[10px] font-semibold">Node.js</span>
                 </button>
                 <button onclick="quickTemplate('minecraft')" class="rounded-xl border border-amber-500/25 bg-amber-500/10 hover:bg-amber-500/20 p-2.5 text-center transition">
-                  <i class="fas fa-cube text-amber-400 text-lg mb-1 block"></i>
-                  <span class="text-[10px] font-semibold">Minecraft</span>
+                  <i class="fas fa-cube text-amber-400 text-lg mb-1 block"></i><span class="text-[10px] font-semibold">Minecraft</span>
                 </button>
                 <button onclick="quickTemplate('static')" class="rounded-xl border border-fuchsia-500/25 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 p-2.5 text-center transition">
-                  <i class="fas fa-globe text-fuchsia-400 text-lg mb-1 block"></i>
-                  <span class="text-[10px] font-semibold">Static Site</span>
+                  <i class="fas fa-globe text-fuchsia-400 text-lg mb-1 block"></i><span class="text-[10px] font-semibold">Static</span>
                 </button>
               </div>
             </div>
 
-            <!-- live preview -->
             <div class="card p-5">
               <h3 class="font-bold text-[14px] mb-3">Deployment Summary</h3>
               <div class="space-y-2 text-[12px]">
@@ -958,21 +834,120 @@ tailwind.config = {
                 <span class="text-[15px] font-extrabold text-emerald-400">FREE</span>
               </div>
             </div>
-
-            <div class="card p-4 border-accent/25" style="background:linear-gradient(160deg, rgb(var(--accent) / .12), transparent)">
-              <div class="flex gap-2.5">
-                <i class="fas fa-lightbulb text-accent mt-0.5"></i>
-                <div>
-                  <p class="text-[12px] font-bold mb-1">Pro Tip</p>
-                  <p class="text-[11px] text-[#8d97ab] leading-relaxed">Set a CPU limit of 50–80% for bots to prevent resource abuse while keeping them stable.</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      <!-- ══════ PAGE : USERS ══════ -->
+      <!-- ══════ PLANS (NEW) ══════ -->
+      <section id="page-plans" class="page">
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Pricing Plans</h2>
+            <p class="text-[13px] text-[#7b869b] mt-0.5">Add, edit, or remove plans shown on the landing page</p>
+          </div>
+          <button onclick="openPlanModal()" class="btn btn-primary"><i class="fas fa-plus text-xs"></i> Add Plan</button>
+        </div>
+
+        <!-- stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div class="card p-4">
+            <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider">Total Plans</p>
+            <p class="text-2xl font-extrabold mt-1" id="planStatTotal">0</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider">Active</p>
+            <p class="text-2xl font-extrabold mt-1 text-emerald-400" id="planStatActive">0</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider">Popular</p>
+            <p class="text-2xl font-extrabold mt-1 text-amber-400" id="planStatPopular">0</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider">Paid Plans</p>
+            <p class="text-2xl font-extrabold mt-1 text-violet-400" id="planStatPaid">0</p>
+          </div>
+        </div>
+
+        <div id="plansGrid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div class="col-span-full card p-10 text-center text-[#4d586b]">
+            <i class="fas fa-crown text-3xl mb-2 block opacity-40 animate-pulse"></i>
+            <p class="text-sm">Loading plans…</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════ ORDERS (NEW) ══════ -->
+      <section id="page-orders" class="page">
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Orders Management</h2>
+            <p class="text-[13px] text-[#7b869b] mt-0.5">Review, activate or cancel user plan purchases</p>
+          </div>
+          <button onclick="loadOrdersPage()" class="btn btn-ghost"><i class="fas fa-rotate text-xs"></i> Refresh</button>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+          <div class="card p-4">
+            <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider">Total Orders</p>
+            <p class="text-2xl font-extrabold mt-1" id="orderStatTotal">0</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider">Pending</p>
+            <p class="text-2xl font-extrabold mt-1 text-amber-400" id="orderStatPending">0</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider">Active</p>
+            <p class="text-2xl font-extrabold mt-1 text-emerald-400" id="orderStatActive">0</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider">Revenue</p>
+            <p class="text-2xl font-extrabold mt-1 text-violet-400" id="orderStatRevenue">$0</p>
+          </div>
+        </div>
+
+        <!-- filters -->
+        <div class="card p-3.5 mb-4 flex flex-wrap items-center gap-2.5">
+          <div class="relative flex-1 min-w-[180px]">
+            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-xs"></i>
+            <input id="orderSearch" type="text" placeholder="Search by order ID, user, plan…" oninput="renderOrders()" class="field !py-2 !pl-9 !text-[13px]">
+          </div>
+          <select id="orderFilter" onchange="renderOrders()" class="field !py-2 !text-[13px] !w-auto">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="active">Active</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left" id="ordersTable">
+              <thead class="bg-white/[.03] text-[10px] uppercase tracking-wider text-[#7b869b] font-bold">
+                <tr>
+                  <th class="p-3.5">Order ID</th>
+                  <th class="p-3.5">User</th>
+                  <th class="p-3.5 hidden md:table-cell">Plan</th>
+                  <th class="p-3.5">Price</th>
+                  <th class="p-3.5 hidden lg:table-cell">Purchased</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody" class="text-[13px]">
+                <tr><td colspan="7" class="p-10 text-center text-[#4d586b]">
+                  <i class="fas fa-receipt text-3xl mb-2 block opacity-40 animate-pulse"></i>
+                  <p class="text-sm">Loading orders…</p>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="px-4 py-3 border-t border-[var(--line)] text-[11px] text-[#7b869b]">
+            Showing <span id="ordersVisible" class="text-white font-semibold">0</span> orders
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════ USERS ══════ -->
       <section id="page-users" class="page">
         <div class="mb-6">
           <h2 class="text-2xl font-extrabold tracking-tight">User Accounts</h2>
@@ -982,9 +957,7 @@ tailwind.config = {
           {% for user in users %}
           <div class="card card-glow lift p-5">
             <div class="flex items-center gap-3 mb-4">
-              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-accent/35 to-accent/10 border border-accent/25 grid place-items-center text-base font-extrabold text-accent">
-                {{ user.username[0] | upper }}
-              </div>
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-accent/35 to-accent/10 border border-accent/25 grid place-items-center text-base font-extrabold text-accent">{{ user.username[0] | upper }}</div>
               <div class="min-w-0">
                 <p class="font-bold text-[14px] truncate">{{ user.username }}</p>
                 <p class="text-[10px] text-[#7b869b] font-mono truncate">{{ user.password }}</p>
@@ -996,19 +969,13 @@ tailwind.config = {
                 <p class="text-[9px] text-[#7b869b] uppercase tracking-wider font-bold">Servers</p>
               </div>
               <div class="rounded-lg bg-white/[.04] p-2.5 text-center">
-                <p class="text-lg font-extrabold text-emerald-400">
-                  {{ user.servers | selectattr('status','equalto','running') | list | length }}
-                </p>
+                <p class="text-lg font-extrabold text-emerald-400">{{ user.servers | selectattr('status','equalto','running') | list | length }}</p>
                 <p class="text-[9px] text-[#7b869b] uppercase tracking-wider font-bold">Running</p>
               </div>
             </div>
             <div class="mt-3 flex gap-2">
-              <button onclick="copyText('{{ user.password }}')" class="btn btn-ghost flex-1 !py-1.5 !text-[11px]">
-                <i class="fas fa-copy text-[10px]"></i> Copy Pass
-              </button>
-              <button onclick="gotoPage('servers')" class="btn btn-ghost flex-1 !py-1.5 !text-[11px]">
-                <i class="fas fa-server text-[10px]"></i> Servers
-              </button>
+              <button onclick="copyText('{{ user.password }}')" class="btn btn-ghost flex-1 !py-1.5 !text-[11px]"><i class="fas fa-copy text-[10px]"></i> Copy Pass</button>
+              <button onclick="gotoPage('servers')" class="btn btn-ghost flex-1 !py-1.5 !text-[11px]"><i class="fas fa-server text-[10px]"></i> Servers</button>
             </div>
           </div>
           {% endfor %}
@@ -1021,7 +988,7 @@ tailwind.config = {
         </div>
       </section>
 
-      <!-- ══════ PAGE : ACTIVITY ══════ -->
+      <!-- ══════ ACTIVITY ══════ -->
       <section id="page-activity" class="page">
         <div class="mb-6">
           <h2 class="text-2xl font-extrabold tracking-tight">Activity Log</h2>
@@ -1031,32 +998,24 @@ tailwind.config = {
           <div class="relative pl-6 space-y-5 before:content-[''] before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-px before:bg-[var(--line)]">
             <div class="relative">
               <span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/15"></span>
-              <p class="text-[13px] font-semibold">Panel upgraded to Premium UI v2.0</p>
-              <p class="text-[11px] text-[#7b869b]">New dashboard, themes &amp; advanced provisioning</p>
+              <p class="text-[13px] font-semibold">Plans &amp; Orders management added</p>
+              <p class="text-[11px] text-[#7b869b]">Full CRUD + order activation flow</p>
             </div>
             <div class="relative">
               <span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-accent ring-4 ring-accent/15"></span>
               <p class="text-[13px] font-semibold">{{ total_servers }} servers currently provisioned</p>
               <p class="text-[11px] text-[#7b869b]">{{ total_running }} running &bull; {{ total_servers - total_running }} stopped</p>
             </div>
-            {% for user in users %}
-            <div class="relative">
-              <span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-violet-500 ring-4 ring-violet-500/15"></span>
-              <p class="text-[13px] font-semibold">Account <span class="font-mono text-accent">{{ user.username }}</span> has {{ user.servers|length }} server(s)</p>
-              <p class="text-[11px] text-[#7b869b]">Managed under MAXX Hosting infrastructure</p>
-            </div>
-            {% endfor %}
           </div>
         </div>
       </section>
 
-      <!-- ══════ PAGE : SETTINGS ══════ -->
+      <!-- ══════ SETTINGS ══════ -->
       <section id="page-settings" class="page">
         <div class="mb-6">
           <h2 class="text-2xl font-extrabold tracking-tight">Settings</h2>
           <p class="text-[13px] text-[#7b869b] mt-0.5">Panel preferences &amp; security</p>
         </div>
-
         <div class="grid lg:grid-cols-2 gap-4">
           <div class="card p-5">
             <h3 class="font-bold text-[15px] mb-4"><i class="fas fa-palette text-accent mr-2"></i>Appearance</h3>
@@ -1070,53 +1029,14 @@ tailwind.config = {
               <button onclick="setAccent(6,182,212)" class="w-10 h-10 rounded-xl bg-cyan-500 hover:scale-110 transition shadow-lg"></button>
             </div>
           </div>
-
           <div class="card p-5">
             <h3 class="font-bold text-[15px] mb-4"><i class="fas fa-bell text-accent mr-2"></i>Notifications</h3>
             <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-[13px]">Server crash alerts</span>
-                <div class="switch on" onclick="this.classList.toggle('on')"></div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-[13px]">CPU limit warnings</span>
-                <div class="switch on" onclick="this.classList.toggle('on')"></div>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-[13px]">Expiry reminders</span>
-                <div class="switch on" onclick="this.classList.toggle('on')"></div>
-              </div>
+              <div class="flex items-center justify-between"><span class="text-[13px]">Server crash alerts</span><div class="switch on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="flex items-center justify-between"><span class="text-[13px]">CPU limit warnings</span><div class="switch on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="flex items-center justify-between"><span class="text-[13px]">New order alerts</span><div class="switch on" onclick="this.classList.toggle('on')"></div></div>
             </div>
           </div>
-
-          <div class="card p-5">
-            <h3 class="font-bold text-[15px] mb-4"><i class="fas fa-shield-halved text-accent mr-2"></i>Security</h3>
-            <div class="space-y-3">
-              <div>
-                <label class="lbl">Current Password</label>
-                <input type="password" placeholder="••••••••" class="field">
-              </div>
-              <div>
-                <label class="lbl">New Password</label>
-                <input type="password" placeholder="••••••••" class="field">
-              </div>
-              <button onclick="toast('Password update requires backend support','info')" class="btn btn-primary w-full !py-2">
-                <i class="fas fa-key text-xs"></i> Update Password
-              </button>
-            </div>
-          </div>
-
-          <div class="card p-5">
-            <h3 class="font-bold text-[15px] mb-4"><i class="fas fa-key text-accent mr-2"></i>API Access</h3>
-            <p class="text-[11px] text-[#7b869b] mb-2">Use this key for automation</p>
-            <div class="flex gap-2">
-              <input type="text" readonly value="maxx_live_sk_9f2a7c41e8b34d6f0a19"
-                     class="field font-mono !text-[11px] !py-2">
-              <button onclick="copyText('maxx_live_sk_9f2a7c41e8b34d6f0a19')" class="btn btn-ghost !px-3"><i class="fas fa-copy"></i></button>
-            </div>
-            <p class="text-[10px] text-[#4d586b] mt-2"><i class="fas fa-triangle-exclamation mr-1 text-amber-400"></i>Never share this key publicly.</p>
-          </div>
-
           <div class="card p-5 lg:col-span-2 border-rose-500/25" style="background:linear-gradient(160deg, rgba(244,63,94,.08), transparent)">
             <h3 class="font-bold text-[15px] mb-3 text-rose-400"><i class="fas fa-triangle-exclamation mr-2"></i>Danger Zone</h3>
             <p class="text-[11px] text-[#8d97ab] mb-3">Sign out of this session on the current device.</p>
@@ -1128,12 +1048,12 @@ tailwind.config = {
     </main>
 
     <footer class="px-6 py-5 border-t border-[var(--line)] text-center text-[11px] text-[#4d586b]">
-      &copy; 2025 MAXX HOSTING &bull; Premium Admin Panel v2.0 &bull; All rights reserved
+      &copy; 2025 MAXX HOSTING &bull; Premium Admin Panel v2.1 &bull; All rights reserved
     </footer>
   </div>
 </div>
 
-<!-- ══════════ DRAWER ══════════ -->
+<!-- ═══════════ SERVER DRAWER ═══════════ -->
 <div id="overlay" class="overlay" onclick="closeDrawer()"></div>
 <div id="drawer" class="drawer">
   <div class="sticky top-0 z-10 bg-[#0f131c]/95 backdrop-blur-xl border-b border-[var(--line)] px-5 py-4 flex items-center gap-3">
@@ -1142,18 +1062,14 @@ tailwind.config = {
       <p class="font-bold text-[14px] truncate" id="dTitle">Server</p>
       <p class="text-[10px] text-[#7b869b] font-mono truncate" id="dSub">—</p>
     </div>
-    <button onclick="closeDrawer()" class="ml-auto w-8 h-8 rounded-lg hover:bg-white/10 grid place-items-center text-[#8d97ab] hover:text-white transition">
-      <i class="fas fa-times text-sm"></i>
-    </button>
+    <button onclick="closeDrawer()" class="ml-auto w-8 h-8 rounded-lg hover:bg-white/10 grid place-items-center text-[#8d97ab] hover:text-white transition"><i class="fas fa-times text-sm"></i></button>
   </div>
-
   <div class="p-5">
     <div class="flex gap-1.5 mb-5 bg-white/[.03] p-1 rounded-xl">
       <div class="tab active flex-1 text-center" data-tab="overview" onclick="switchTab('overview')">Overview</div>
       <div class="tab flex-1 text-center" data-tab="console" onclick="switchTab('console')">Console</div>
       <div class="tab flex-1 text-center" data-tab="actions" onclick="switchTab('actions')">Actions</div>
     </div>
-
     <div id="tab-overview" class="space-y-3">
       <div class="rounded-xl bg-white/[.03] border border-[var(--line)] p-4 space-y-3">
         <div class="flex justify-between text-[12px]"><span class="text-[#7b869b]">Owner</span><span class="font-semibold" id="dUser">—</span></div>
@@ -1168,36 +1084,123 @@ tailwind.config = {
         <div class="flex justify-between text-[12px]"><span class="text-[#7b869b]">Expiry</span><span class="font-semibold" id="dExpiry">—</span></div>
         <div class="flex justify-between text-[12px] items-center"><span class="text-[#7b869b]">Status</span><span id="dStatus">—</span></div>
       </div>
-
-      <a id="dLink" href="#" target="_blank" class="btn btn-primary w-full !py-2.5">
-        <i class="fas fa-arrow-up-right-from-square text-xs"></i> Open Server Panel
-      </a>
+      <a id="dLink" href="#" target="_blank" class="btn btn-primary w-full !py-2.5"><i class="fas fa-arrow-up-right-from-square text-xs"></i> Open Server Panel</a>
     </div>
-
     <div id="tab-console" class="hidden">
       <div class="rounded-xl bg-black/60 border border-[var(--line)] p-4 font-mono text-[11px] leading-relaxed h-64 overflow-y-auto text-emerald-400" id="consoleBox">
         <p class="text-[#4d586b]"># MAXX container console</p>
         <p>[boot] initializing container…</p>
-        <p>[boot] mounting volume /data</p>
-        <p>[net ] binding port 8080</p>
-        <p class="text-emerald-300">[ready] application listening</p>
+        <p>[ready] application listening</p>
       </div>
       <div class="flex gap-2 mt-3">
-        <input type="text" placeholder="Type a command…" class="field font-mono !text-[11px]"
-               onkeydown="if(event.key==='Enter'){pushConsole(this.value);this.value=''}">
+        <input type="text" placeholder="Type a command…" class="field font-mono !text-[11px]" onkeydown="if(event.key==='Enter'){pushConsole(this.value);this.value=''}">
         <button onclick="pushConsole(document.querySelector('#tab-console input').value)" class="btn btn-ghost !px-3"><i class="fas fa-paper-plane"></i></button>
       </div>
     </div>
-
     <div id="tab-actions" class="hidden space-y-2">
       <button onclick="serverAction('start')" class="btn btn-ghost w-full !py-2.5 !justify-start"><i class="fas fa-play text-emerald-400 w-5"></i> Start Server</button>
       <button onclick="serverAction('restart')" class="btn btn-ghost w-full !py-2.5 !justify-start"><i class="fas fa-rotate-right text-accent w-5"></i> Restart Server</button>
       <button onclick="serverAction('stop')" class="btn btn-ghost w-full !py-2.5 !justify-start"><i class="fas fa-stop text-amber-400 w-5"></i> Stop Server</button>
-      <button onclick="serverAction('backup')" class="btn btn-ghost w-full !py-2.5 !justify-start"><i class="fas fa-database text-violet-400 w-5"></i> Create Backup</button>
       <div class="h-px bg-[var(--line)] my-2"></div>
-      <button onclick="deleteServer(document.getElementById('dUser').innerText, document.getElementById('dSub').innerText)" class="btn btn-danger w-full !py-2.5 !justify-start">
-        <i class="fas fa-trash w-5"></i> Delete Server
-      </button>
+      <button onclick="deleteServer(document.getElementById('dUser').innerText, document.getElementById('dSub').innerText)" class="btn btn-danger w-full !py-2.5 !justify-start"><i class="fas fa-trash w-5"></i> Delete Server</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PLAN EDITOR MODAL ═══════════ -->
+<div id="planModal" class="modal-overlay">
+  <div class="modal-card" style="max-width:580px">
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-9 h-9 rounded-lg bg-amber-500/15 grid place-items-center"><i class="fas fa-crown text-amber-400 text-sm"></i></div>
+      <div class="flex-1">
+        <h3 class="font-bold text-[15px]" id="planModalTitle">Add New Plan</h3>
+        <p class="text-[10px] text-[#7b869b]">Configure the plan for the landing page</p>
+      </div>
+      <button onclick="closePlanModal()" class="w-8 h-8 rounded-lg hover:bg-white/10 grid place-items-center text-[#8d97ab] hover:text-white transition"><i class="fas fa-times text-sm"></i></button>
+    </div>
+
+    <input type="hidden" id="planId">
+
+    <div class="space-y-3.5 max-h-[60vh] overflow-y-auto pr-1">
+      <!-- Basic -->
+      <div class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="lbl">Icon</label>
+          <input id="planIcon" type="text" placeholder="⭐" class="field text-center text-lg">
+        </div>
+        <div class="col-span-2">
+          <label class="lbl">Plan Name *</label>
+          <input id="planName" type="text" placeholder="e.g. Standard" class="field">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="lbl">Price (USD)</label>
+          <input id="planPrice" type="number" step="0.01" min="0" placeholder="0" class="field">
+        </div>
+        <div>
+          <label class="lbl">Period Label</label>
+          <input id="planPeriod" type="text" placeholder="7 Days Panel" class="field">
+        </div>
+      </div>
+
+      <!-- Resources -->
+      <div class="rounded-xl bg-white/[.02] border border-[var(--line)] p-3">
+        <p class="text-[10px] font-bold text-[#7b869b] uppercase tracking-wider mb-2.5"><i class="fas fa-gauge-high mr-1"></i> Resources</p>
+        <div class="grid grid-cols-3 gap-2.5">
+          <div>
+            <label class="lbl">RAM</label>
+            <input id="planRam" type="text" placeholder="1GB" class="field !py-1.5 font-mono !text-[12px]">
+          </div>
+          <div>
+            <label class="lbl">Disk</label>
+            <input id="planDisk" type="text" placeholder="1GB" class="field !py-1.5 font-mono !text-[12px]">
+          </div>
+          <div>
+            <label class="lbl">CPU %</label>
+            <input id="planCpu" type="text" placeholder="50%" class="field !py-1.5 font-mono !text-[12px]">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5 mt-2.5">
+          <div>
+            <label class="lbl">Validity (Days)</label>
+            <input id="planValidDays" type="number" min="1" placeholder="7" class="field !py-1.5">
+          </div>
+          <div>
+            <label class="lbl">Referrals Required</label>
+            <input id="planReferrals" type="number" min="0" placeholder="0" class="field !py-1.5">
+          </div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <label class="lbl !mb-0">Features List</label>
+          <button onclick="addFeatureRow('')" type="button" class="text-accent hover:text-accent/70 text-[10px] font-bold">
+            <i class="fas fa-plus mr-0.5"></i> Add Feature
+          </button>
+        </div>
+        <div id="featureRows" class="space-y-2"></div>
+      </div>
+
+      <!-- Toggles -->
+      <div class="flex gap-4 pt-1">
+        <label class="flex items-center gap-2 text-[12px] cursor-pointer">
+          <input type="checkbox" id="planPopular" class="accent-accent w-4 h-4">
+          <span>Mark as Popular</span>
+        </label>
+        <label class="flex items-center gap-2 text-[12px] cursor-pointer">
+          <input type="checkbox" id="planActive" class="accent-accent w-4 h-4" checked>
+          <span>Active (visible)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex gap-2 mt-5 pt-4 border-t border-[var(--line)]">
+      <button onclick="closePlanModal()" class="btn btn-ghost flex-1 !py-2.5">Cancel</button>
+      <button onclick="savePlan()" class="btn btn-primary flex-1 !py-2.5"><i class="fas fa-check text-xs"></i> Save Plan</button>
     </div>
   </div>
 </div>
@@ -1207,7 +1210,7 @@ tailwind.config = {
 
 <script>
 /* ═══════════════════════════════════════════
-   AUTH  —  admin / admin123  &  MAXX / MAXX@2010
+   AUTH
    ═══════════════════════════════════════════ */
 const ACCOUNTS = [
   { user: 'admin', pass: 'admin123',  role: 'Administrator', name: 'admin' },
@@ -1227,17 +1230,11 @@ function doLogin(){
   const u  = document.getElementById('loginUser').value.trim();
   const p  = document.getElementById('loginPass').value;
   const btn = document.getElementById('loginBtn');
-
   if(!u || !p){ shake(); toast('Enter username and password','error'); return; }
-
   btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying…';
   btn.disabled = true;
-
   setTimeout(() => {
-    const found = ACCOUNTS.find(a =>
-      a.user.toLowerCase() === u.toLowerCase() && a.pass === p
-    );
-
+    const found = ACCOUNTS.find(a => a.user.toLowerCase() === u.toLowerCase() && a.pass === p);
     if(found){
       const remember = document.getElementById('rememberMe').checked;
       const payload = JSON.stringify({ user: found.user, role: found.role });
@@ -1257,11 +1254,7 @@ function doLogin(){
 
 function shake(){
   const c = document.querySelector('.login-card');
-  c.animate([
-    {transform:'translateX(0)'},{transform:'translateX(-9px)'},
-    {transform:'translateX(9px)'},{transform:'translateX(-6px)'},
-    {transform:'translateX(6px)'},{transform:'translateX(0)'}
-  ], {duration:380, easing:'ease-in-out'});
+  c.animate([{transform:'translateX(0)'},{transform:'translateX(-9px)'},{transform:'translateX(9px)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(0)'}], {duration:380, easing:'ease-in-out'});
 }
 
 function launchApp(acc){
@@ -1273,6 +1266,8 @@ function launchApp(acc){
   document.getElementById('avatarLetter').textContent = acc.user[0].toUpperCase();
   document.body.style.overflow = '';
   initDashboard();
+  loadPlansPage();
+  loadOrdersPage();
 }
 
 function doLogout(){
@@ -1290,7 +1285,6 @@ function doLogout(){
   });
 }
 
-/* auto-login restore */
 (function(){
   const saved = localStorage.getItem('maxx_auth') || sessionStorage.getItem('maxx_auth');
   if(saved){ try{ launchApp(JSON.parse(saved)); }catch(e){} }
@@ -1298,7 +1292,9 @@ function doLogout(){
   document.getElementById('loginUser').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginPass').focus(); });
 })();
 
-/* ═══════════════ THEME ═══════════════ */
+/* ═══════════════════════════════════════════
+   THEME + NAV
+   ═══════════════════════════════════════════ */
 function setAccent(r,g,b){
   document.documentElement.style.setProperty('--accent', r+' '+g+' '+b);
   localStorage.setItem('maxx_accent', [r,g,b].join(','));
@@ -1309,7 +1305,6 @@ function setAccent(r,g,b){
   if(s){ const [r,g,b] = s.split(','); document.documentElement.style.setProperty('--accent', r+' '+g+' '+b); }
 })();
 
-/* ═══════════════ NAVIGATION ═══════════════ */
 function gotoPage(id){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const el = document.getElementById('page-' + id);
@@ -1317,53 +1312,452 @@ function gotoPage(id){
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === id));
   closeSidebar();
   window.scrollTo({top:0, behavior:'smooth'});
+  if(id === 'plans') loadPlansPage();
+  if(id === 'orders') loadOrdersPage();
+  if(id === 'dashboard') initDashboard();
 }
-function openSidebar(){
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('sidebarOverlay').classList.remove('hidden');
-}
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.add('hidden');
-}
+function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.remove('hidden'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.add('hidden'); }
 
-/* dropdowns */
-function toggleNotif(){
-  document.getElementById('notifPanel').classList.toggle('hidden');
-  document.getElementById('profilePanel').classList.add('hidden');
-}
-function toggleProfile(){
-  document.getElementById('profilePanel').classList.toggle('hidden');
-  document.getElementById('notifPanel').classList.add('hidden');
-}
-document.addEventListener('click', e => {
-  if(!e.target.closest('#notifPanel') && !e.target.closest('button[onclick="toggleNotif()"]'))
-    document.getElementById('notifPanel')?.classList.add('hidden');
-  if(!e.target.closest('#profilePanel') && !e.target.closest('button[onclick="toggleProfile()"]'))
-    document.getElementById('profilePanel')?.classList.add('hidden');
-});
-
-/* ═══════════════ TOASTS ═══════════════ */
+/* ═══════════════════════════════════════════
+   TOAST + CLIPBOARD
+   ═══════════════════════════════════════════ */
 function toast(msg, type='info'){
   const colors = { success:'#10b981', error:'#ef4444', info:'rgb(var(--accent))', warn:'#f59e0b' };
   const icons  = { success:'fa-check', error:'fa-xmark', info:'fa-circle-info', warn:'fa-triangle-exclamation' };
   const el = document.createElement('div');
   el.className = 'toast';
-  el.innerHTML = '<div style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:' +
-      (colors[type] || colors.info) + '22;color:' + (colors[type] || colors.info) +
-      ';flex:none"><i class="fas ' + (icons[type] || icons.info) + '" style="font-size:10px"></i></div><span>' + msg + '</span>';
+  el.innerHTML = '<div style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:'+(colors[type]||colors.info)+'22;color:'+(colors[type]||colors.info)+';flex:none"><i class="fas '+(icons[type]||icons.info)+'" style="font-size:10px"></i></div><span>'+msg+'</span>';
   document.getElementById('toastWrap').appendChild(el);
   setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3200);
 }
-
-/* ═══════════════ CLIPBOARD ═══════════════ */
 function copyText(txt){
   if(!txt) return;
-  navigator.clipboard.writeText(txt).then(() => toast('Copied to clipboard', 'success'))
-    .catch(() => toast('Copy failed', 'error'));
+  navigator.clipboard.writeText(txt).then(() => toast('Copied to clipboard', 'success')).catch(() => toast('Copy failed', 'error'));
 }
 
-/* ═══════════════ PASSWORD ═══════════════ */
+/* ═══════════════════════════════════════════
+   PLANS MANAGEMENT
+   ═══════════════════════════════════════════ */
+let PLANS_CACHE = [];
+
+const DEFAULT_PLANS_FALLBACK = [
+  { id:'free',     name:'Free',     icon:'🆓', price:0, period:'Via Referrals', ram:'1GB', disk:'1GB', cpu:'30%', validDays:3,  referralsRequired:5, features:['5 Referrals Required','3 Days Validity','1GB RAM / 1GB Disk','30% CPU Limit'], popular:false, active:true },
+  { id:'standard', name:'Standard', icon:'⭐', price:2, period:'7 Days Panel',  ram:'1GB', disk:'1GB', cpu:'50%', validDays:7,  referralsRequired:0, features:['No Referrals Needed','7 Days Validity','1GB RAM / 1GB Disk','50% CPU Limit'], popular:true,  active:true },
+  { id:'premium',  name:'Premium',  icon:'💎', price:5, period:'30 Days Panel', ram:'2GB', disk:'2GB', cpu:'80%', validDays:30, referralsRequired:0, features:['No Referrals Needed','30 Days Validity','2GB RAM / 2GB Disk','80% CPU Limit'], popular:false, active:true }
+];
+
+async function loadPlansPage(){
+  try {
+    const r = await fetch('/api/plans/all');
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    PLANS_CACHE = await r.json();
+  } catch(e){
+    PLANS_CACHE = JSON.parse(localStorage.getItem('maxx_plans') || 'null') || DEFAULT_PLANS_FALLBACK;
+    localStorage.setItem('maxx_plans', JSON.stringify(PLANS_CACHE));
+  }
+  renderPlans();
+}
+
+function renderPlans(){
+  const grid = document.getElementById('plansGrid');
+  const total = PLANS_CACHE.length;
+  const active = PLANS_CACHE.filter(p => p.active !== false).length;
+  const popular = PLANS_CACHE.filter(p => p.popular).length;
+  const paid = PLANS_CACHE.filter(p => Number(p.price) > 0).length;
+
+  document.getElementById('planStatTotal').textContent = total;
+  document.getElementById('planStatActive').textContent = active;
+  document.getElementById('planStatPopular').textContent = popular;
+  document.getElementById('planStatPaid').textContent = paid;
+  document.getElementById('plansCount').textContent = total;
+  const dash = document.getElementById('dashPlansCount');
+  if(dash) dash.textContent = active;
+
+  if(!PLANS_CACHE.length){
+    grid.innerHTML = '<div class="col-span-full card p-14 text-center"><i class="fas fa-crown text-3xl text-[#3b465c] mb-3 block"></i><p class="text-sm text-[#7b869b]">No plans yet — click "Add Plan" to create your first one</p></div>';
+    return;
+  }
+
+  grid.innerHTML = PLANS_CACHE.map(p => {
+    const isPopular = p.popular;
+    const isHidden = p.active === false;
+    return `
+    <div class="plan-card ${isPopular ? 'popular' : ''} ${isHidden ? 'hidden-plan' : ''} row-in">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="text-3xl flex-none">${p.icon || '🎁'}</div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <h3 class="font-extrabold text-[15px] truncate">${escapeHtml(p.name)}</h3>
+            ${isPopular ? '<span class="pill bg-amber-500/20 text-amber-400 !text-[9px] !py-0.5">🔥 POPULAR</span>' : ''}
+          </div>
+          <p class="text-[10px] text-[#7b869b] mt-0.5">${escapeHtml(p.period || '')}</p>
+        </div>
+        <div class="text-right flex-none">
+          <p class="text-xl font-extrabold ${Number(p.price) === 0 ? 'text-emerald-400' : 'text-accent'}">$${p.price}</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-1.5 mb-3">
+        <span class="pill bg-white/[.06] text-[#8d97ab] !text-[9px]"><i class="fas fa-memory"></i> ${escapeHtml(p.ram || '—')}</span>
+        <span class="pill bg-white/[.06] text-[#8d97ab] !text-[9px]"><i class="fas fa-hard-drive"></i> ${escapeHtml(p.disk || '—')}</span>
+        <span class="pill bg-white/[.06] text-[#8d97ab] !text-[9px]"><i class="fas fa-microchip"></i> ${escapeHtml(p.cpu || '—')}</span>
+        <span class="pill bg-accent/10 text-accent !text-[9px]">${p.validDays || 0}d validity</span>
+      </div>
+
+      ${(p.features && p.features.length) ? `
+      <div class="mb-3">
+        ${p.features.slice(0, 5).map(f => `<div class="feat-item"><i class="fas fa-check-circle"></i><span>${escapeHtml(f)}</span></div>`).join('')}
+      </div>` : ''}
+
+      <div class="flex gap-1.5 pt-3 border-t border-[var(--line)]">
+        <button onclick="openPlanModal('${p.id}')" class="btn btn-ghost flex-1 !py-1.5 !text-[11px]"><i class="fas fa-pen text-[10px]"></i> Edit</button>
+        <button onclick="togglePlanActive('${p.id}')" class="btn btn-ghost !py-1.5 !px-2.5 !text-[11px]" title="${isHidden ? 'Show' : 'Hide'}">${isHidden ? '<i class="fas fa-eye text-emerald-400"></i>' : '<i class="fas fa-eye-slash text-amber-400"></i>'}</button>
+        <button onclick="deletePlan('${p.id}')" class="btn btn-danger !py-1.5 !px-2.5 !text-[11px]"><i class="fas fa-trash text-[10px]"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escapeHtml(t){
+  const d = document.createElement('div');
+  d.textContent = t == null ? '' : t;
+  return d.innerHTML;
+}
+
+function openPlanModal(planId){
+  document.getElementById('planModal').classList.add('show');
+  document.getElementById('planModalTitle').textContent = planId ? 'Edit Plan' : 'Add New Plan';
+  document.getElementById('featureRows').innerHTML = '';
+  document.getElementById('planId').value = planId || '';
+
+  if(planId){
+    const p = PLANS_CACHE.find(x => x.id === planId);
+    if(p){
+      document.getElementById('planName').value = p.name || '';
+      document.getElementById('planIcon').value = p.icon || '';
+      document.getElementById('planPrice').value = p.price ?? 0;
+      document.getElementById('planPeriod').value = p.period || '';
+      document.getElementById('planRam').value = p.ram || '';
+      document.getElementById('planDisk').value = p.disk || '';
+      document.getElementById('planCpu').value = p.cpu || '';
+      document.getElementById('planValidDays').value = p.validDays || 1;
+      document.getElementById('planReferrals').value = p.referralsRequired || 0;
+      document.getElementById('planPopular').checked = !!p.popular;
+      document.getElementById('planActive').checked = p.active !== false;
+      (p.features || []).forEach(f => addFeatureRow(f));
+      if(!p.features || !p.features.length) addFeatureRow('');
+    }
+  } else {
+    ['planName','planIcon','planPeriod','planRam','planDisk','planCpu'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('planPrice').value = 0;
+    document.getElementById('planValidDays').value = 7;
+    document.getElementById('planReferrals').value = 0;
+    document.getElementById('planPopular').checked = false;
+    document.getElementById('planActive').checked = true;
+    addFeatureRow(''); addFeatureRow(''); addFeatureRow('');
+  }
+}
+
+function closePlanModal(){
+  document.getElementById('planModal').classList.remove('show');
+}
+
+function addFeatureRow(val=''){
+  const wrap = document.getElementById('featureRows');
+  const row = document.createElement('div');
+  row.className = 'flex gap-2';
+  row.innerHTML = `
+    <input type="text" placeholder="e.g. 1GB RAM" value="${escapeHtml(val)}" class="field !py-1.5 !text-[12px] flex-1">
+    <button type="button" onclick="this.parentNode.remove()" class="btn btn-ghost !px-2.5 !py-1.5 !text-rose-400"><i class="fas fa-xmark text-[10px]"></i></button>
+  `;
+  wrap.appendChild(row);
+}
+
+async function savePlan(){
+  const id = document.getElementById('planId').value;
+  const name = document.getElementById('planName').value.trim();
+  const price = parseFloat(document.getElementById('planPrice').value) || 0;
+
+  if(!name){ toast('Plan name is required','error'); return; }
+  if(price < 0){ toast('Price cannot be negative','error'); return; }
+
+  const features = Array.from(document.querySelectorAll('#featureRows input')).map(i => i.value.trim()).filter(Boolean);
+
+  const newPlan = {
+    id: id || undefined,
+    name,
+    icon: document.getElementById('planIcon').value.trim() || '🎁',
+    price,
+    period: document.getElementById('planPeriod').value.trim(),
+    ram: document.getElementById('planRam').value.trim() || '—',
+    disk: document.getElementById('planDisk').value.trim() || '—',
+    cpu: document.getElementById('planCpu').value.trim() || '—',
+    validDays: parseInt(document.getElementById('planValidDays').value) || 1,
+    referralsRequired: parseInt(document.getElementById('planReferrals').value) || 0,
+    features,
+    popular: document.getElementById('planPopular').checked,
+    active: document.getElementById('planActive').checked
+  };
+
+  const btn = document.querySelector('#planModal button.btn-primary');
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin text-xs"></i> Saving…';
+  btn.disabled = true;
+
+  try {
+    const url = id ? `/api/plans/${id}` : '/api/plans';
+    const method = id ? 'PUT' : 'POST';
+    const r = await fetch(url, {
+      method,
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(newPlan)
+    });
+    if(!r.ok){
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.error || 'Save failed');
+    }
+    toast(id ? 'Plan updated!' : 'Plan created!', 'success');
+    closePlanModal();
+    await loadPlansPage();
+  } catch(e){
+    // Fallback to localStorage
+    let plans = JSON.parse(localStorage.getItem('maxx_plans') || 'null') || DEFAULT_PLANS_FALLBACK;
+    if(id){ const i = plans.findIndex(p => p.id === id); if(i >= 0) plans[i] = {...plans[i], ...newPlan}; }
+    else { newPlan.id = 'plan-' + Date.now().toString(36); plans.push(newPlan); }
+    localStorage.setItem('maxx_plans', JSON.stringify(plans));
+    PLANS_CACHE = plans;
+    renderPlans();
+    toast('Plan saved locally (backend unavailable)', 'warn');
+    closePlanModal();
+  } finally {
+    btn.innerHTML = '<i class="fas fa-check text-xs"></i> Save Plan';
+    btn.disabled = false;
+  }
+}
+
+async function togglePlanActive(id){
+  const p = PLANS_CACHE.find(x => x.id === id);
+  if(!p) return;
+  const newActive = p.active === false;
+  try {
+    const r = await fetch(`/api/plans/${id}`, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ active: newActive })
+    });
+    if(!r.ok) throw new Error();
+    await loadPlansPage();
+    toast(newActive ? 'Plan shown' : 'Plan hidden', 'success');
+  } catch(e){
+    p.active = newActive;
+    localStorage.setItem('maxx_plans', JSON.stringify(PLANS_CACHE));
+    renderPlans();
+    toast(newActive ? 'Plan shown (local)' : 'Plan hidden (local)', 'warn');
+  }
+}
+
+async function deletePlan(id){
+  const p = PLANS_CACHE.find(x => x.id === id);
+  if(!p) return;
+
+  const result = await Swal.fire({
+    title:'Delete Plan?',
+    html:
+      '<div style="text-align:left;font-size:12px;background:#0a0d14;border:1px solid #212836;border-radius:10px;padding:10px;font-family:monospace">' +
+      '<b style="color:#8d97ab">Plan</b>: ' + escapeHtml(p.name) + '<br>' +
+      '<b style="color:#8d97ab">Price</b>: $' + p.price + '</div>' +
+      '<p style="margin-top:10px;font-size:12px;color:#f87171">⚠️ This plan will be removed from the landing page.</p>',
+    icon:'warning', background:'#12141c', color:'#fff',
+    showCancelButton:true, confirmButtonColor:'#ef4444', cancelButtonColor:'#374151',
+    confirmButtonText:'Delete Plan'
+  });
+
+  if(!result.isConfirmed) return;
+
+  try {
+    const r = await fetch(`/api/plans/${id}`, { method:'DELETE' });
+    if(!r.ok) throw new Error();
+    toast('Plan deleted', 'success');
+    await loadPlansPage();
+  } catch(e){
+    PLANS_CACHE = PLANS_CACHE.filter(x => x.id !== id);
+    localStorage.setItem('maxx_plans', JSON.stringify(PLANS_CACHE));
+    renderPlans();
+    toast('Plan deleted (local)', 'warn');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   ORDERS MANAGEMENT
+   ═══════════════════════════════════════════ */
+let ORDERS_CACHE = [];
+
+async function loadOrdersPage(){
+  try {
+    const r = await fetch('/api/orders/all');
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    ORDERS_CACHE = await r.json();
+  } catch(e){
+    ORDERS_CACHE = JSON.parse(localStorage.getItem('maxx_orders') || '[]');
+  }
+  renderOrders();
+}
+
+function renderOrders(){
+  const q = (document.getElementById('orderSearch')?.value || '').toLowerCase();
+  const filter = document.getElementById('orderFilter')?.value || '';
+
+  let list = ORDERS_CACHE.slice().reverse();
+  if(q) list = list.filter(o => (o.id + ' ' + o.username + ' ' + o.plan_name).toLowerCase().includes(q));
+  if(filter) list = list.filter(o => o.status === filter);
+
+  // Stats
+  const total = ORDERS_CACHE.length;
+  const pending = ORDERS_CACHE.filter(o => o.status === 'pending').length;
+  const active = ORDERS_CACHE.filter(o => o.status === 'active').length;
+  const revenue = ORDERS_CACHE.filter(o => o.status === 'active').reduce((s, o) => s + Number(o.price || 0), 0);
+
+  document.getElementById('orderStatTotal').textContent = total;
+  document.getElementById('orderStatPending').textContent = pending;
+  document.getElementById('orderStatActive').textContent = active;
+  document.getElementById('orderStatRevenue').textContent = '$' + revenue.toFixed(2);
+  document.getElementById('ordersCount').textContent = total;
+  document.getElementById('ordersVisible').textContent = list.length;
+  const dash = document.getElementById('dashOrdersCount');
+  if(dash) dash.textContent = pending;
+
+  const tbody = document.getElementById('ordersTableBody');
+  if(!list.length){
+    tbody.innerHTML = `<tr><td colspan="7" class="p-10 text-center text-[#4d586b]">
+      <i class="fas fa-receipt text-3xl mb-2 block opacity-40"></i>
+      <p class="text-sm">${ORDERS_CACHE.length ? 'No orders match your filter' : 'No orders yet'}</p>
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = list.map(o => {
+    const statusMap = {
+      pending: '<span class="pill bg-amber-500/15 text-amber-400"><span class="dot bg-amber-400"></span>Pending</span>',
+      active: '<span class="pill bg-emerald-500/15 text-emerald-400"><span class="dot bg-emerald-400"></span>Active</span>',
+      cancelled: '<span class="pill bg-rose-500/15 text-rose-400"><i class="fas fa-xmark text-[8px]"></i>Cancelled</span>'
+    };
+    const statusPill = statusMap[o.status] || statusMap.pending;
+    const date = o.purchased_at ? new Date(o.purchased_at).toLocaleDateString() : '—';
+
+    let actions = '';
+    if(o.status === 'pending'){
+      actions = `
+        <button onclick="activateOrder('${o.id}')" class="btn btn-success !py-1.5 !px-2.5 !text-[10px] mr-1" title="Activate"><i class="fas fa-check text-[9px]"></i> Activate</button>
+        <button onclick="cancelOrder('${o.id}')" class="btn btn-danger !py-1.5 !px-2.5 !text-[10px]" title="Cancel"><i class="fas fa-xmark text-[9px]"></i></button>
+      `;
+    } else if(o.status === 'active'){
+      actions = `<span class="text-[10px] text-[#4d586b] font-mono">${o.server_id ? o.server_id.slice(0, 10) + '…' : 'Activated'}</span>`;
+    } else {
+      actions = `<span class="text-[10px] text-[#4d586b]">—</span>`;
+    }
+
+    return `
+    <tr class="row-in border-t border-[var(--line)] hover:bg-white/[.035] transition">
+      <td class="p-3.5">
+        <p class="font-mono text-[11px] text-accent font-bold">${escapeHtml(o.id)}</p>
+      </td>
+      <td class="p-3.5">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-accent/15 grid place-items-center text-[10px] font-bold text-accent">${(o.username || 'U')[0].toUpperCase()}</div>
+          <div class="min-w-0">
+            <p class="font-semibold text-[12px] truncate">${escapeHtml(o.username || '—')}</p>
+            <p class="text-[10px] text-[#4d586b] truncate">${escapeHtml(o.email || '')}</p>
+          </div>
+        </div>
+      </td>
+      <td class="p-3.5 hidden md:table-cell">
+        <p class="text-[12px] font-semibold">${escapeHtml(o.plan_name || '—')}</p>
+        <p class="text-[10px] text-[#4d586b]">${o.valid_days || 0}d · ${escapeHtml(o.ram || '')} / ${escapeHtml(o.disk || '')}</p>
+      </td>
+      <td class="p-3.5">
+        <p class="font-extrabold text-[13px] text-accent">$${Number(o.price || 0).toFixed(2)}</p>
+      </td>
+      <td class="p-3.5 hidden lg:table-cell">
+        <span class="text-[11px] text-[#8d97ab]"><i class="far fa-calendar mr-1 text-[9px]"></i>${date}</span>
+      </td>
+      <td class="p-3.5">${statusPill}</td>
+      <td class="p-3.5 text-right">${actions}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function activateOrder(id){
+  const o = ORDERS_CACHE.find(x => x.id === id);
+  if(!o) return;
+
+  const result = await Swal.fire({
+    title:'Activate Order?',
+    html:
+      '<div style="text-align:left;font-size:12px;background:#0a0d14;border:1px solid #212836;border-radius:10px;padding:10px;font-family:monospace;margin-bottom:10px">' +
+      '<b style="color:#8d97ab">Order</b>: ' + escapeHtml(o.id) + '<br>' +
+      '<b style="color:#8d97ab">User</b>: ' + escapeHtml(o.username) + '<br>' +
+      '<b style="color:#8d97ab">Plan</b>: ' + escapeHtml(o.plan_name) + ' ($' + o.price + ')' +
+      '</div>' +
+      '<p style="font-size:11px;color:#8d97ab">A server will be created automatically for the user.</p>',
+    icon:'question', background:'#12141c', color:'#fff',
+    showCancelButton:true, confirmButtonColor:'#10b981', cancelButtonColor:'#374151',
+    confirmButtonText:'Yes, activate'
+  });
+
+  if(!result.isConfirmed) return;
+
+  try {
+    const r = await fetch(`/api/orders/${id}/activate`, { method:'POST' });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error || 'Activation failed');
+
+    Swal.fire({
+      title:'✅ Order Activated!',
+      html:
+        '<div style="text-align:left;font-size:12px;background:#0a0d14;border:1px solid #212836;border-radius:10px;padding:10px;font-family:monospace;margin-top:8px">' +
+        '<b style="color:#8d97ab">Server ID</b>: ' + (d.server_id || '—') +
+        '</div>',
+      icon:'success', background:'#12141c', color:'#fff'
+    });
+
+    await loadOrdersPage();
+  } catch(e){
+    // Local fallback
+    o.status = 'active';
+    o.activated_at = new Date().toISOString();
+    localStorage.setItem('maxx_orders', JSON.stringify(ORDERS_CACHE));
+    renderOrders();
+    toast('Order activated (local)', 'warn');
+  }
+}
+
+async function cancelOrder(id){
+  const result = await Swal.fire({
+    title:'Cancel Order?',
+    text:'This order will be marked as cancelled.',
+    icon:'warning', background:'#12141c', color:'#fff',
+    showCancelButton:true, confirmButtonColor:'#ef4444', cancelButtonColor:'#374151',
+    confirmButtonText:'Cancel Order'
+  });
+  if(!result.isConfirmed) return;
+
+  try {
+    const r = await fetch(`/api/orders/${id}/cancel`, { method:'POST' });
+    if(!r.ok) throw new Error();
+    toast('Order cancelled', 'success');
+    await loadOrdersPage();
+  } catch(e){
+    const o = ORDERS_CACHE.find(x => x.id === id);
+    if(o) o.status = 'cancelled';
+    localStorage.setItem('maxx_orders', JSON.stringify(ORDERS_CACHE));
+    renderOrders();
+    toast('Order cancelled (local)', 'warn');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   EXISTING: PASSWORD / CPU / TEMPLATES
+   ═══════════════════════════════════════════ */
 function togglePassword(id, btn){
   const el = document.getElementById('pass-' + id);
   const row = btn.closest('tr');
@@ -1394,38 +1788,19 @@ function updateStrength(v){
   const colors = ['#ef4444','#f59e0b','#3b82f6','#10b981'];
   bars.forEach((b,i) => b.style.background = i < s ? colors[s-1] : 'rgba(255,255,255,.1)');
 }
-
-/* ═══════════════ CPU PRESETS ═══════════════ */
 function setQuickCPU(v){
   document.getElementById('cpuLimit').value = v;
   document.getElementById('cpuLimitValue').innerText = v + '%';
   updateSummary();
 }
-
-/* ═══════════════ QUICK TEMPLATES ═══════════════ */
 function quickTemplate(type){
   const set = (id, val) => { const e = document.getElementById(id); if(e) e.value = val; };
-
-  if(type === 'discord'){
-    set('serverType','python'); set('ram','256MB'); set('cpuLimit',50); set('startupFile','bot.py');
-    set('newUsername','discord_bot_' + Math.random().toString(36).slice(2,6));
-  } else if(type === 'telegram'){
-    set('serverType','python'); set('ram','128MB'); set('cpuLimit',30); set('startupFile','main.py');
-    set('newUsername','telegram_bot_' + Math.random().toString(36).slice(2,6));
-  } else if(type === 'flask'){
-    set('serverType','python'); set('ram','512MB'); set('cpuLimit',80); set('startupFile','app.py');
-    set('newUsername','flask_app_' + Math.random().toString(36).slice(2,6));
-  } else if(type === 'node'){
-    set('serverType','node'); set('ram','256MB'); set('cpuLimit',60); set('startupFile','index.js');
-    set('newUsername','node_app_' + Math.random().toString(36).slice(2,6));
-  } else if(type === 'minecraft'){
-    set('serverType','java'); set('ram','2GB'); set('disk','5GB'); set('cpuLimit',90); set('startupFile','server.jar');
-    set('newUsername','mc_server_' + Math.random().toString(36).slice(2,6));
-  } else if(type === 'static'){
-    set('serverType','static'); set('ram','128MB'); set('disk','1GB'); set('cpuLimit',40); set('startupFile','index.html');
-    set('newUsername','site_' + Math.random().toString(36).slice(2,6));
-  }
-
+  if(type === 'discord'){ set('serverType','python'); set('ram','256MB'); set('cpuLimit',50); set('startupFile','bot.py'); set('newUsername','discord_bot_' + Math.random().toString(36).slice(2,6)); }
+  else if(type === 'telegram'){ set('serverType','python'); set('ram','128MB'); set('cpuLimit',30); set('startupFile','main.py'); set('newUsername','telegram_bot_' + Math.random().toString(36).slice(2,6)); }
+  else if(type === 'flask'){ set('serverType','python'); set('ram','512MB'); set('cpuLimit',80); set('startupFile','app.py'); set('newUsername','flask_app_' + Math.random().toString(36).slice(2,6)); }
+  else if(type === 'node'){ set('serverType','node'); set('ram','256MB'); set('cpuLimit',60); set('startupFile','index.js'); set('newUsername','node_app_' + Math.random().toString(36).slice(2,6)); }
+  else if(type === 'minecraft'){ set('serverType','java'); set('ram','2GB'); set('disk','5GB'); set('cpuLimit',90); set('startupFile','server.jar'); set('newUsername','mc_server_' + Math.random().toString(36).slice(2,6)); }
+  else if(type === 'static'){ set('serverType','static'); set('ram','128MB'); set('disk','1GB'); set('cpuLimit',40); set('startupFile','index.html'); set('newUsername','site_' + Math.random().toString(36).slice(2,6)); }
   document.getElementById('cpuLimitValue').innerText = document.getElementById('cpuLimit').value + '%';
   const p = generatePassword();
   document.getElementById('newPassword').value = p;
@@ -1434,19 +1809,6 @@ function quickTemplate(type){
   toast('Template applied — ready to deploy','success');
 }
 
-/* ═══════════════ ENV VARS ═══════════════ */
-function addEnvRow(k='', v=''){
-  const wrap = document.getElementById('envRows');
-  const row = document.createElement('div');
-  row.className = 'flex gap-2';
-  row.innerHTML =
-    '<input type="text" placeholder="KEY" value="' + k + '" class="field font-mono !text-[11px] !py-1.5" style="flex:0 0 38%">' +
-    '<input type="text" placeholder="value" value="' + v + '" class="field font-mono !text-[11px] !py-1.5 flex-1">' +
-    '<button onclick="this.parentNode.remove()" class="btn btn-ghost !px-2.5 !py-1.5 !text-rose-400"><i class="fas fa-xmark text-[10px]"></i></button>';
-  wrap.appendChild(row);
-}
-
-/* ═══════════════ FORM SUMMARY ═══════════════ */
 function updateSummary(){
   const g = id => document.getElementById(id);
   const set = (id,v) => { const e = g(id); if(e) e.textContent = v; };
@@ -1462,12 +1824,10 @@ function updateSummary(){
 });
 updateSummary();
 
-/* ═══════════════ CREATE SERVER ═══════════════ */
 function resetForm(){
   ['newUsername','newPassword'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('cpuLimit').value = 80;
   document.getElementById('cpuLimitValue').innerText = '80%';
-  document.getElementById('envRows').innerHTML = '';
   updateStrength('');
   updateSummary();
   toast('Form reset','info');
@@ -1484,29 +1844,13 @@ function createServer(){
     disk:        document.getElementById('disk').value,
     cpu_cores:   document.getElementById('cpuCores').value,
     expiry_days: parseInt(document.getElementById('expiryDays').value) || 30,
-    cpu_limit:   parseInt(document.getElementById('cpuLimit').value) || 80,
-    env: Array.from(document.querySelectorAll('#envRows > div')).map(r => {
-      const i = r.querySelectorAll('input');
-      return i[0].value ? i[0].value + '=' + i[1].value : null;
-    }).filter(Boolean),
-    auto_restart: document.querySelectorAll('.switch')[0]?.classList.contains('on'),
-    backups:      document.querySelectorAll('.switch')[1]?.classList.contains('on'),
-    public:       document.querySelectorAll('.switch')[2]?.classList.contains('on'),
-    ssl:          document.querySelectorAll('.switch')[3]?.classList.contains('on')
+    cpu_limit:   parseInt(document.getElementById('cpuLimit').value) || 80
   };
 
-  if(!data.username || !data.password){
-    toast('Username and password are required','error'); return;
-  }
-  if(!/^[a-zA-Z0-9_.-]{3,32}$/.test(data.username)){
-    toast('Username: 3–32 chars (a-z, 0-9, _ . -)','error'); return;
-  }
-  if(data.password.length < 6){
-    toast('Password must be at least 6 characters','error'); return;
-  }
-  if(data.cpu_limit < 10 || data.cpu_limit > 100){
-    toast('CPU limit must be between 10% and 100%','error'); return;
-  }
+  if(!data.username || !data.password){ toast('Username and password are required','error'); return; }
+  if(!/^[a-zA-Z0-9_.-]{3,32}$/.test(data.username)){ toast('Username: 3–32 chars (a-z, 0-9, _ . -)','error'); return; }
+  if(data.password.length < 6){ toast('Password must be at least 6 characters','error'); return; }
+  if(data.cpu_limit < 10 || data.cpu_limit > 100){ toast('CPU limit must be between 10% and 100%','error'); return; }
 
   Swal.fire({
     title:'Deploying Server…',
@@ -1517,9 +1861,7 @@ function createServer(){
   });
 
   fetch('/admin/create_server', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(data)
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data)
   })
   .then(r => r.json())
   .then(res => {
@@ -1543,12 +1885,9 @@ function createServer(){
       Swal.fire({title:'Deployment Failed', text: res.error || 'Unknown error', icon:'error', background:'#12141c', color:'#fff'});
     }
   })
-  .catch(() => {
-    Swal.fire({title:'Connection Error', text:'Could not reach the server.', icon:'error', background:'#12141c', color:'#fff'});
-  });
+  .catch(() => Swal.fire({title:'Connection Error', text:'Could not reach the server.', icon:'error', background:'#12141c', color:'#fff'}));
 }
 
-/* ═══════════════ CPU LIMIT CHANGE ═══════════════ */
 function changeCPULimit(serverId, current){
   Swal.fire({
     title:'CPU Rate Limit',
@@ -1575,22 +1914,17 @@ function changeCPULimit(serverId, current){
     if(!r.isConfirmed) return;
     const val = r.value;
     fetch('/admin/set_rate_limit/' + serverId, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ cpu_limit: parseInt(val) })
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ cpu_limit: parseInt(val) })
     })
     .then(x => x.json())
     .then(d => {
-      if(d.success){
-        toast('CPU limit set to ' + val + '%', 'success');
-        setTimeout(() => location.reload(), 900);
-      } else toast(d.error || 'Update failed', 'error');
+      if(d.success){ toast('CPU limit set to ' + val + '%', 'success'); setTimeout(() => location.reload(), 900); }
+      else toast(d.error || 'Update failed', 'error');
     })
     .catch(() => toast('Connection error', 'error'));
   });
 }
 
-/* ═══════════════ DELETE ═══════════════ */
 function deleteServer(username, serverId){
   Swal.fire({
     title:'Delete Server?',
@@ -1604,45 +1938,35 @@ function deleteServer(username, serverId){
   }).then(r => {
     if(!r.isConfirmed) return;
     fetch('/admin/delete_server/' + username + '/' + serverId, { method:'POST' })
-      .then(() => {
-        toast('Server deleted','success');
-        closeDrawer();
-        setTimeout(() => location.reload(), 900);
-      })
+      .then(() => { toast('Server deleted','success'); closeDrawer(); setTimeout(() => location.reload(), 900); })
       .catch(() => toast('Delete failed','error'));
   });
 }
 
-/* ═══════════════ TABLE FILTER / BULK ═══════════════ */
+/* ═══════════════════════════════════════════
+   TABLE / BULK / DRAWER
+   ═══════════════════════════════════════════ */
 function filterTable(){
   const q = (document.getElementById('tableSearch').value || '').toLowerCase();
   const st = document.getElementById('filterStatus').value;
   const tp = document.getElementById('filterType').value;
   let visible = 0;
-
   document.querySelectorAll('#serverTable tbody tr[data-server]').forEach(row => {
     const hay = (row.dataset.user + ' ' + row.dataset.server + ' ' + row.dataset.type).toLowerCase();
-    const okQ  = !q  || hay.includes(q);
-    const okS  = !st || row.dataset.status === st;
-    const okT  = !tp || row.dataset.type === tp;
-    const show = okQ && okS && okT;
+    const show = (!q || hay.includes(q)) && (!st || row.dataset.status === st) && (!tp || row.dataset.type === tp);
     row.style.display = show ? '' : 'none';
     if(show) visible++;
   });
   const vc = document.getElementById('visibleCount');
   if(vc) vc.textContent = visible;
 }
-
 function globalSearchHandler(v){
   document.getElementById('tableSearch').value = v;
   gotoPage('servers');
   filterTable();
 }
-
 function toggleAll(cb){
-  document.querySelectorAll('.rowCheck').forEach(c => {
-    if(c.closest('tr').style.display !== 'none') c.checked = cb.checked;
-  });
+  document.querySelectorAll('.rowCheck').forEach(c => { if(c.closest('tr').style.display !== 'none') c.checked = cb.checked; });
   updateBulk();
 }
 function updateBulk(){
@@ -1657,22 +1981,16 @@ function bulkAction(action){
   if(!rows.length) return;
   toast(action.charAt(0).toUpperCase() + action.slice(1) + ' queued for ' + rows.length + ' server(s)', 'info');
   rows.forEach(r => {
-    fetch('/admin/server_action', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ server_id: r.dataset.server, username: r.dataset.user, action })
-    }).catch(() => {});
+    fetch('/admin/server_action', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ server_id: r.dataset.server, username: r.dataset.user, action }) }).catch(() => {});
   });
 }
 function bulkDelete(){
   const rows = Array.from(document.querySelectorAll('.rowCheck:checked')).map(c => c.closest('tr'));
   if(!rows.length) return;
   Swal.fire({
-    title:'Delete ' + rows.length + ' server(s)?',
-    text:'This action cannot be undone.',
+    title:'Delete ' + rows.length + ' server(s)?', text:'This action cannot be undone.',
     icon:'warning', background:'#12141c', color:'#fff',
-    showCancelButton:true, confirmButtonColor:'#ef4444', cancelButtonColor:'#374151',
-    confirmButtonText:'Delete All'
+    showCancelButton:true, confirmButtonColor:'#ef4444', cancelButtonColor:'#374151', confirmButtonText:'Delete All'
   }).then(r => {
     if(!r.isConfirmed) return;
     let done = 0;
@@ -1683,13 +2001,11 @@ function bulkDelete(){
   });
 }
 
-/* ═══════════════ DRAWER ═══════════════ */
 let currentRow = null;
 function openDrawer(btn){
   const row = btn.closest('tr');
   currentRow = row;
   const d = row.dataset;
-
   document.getElementById('dTitle').textContent = d.user;
   document.getElementById('dSub').textContent   = d.server;
   document.getElementById('dUser').textContent  = d.user;
@@ -1700,14 +2016,12 @@ function openDrawer(btn){
   document.getElementById('dCpu').textContent   = d.cpu + '%';
   document.getElementById('dExpiry').textContent= d.expiry;
   document.getElementById('dLink').href         = d.url;
-
   const map = {
     running:'<span class="pill bg-emerald-500/15 text-emerald-400"><span class="dot bg-emerald-400"></span>Running</span>',
     stopped:'<span class="pill bg-rose-500/15 text-rose-400"><span class="dot bg-rose-400"></span>Stopped</span>',
     limited:'<span class="pill bg-amber-500/15 text-amber-400"><i class="fas fa-triangle-exclamation text-[9px]"></i>Rate Limited</span>'
   };
   document.getElementById('dStatus').innerHTML = map[d.status] || map.stopped;
-
   document.getElementById('drawer').classList.add('open');
   document.getElementById('overlay').classList.add('show');
   switchTab('overview');
@@ -1718,20 +2032,16 @@ function closeDrawer(){
 }
 function switchTab(name){
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-  ['overview','console','actions'].forEach(t => {
-    document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
-  });
+  ['overview','console','actions'].forEach(t => document.getElementById('tab-' + t).classList.toggle('hidden', t !== name));
 }
 function pushConsole(cmd){
   if(!cmd) return;
   const box = document.getElementById('consoleBox');
   const p = document.createElement('p');
-  p.className = 'text-white';
-  p.textContent = '$ ' + cmd;
+  p.className = 'text-white'; p.textContent = '$ ' + cmd;
   box.appendChild(p);
   const r = document.createElement('p');
-  r.className = 'text-emerald-400';
-  r.textContent = 'executed (simulated)';
+  r.className = 'text-emerald-400'; r.textContent = 'executed (simulated)';
   box.appendChild(r);
   box.scrollTop = box.scrollHeight;
 }
@@ -1739,26 +2049,19 @@ function serverAction(action){
   if(!currentRow) return;
   const { server, user } = currentRow.dataset;
   toast(action.toUpperCase() + ' → ' + server.slice(0,10) + '…', 'info');
-  fetch('/admin/server_action', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ server_id: server, username: user, action })
-  }).catch(() => {});
+  fetch('/admin/server_action', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ server_id: server, username: user, action }) }).catch(() => {});
 }
 
-/* ═══════════════ DASHBOARD CHARTS ═══════════════ */
+/* ═══════════════════════════════════════════
+   DASHBOARD CHARTS
+   ═══════════════════════════════════════════ */
 function initDashboard(){
   const rows = Array.from(document.querySelectorAll('#serverTable tbody tr[data-server]'));
   if(!rows.length) return;
-
-  /* --- type distribution bars --- */
   const counts = {};
   rows.forEach(r => { counts[r.dataset.type] = (counts[r.dataset.type] || 0) + 1; });
   const max = Math.max(...Object.values(counts), 1);
-  const palette = {
-    python:'#3b82f6', node:'#84cc16', static:'#f472b6',
-    java:'#f59e0b', go:'#06b6d4'
-  };
+  const palette = { python:'#3b82f6', node:'#84cc16', static:'#f472b6', java:'#f59e0b', go:'#06b6d4' };
   const chart = document.getElementById('typeChart');
   if(chart){
     chart.innerHTML = Object.entries(counts).map(([t,c]) => {
@@ -1767,15 +2070,10 @@ function initDashboard(){
       return '<div class="flex flex-col items-center gap-2 flex-1">' +
         '<span class="text-[11px] font-extrabold" style="color:' + col + '">' + c + '</span>' +
         '<div class="bar w-full max-w-[52px] rounded-t-lg" style="height:0;background:linear-gradient(180deg,' + col + ',' + col + '44)" data-h="' + h + '"></div>' +
-        '<span class="text-[10px] text-[#7b869b] font-semibold capitalize">' + t + '</span>' +
-        '</div>';
+        '<span class="text-[10px] text-[#7b869b] font-semibold capitalize">' + t + '</span></div>';
     }).join('');
-    setTimeout(() => {
-      chart.querySelectorAll('.bar').forEach(b => { b.style.height = b.dataset.h + '%'; });
-    }, 80);
+    setTimeout(() => chart.querySelectorAll('.bar').forEach(b => { b.style.height = b.dataset.h + '%'; }), 80);
   }
-
-  /* --- status donut --- */
   const run = rows.filter(r => r.dataset.status === 'running').length;
   const lim = rows.filter(r => r.dataset.status === 'limited').length;
   const stop = rows.length - run - lim;
@@ -1783,30 +2081,53 @@ function initDashboard(){
   const a = (run/total)*100, b = a + (stop/total)*100;
   const donut = document.getElementById('donut');
   if(donut){
-    donut.style.background =
-      'conic-gradient(#10b981 0 ' + a + '%, #f43f5e ' + a + '% ' + b + '%, #f59e0b ' + b + '% 100%)';
+    donut.style.background = 'conic-gradient(#10b981 0 ' + a + '%, #f43f5e ' + a + '% ' + b + '%, #f59e0b ' + b + '% 100%)';
   }
 }
 
-/* ═══════════════ KEYBOARD SHORTCUTS ═══════════════ */
+/* ═══════════════════════════════════════════
+   DROPDOWNS / KEYBOARD
+   ═══════════════════════════════════════════ */
+function toggleNotif(){
+  document.getElementById('notifPanel').classList.toggle('hidden');
+  document.getElementById('profilePanel').classList.add('hidden');
+}
+function toggleProfile(){
+  document.getElementById('profilePanel').classList.toggle('hidden');
+  document.getElementById('notifPanel').classList.add('hidden');
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('#notifPanel') && !e.target.closest('button[onclick="toggleNotif()"]'))
+    document.getElementById('notifPanel')?.classList.add('hidden');
+  if(!e.target.closest('#profilePanel') && !e.target.closest('button[onclick="toggleProfile()"]'))
+    document.getElementById('profilePanel')?.classList.add('hidden');
+});
+
 document.addEventListener('keydown', e => {
   if(document.getElementById('loginScreen').style.display !== 'none') return;
-
   if(e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
-    e.preventDefault();
-    document.getElementById('globalSearch')?.focus();
+    e.preventDefault(); document.getElementById('globalSearch')?.focus();
   }
   if(e.ctrlKey && e.key.toLowerCase() === 'k'){
     e.preventDefault(); gotoPage('create'); document.getElementById('newUsername')?.focus();
   }
-  if(e.ctrlKey && e.key.toLowerCase() === 'r'){
-    e.preventDefault(); location.reload();
+  if(e.ctrlKey && e.key.toLowerCase() === 'p'){
+    e.preventDefault(); gotoPage('plans');
   }
-  if(e.key === 'Escape'){ closeDrawer(); document.getElementById('notifPanel')?.classList.add('hidden'); document.getElementById('profilePanel')?.classList.add('hidden'); }
+  if(e.ctrlKey && e.key.toLowerCase() === 'o'){
+    e.preventDefault(); gotoPage('orders');
+  }
+  if(e.key === 'Escape'){
+    closeDrawer(); closePlanModal();
+    document.getElementById('notifPanel')?.classList.add('hidden');
+    document.getElementById('profilePanel')?.classList.add('hidden');
+  }
 });
 
-/* init env example */
-addEnvRow('TZ', 'Asia/Kolkata');
+/* plan modal click outside to close */
+document.getElementById('planModal').addEventListener('click', e => {
+  if(e.target.id === 'planModal') closePlanModal();
+});
 </script>
 </body>
 </html>
