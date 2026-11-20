@@ -1,43 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Error | MAXX HOSTING</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Expired | MAXX HOSTING</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: { extend: {
+    fontFamily: { sans:['Inter','sans-serif'], mono:['JetBrains Mono','monospace'] },
+    colors: { accent: 'rgb(var(--accent) / <alpha-value>)' }
+  }}
+}
+</script>
+
+<style>
+  :root{ --accent: 59 130 246; --line: rgba(255,255,255,.07); }
+  *{ -webkit-tap-highlight-color:transparent; }
+  body{
+    font-family:'Inter',sans-serif;
+    background:#06080f; color:#e9edf7;
+    min-height:100vh; overflow-x:hidden;
+  }
+  body::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(900px 500px at 12% -8%, rgba(245,158,11,.16), transparent 60%),
+      radial-gradient(700px 420px at 92% 4%, rgba(239,68,68,.10), transparent 62%),
+      radial-gradient(800px 500px at 50% 108%, rgb(var(--accent) / .08), transparent 60%);
+    transition: background .5s;
+  }
+
+  .grid-bg{
+    position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.35;
+    background-image:
+      linear-gradient(rgba(245,158,11,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,158,11,.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at 50% 50%, black, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 75%);
+  }
+
+  .card{
+    background: linear-gradient(170deg, rgba(22,27,40,.94), rgba(13,16,24,.94));
+    border:1px solid var(--line); border-radius:22px;
+    position:relative; backdrop-filter: blur(14px);
+    box-shadow: 0 40px 100px -40px rgba(0,0,0,.9);
+  }
+  .card::after{
+    content:''; position:absolute; inset:-1px; border-radius:22px; padding:1px;
+    background:linear-gradient(140deg, rgba(245,158,11,.5), transparent 40%, transparent 60%, rgba(239,68,68,.3));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events:none; opacity:.6; transition:opacity .3s;
+  }
+  .card:hover::after{ opacity:1; }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+        border-radius:12px; font-weight:600; font-size:.85rem; padding:.72rem 1.15rem;
+        transition: all .22s cubic-bezier(.2,.8,.3,1); cursor:pointer; border:1px solid transparent; white-space:nowrap; text-decoration:none; }
+  .btn:active{ transform: scale(.97); }
+  .btn-primary{ background:linear-gradient(135deg, rgb(var(--accent)), rgb(var(--accent) / .68)); color:#fff;
+                box-shadow:0 10px 28px -12px rgb(var(--accent) / .95); }
+  .btn-primary:hover{ filter:brightness(1.12); box-shadow:0 14px 34px -10px rgb(var(--accent) / .95); }
+  .btn-ghost{ background:rgba(255,255,255,.045); border-color:var(--line); color:#c3cbdb; }
+  .btn-ghost:hover{ background:rgba(255,255,255,.09); color:#fff; border-color:rgba(255,255,255,.16); }
+  .btn-warn{ background:linear-gradient(135deg,#f59e0b,#d97706); color:#fff; box-shadow:0 10px 28px -12px rgba(245,158,11,.9); }
+  .btn-warn:hover{ filter:brightness(1.1); }
+
+  .icon-wrap{
+    width:92px; height:92px; border-radius:26px; display:grid; place-items:center;
+    margin:0 auto 1.5rem; position:relative;
+    background:linear-gradient(135deg, rgba(245,158,11,.24), rgba(245,158,11,.05));
+    border:1px solid rgba(245,158,11,.45);
+    animation: popIn .55s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes popIn{ from{opacity:0; transform: scale(.7);} to{opacity:1; transform:none;} }
+  .icon-wrap::after{
+    content:''; position:absolute; inset:-6px; border-radius:32px;
+    border:1px solid rgba(245,158,11,.45);
+    animation: pulseRing 2.4s infinite;
+  }
+  @keyframes pulseRing{
+    0%{ transform: scale(1); opacity:.6; }
+    70%{ transform: scale(1.15); opacity:0; }
+    100%{ transform: scale(1.15); opacity:0; }
+  }
+
+  .pill{ display:inline-flex; align-items:center; gap:.4rem; font-size:.68rem; font-weight:700;
+         padding:.28rem .7rem; border-radius:999px; letter-spacing:.04em; }
+
+  .countdown-grid{
+    display:grid; grid-template-columns: repeat(4, 1fr); gap:.5rem;
+  }
+  .countdown-cell{
+    background:rgba(0,0,0,.45); border:1px solid var(--line);
+    border-radius:14px; padding:.75rem .4rem; text-align:center;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .countdown-cell .num{
+    font-size:1.4rem; font-weight:800; color:#fbbf24; line-height:1;
+    display:block; margin-bottom:.25rem;
+  }
+  .countdown-cell .lbl{
+    font-size:.55rem; color:#7b869b; font-weight:700;
+    letter-spacing:.12em; text-transform:uppercase;
+  }
+
+  .detail-row{ display:flex; justify-content:space-between; gap:1rem; padding:.55rem 0;
+               border-bottom:1px solid rgba(255,255,255,.04); font-size:.78rem; }
+  .detail-row:last-child{ border-bottom:none; }
+  .detail-row .k{ color:#7b869b; }
+  .detail-row .v{ color:#e9edf7; font-weight:600; font-family:'JetBrains Mono',monospace; }
+
+  .fade-in{ animation: fadeIn .5s cubic-bezier(.2,.8,.3,1) both; }
+  @keyframes fadeIn{ from{opacity:0; transform: translateY(10px);} to{opacity:1; transform:none;} }
+  .fade-in.delay-1{ animation-delay:.08s; }
+  .fade-in.delay-2{ animation-delay:.16s; }
+  .fade-in.delay-3{ animation-delay:.24s; }
+
+  .toast-wrap{ position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; }
+  .toast{ display:flex; align-items:center; gap:.7rem; padding:.75rem 1rem; border-radius:13px; font-size:.82rem; font-weight:500;
+          background:rgba(19,24,36,.97); border:1px solid var(--line); box-shadow:0 20px 45px -18px #000;
+          backdrop-filter:blur(14px); animation: toastIn .35s cubic-bezier(.2,.8,.3,1); min-width:260px; max-width:380px; }
+  @keyframes toastIn{ from{ opacity:0; transform: translateX(40px) scale(.96);} to{ opacity:1; transform:none; } }
+  .toast.out{ animation: toastOut .3s ease forwards; }
+  @keyframes toastOut{ to{ opacity:0; transform: translateX(40px) scale(.96);} }
+
+  .quick-help{ display:flex; align-items:center; gap:.65rem; padding:.7rem .85rem;
+               border-radius:12px; font-size:.78rem; color:#c3cbdb;
+               background:rgba(255,255,255,.03); border:1px solid var(--line);
+               transition: all .2s; cursor:pointer; text-decoration:none; }
+  .quick-help:hover{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.14); color:#fff; }
+  .quick-help .qh-ico{ width:28px; height:28px; border-radius:9px; display:grid; place-items:center; flex:none; font-size:.75rem; }
+
+  .benefit{ display:flex; align-items:flex-start; gap:.55rem; font-size:.75rem; color:#c3cbdb; padding:.4rem 0; }
+  .benefit i{ color:#34d399; margin-top:.15rem; font-size:.7rem; flex:none; }
+</style>
 </head>
-<body class="bg-[#0a0c12] min-h-screen flex items-center justify-center p-4">
-    <div class="bg-[#12141c] rounded-2xl p-8 w-full max-w-md border text-center">
-        
-        {% if error_type == "expired" %}
-        <div class="w-20 h-20 bg-yellow-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-yellow-500">
-            <i class="fas fa-hourglass-end text-4xl text-yellow-500"></i>
+<body class="antialiased">
+
+<div class="grid-bg"></div>
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Header -->
+<header class="relative z-10 px-4 sm:px-6 py-4 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/55 grid place-items-center shadow-lg group-hover:scale-105 transition">
+            <i class="fas fa-cloud-upload-alt text-white"></i>
         </div>
-        <h1 class="text-2xl font-bold text-yellow-500 mb-2">⚠️ Server Expired</h1>
-        <p class="text-gray-400 mb-4">Your server subscription has ended.</p>
-        <p class="text-gray-500 text-sm">Contact admin to renew.</p>
-        
-        {% elif error_type == "deleted" %}
-        <div class="w-20 h-20 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-red-500">
-            <i class="fas fa-trash-alt text-4xl text-red-500"></i>
+        <div>
+            <p class="text-[15px] font-extrabold leading-tight">MAXX <span class="text-accent">HOSTING</span></p>
+            <p class="text-[10px] text-[#7b869b] tracking-wider uppercase font-semibold">Panel</p>
         </div>
-        <h1 class="text-2xl font-bold text-red-500 mb-2">❌ Server Not Found</h1>
-        <p class="text-gray-400 mb-4">This server has been deleted.</p>
-        <p class="text-gray-500 text-sm">Contact admin for details.</p>
-        
-        {% else %}
-        <div class="w-20 h-20 bg-gray-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-gray-500">
-            <i class="fas fa-question text-4xl text-gray-500"></i>
+    </a>
+    <a href="https://t.me/MAXX_codex" target="_blank" class="btn btn-ghost !py-1.5 !px-3 !text-[11px]">
+        <i class="fab fa-telegram text-[10px] text-accent"></i> Support
+    </a>
+</header>
+
+<!-- Main -->
+<main class="relative z-10 flex items-center justify-center px-4 py-6 sm:py-10" style="min-height: calc(100vh - 140px)">
+    <div class="w-full max-w-md">
+
+        <div class="card p-6 sm:p-8 text-center">
+
+            <!-- Icon -->
+            <div class="icon-wrap">
+                <i class="fas fa-hourglass-end text-4xl text-amber-400"></i>
+            </div>
+
+            <!-- Heading -->
+            <div class="fade-in">
+                <span class="pill bg-amber-500/15 text-amber-400 mb-3">
+                    <i class="fas fa-triangle-exclamation text-[9px]"></i> PLAN EXPIRED
+                </span>
+                <h1 class="text-2xl font-extrabold mb-2 tracking-tight">Your Plan Has Expired</h1>
+                <p class="text-[13px] text-[#7b869b] mb-5 leading-relaxed">
+                    Your hosting plan has ended. Renew now to bring your server back online instantly. Your files are 100% safe.
+                </p>
+            </div>
+
+            <!-- Countdown -->
+            <div class="fade-in delay-1 mb-5">
+                <p class="text-[10px] text-[#7b869b] uppercase tracking-widest font-bold mb-2.5">
+                    <i class="fas fa-clock text-[9px] mr-1"></i> Expired
+                </p>
+                <div class="countdown-grid">
+                    <div class="countdown-cell"><span class="num" id="cdDays">0</span><span class="lbl">Days</span></div>
+                    <div class="countdown-cell"><span class="num" id="cdHours">0</span><span class="lbl">Hrs</span></div>
+                    <div class="countdown-cell"><span class="num" id="cdMins">0</span><span class="lbl">Min</span></div>
+                    <div class="countdown-cell"><span class="num" id="cdSecs">0</span><span class="lbl">Sec</span></div>
+                </div>
+            </div>
+
+            <!-- Server Details -->
+            {% if current_server %}
+            <div class="fade-in delay-1 rounded-xl bg-black/30 border border-[var(--line)] p-3.5 mb-5 text-left">
+                <div class="detail-row">
+                    <span class="k">Server ID</span>
+                    <span class="v" style="color:#fbbf24" id="serverIdVal" title="Click to copy">{{ current_server.server_id[:16] }}…</span>
+                </div>
+                {% if current_server.expiry %}
+                <div class="detail-row">
+                    <span class="k">Expired On</span>
+                    <span class="v" style="color:#f87171">{{ current_server.expiry[:10] }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-row">
+                    <span class="k">Files Preserved</span>
+                    <span class="v" style="color:#34d399"><i class="fas fa-check text-[9px] mr-1"></i> Yes</span>
+                </div>
+                <div class="detail-row">
+                    <span class="k">Status</span>
+                    <span class="v" style="color:#f87171"><span class="inline-block w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5 align-middle"></span>Stopped</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- What you get after renewal -->
+            <div class="fade-in delay-2 text-left rounded-xl bg-black/20 border border-[var(--line)] p-3.5 mb-5">
+                <p class="text-[11px] font-bold text-[#7b869b] uppercase tracking-wider mb-2">
+                    <i class="fas fa-rotate-right text-[9px] mr-1 text-accent"></i> Renewal Includes
+                </p>
+                <div class="benefit"><i class="fas fa-check-circle"></i><span>Instant server restart with all your files</span></div>
+                <div class="benefit"><i class="fas fa-check-circle"></i><span>Same server ID &amp; credentials preserved</span></div>
+                <div class="benefit"><i class="fas fa-check-circle"></i><span>No reupload or reconfiguration needed</span></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="fade-in delay-2 grid gap-2 mb-4">
+                <a href="/plans" class="btn btn-warn w-full !py-3">
+                    <i class="fas fa-cart-plus text-xs"></i> Renew Plan Now
+                </a>
+                <a href="https://t.me/MAXX_codex" target="_blank" class="btn btn-primary w-full !py-3">
+                    <i class="fab fa-telegram-plane text-xs"></i> Contact Admin
+                </a>
+            </div>
+
+            <p class="fade-in delay-3 text-[11px] text-[#4d586b]">
+                <i class="fas fa-lock text-[9px] mr-1"></i>
+                Your files &amp; data remain safe until the server is deleted by admin.
+            </p>
+
         </div>
-        <h1 class="text-2xl font-bold text-gray-400 mb-2">Error</h1>
-        <p class="text-gray-500">Something went wrong.</p>
-        {% endif %}
-        
-        <a href="https://t.me/MAXX_codex" target="_blank" 
-           class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white font-bold py-2.5 px-6 rounded-lg transition transform hover:scale-105 mt-6">
-            <i class="fab fa-telegram-plane"></i> Contact Admin
-        </a>
+
+        <!-- Quick help -->
+        <div class="grid grid-cols-2 gap-2.5 mt-5 fade-in delay-3">
+            <a href="https://t.me/MAXX_codex" target="_blank" class="quick-help">
+                <div class="qh-ico" style="background:rgba(59,130,246,.15); color:#60a5fa"><i class="fab fa-telegram-plane"></i></div>
+                <div>
+                    <p class="font-semibold text-[12px]">Telegram</p>
+                    <p class="text-[10px] text-[#7b869b]">Instant support</p>
+                </div>
+            </a>
+            <a href="/plans" class="quick-help">
+                <div class="qh-ico" style="background:rgba(245,158,11,.15); color:#fbbf24"><i class="fas fa-crown"></i></div>
+                <div>
+                    <p class="font-semibold text-[12px]">Plans</p>
+                    <p class="text-[10px] text-[#7b869b]">View &amp; renew</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-6 text-[10px] text-[#4d586b]">
+            &copy; 2025 MAXX HOSTING
+            {% if current_server %}
+            &bull; <span class="font-mono">{{ current_server.server_id[:8] }}…</span>
+            {% endif %}
+        </div>
+
     </div>
+</main>
+
+<script>
+/* ═══════════ TOAST ═══════════ */
+function toast(msg, type='info', dur=3000){
+  const icons = { success:'fa-check', error:'fa-xmark', info:'fa-circle-info', warn:'fa-triangle-exclamation' };
+  const colors = { success:'#10b981', error:'#ef4444', info:'rgb(var(--accent))', warn:'#f59e0b' };
+  const c = colors[type] || colors.info, i = icons[type] || icons.info;
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<div style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:${c}22;color:${c};flex:none"><i class="fas ${i}" style="font-size:10px"></i></div><span style="flex:1">${msg}</span>`;
+  document.getElementById('toastWrap').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, dur);
+}
+
+/* ═══════════ LIVE EXPIRED COUNTDOWN ═══════════ */
+{% if current_server and current_server.expiry %}
+(function(){
+  const expiryStr = "{{ current_server.expiry[:10] }}";
+  const expiry = new Date(expiryStr + 'T00:00:00');
+
+  function update(){
+    const now = new Date();
+    let diff = now - expiry;   // how long ago it expired (positive)
+    if(diff < 0) diff = 0;     // just in case, don't go negative
+
+    const totalSec = Math.floor(diff / 1000);
+    const days  = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins  = Math.floor((totalSec % 3600) / 60);
+    const secs  = totalSec % 60;
+
+    const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+    set('cdDays',  days);
+    set('cdHours', hours);
+    set('cdMins',  mins);
+    set('cdSecs',  secs);
+  }
+  update();
+  setInterval(update, 1000);
+})();
+{% endif %}
+
+/* ═══════════ THEME PERSISTENCE ═══════════ */
+(function(){
+  try {
+    const a = localStorage.getItem('maxx_user_accent') || localStorage.getItem('maxx_accent');
+    if(a){ const [r,g,b] = a.split(','); document.documentElement.style.setProperty('--accent', r+' '+g+' '+b); }
+  } catch(e){}
+})();
+
+/* ═══════════ COPY SERVER ID ═══════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('serverIdVal');
+  if(el){
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', () => {
+      const t = el.textContent.trim().replace(/…$/, '');
+      navigator.clipboard.writeText(t).then(() => toast('Server ID copied', 'success'))
+        .catch(() => toast('Copy failed', 'error'));
+    });
+  }
+});
+</script>
+
 </body>
 </html>
