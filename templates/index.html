@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXX HOSTING - Free Python Bot Hosting</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+* { font-family: 'Poppins', sans-serif; }
+body { background: #0a0c14; color: #fff; overflow-x: hidden; }
+html { scroll-behavior: smooth; }
+.gradient-text { background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-glow { background: radial-gradient(circle at center, rgba(59,130,246,0.15) 0%, transparent 70%); }
+.card { background: rgba(18,20,28,0.8); border: 1px solid rgba(59,130,246,0.2); border-radius: 16px; transition: all 0.3s ease; }
+.card:hover { border-color: rgba(59,130,246,0.5); transform: translateY(-2px); box-shadow: 0 20px 40px rgba(59,130,246,0.1); }
+.btn-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; padding: 12px 28px; border-radius: 10px; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; color: white; }
+.btn-blue:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(59,130,246,0.3); }
+.btn-dark { background: #1a1d27; border: 2px solid #2a2d37; padding: 12px 28px; border-radius: 10px; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; color: white; }
+.btn-dark:hover { background: #252836; border-color: #3b82f6; }
+.stat-number { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+@media (min-width: 768px) { .stat-number { font-size: 2.5rem; } }
+.feature-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+@media (min-width: 768px) { .feature-icon { width: 50px; height: 50px; font-size: 22px; } }
+.pricing-card { border: 1px solid rgba(59,130,246,0.3); background: rgba(18,20,28,0.9); border-radius: 20px; transition: all 0.3s ease; }
+.pricing-card:hover { transform: translateY(-4px); border-color: rgba(59,130,246,0.6); }
+.pricing-card.popular { border-color: #3b82f6; background: rgba(59,130,246,0.08); position: relative; box-shadow: 0 20px 60px -20px rgba(59,130,246,0.5); }
+.popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: white; padding: 5px 20px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.float { animation: float 3s ease-in-out infinite; }
+
+/* Modal */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px; overflow-y: auto; }
+.modal.show { display: flex; animation: fadeIn 0.22s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-card { background: linear-gradient(170deg, #12141c, #0a0c14); border: 1px solid rgba(59,130,246,0.3); border-radius: 22px; width: 100%; max-width: 430px; padding: 28px; box-shadow: 0 40px 100px -20px rgba(59,130,246,0.4), 0 0 0 1px rgba(255,255,255,0.03) inset; animation: slideUp 0.32s cubic-bezier(.2,.8,.3,1); margin: auto; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px) scale(0.96); } to { opacity: 1; transform: none; } }
+.auth-input { width: 100%; background: #0a0c14; border: 1px solid #2a2d37; border-radius: 11px; padding: 12px 14px; color: white; font-size: 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+.auth-input::placeholder { color: #4d586b; }
+.auth-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+.auth-tab { flex: 1; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; color: #7b869b; transition: all 0.2s; background: transparent; border: none; }
+.auth-tab.active { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.close-x { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: #7b869b; cursor: pointer; transition: all 0.2s; }
+.close-x:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+/* Toast */
+.toast-wrap { position: fixed; top: 80px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 10px; }
+.toast { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 13px; font-size: 13px; font-weight: 500; background: rgba(19,24,36,0.98); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 45px -18px #000; backdrop-filter: blur(14px); min-width: 260px; max-width: 380px; animation: toastIn 0.35s cubic-bezier(.2,.8,.3,1); }
+.toast.success { border-left: 3px solid #10b981; }
+.toast.error { border-left: 3px solid #ef4444; }
+.toast.info { border-left: 3px solid #3b82f6; }
+.toast.warn { border-left: 3px solid #f59e0b; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(40px) scale(0.96); } to { opacity: 1; transform: none; } }
+.toast.out { animation: toastOut 0.3s ease forwards; }
+@keyframes toastOut { to { opacity: 0; transform: translateX(40px) scale(0.96); } }
+
+/* User Menu */
+.user-menu { position: relative; }
+.user-menu-panel { position: absolute; right: 0; top: calc(100% + 8px); background: #12141c; border: 1px solid #2a2d37; border-radius: 14px; min-width: 220px; padding: 6px; box-shadow: 0 20px 45px -12px #000; display: none; z-index: 60; }
+.user-menu-panel.show { display: block; animation: fadeIn 0.2s ease; }
+.user-menu-panel a, .user-menu-panel button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 12px; border-radius: 9px; font-size: 13px; color: #c3cbdb; transition: all 0.15s; text-decoration: none; background: none; border: none; cursor: pointer; text-align: left; }
+.user-menu-panel a:hover, .user-menu-panel button:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.user-menu-panel i { width: 14px; text-align: center; }
+
+/* Plan modal */
+.plan-highlight { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.08)); border: 1px solid rgba(59,130,246,0.3); border-radius: 14px; padding: 16px; }
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Navbar -->
+<nav class="fixed top-0 w-full z-50 bg-[#0a0c14]/90 backdrop-blur-md border-b border-gray-800">
+    <div class="container mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2 md:gap-3">
+            <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-blue-400 rounded-lg md:rounded-xl flex items-center justify-center">
+                <i class="fas fa-cloud-upload-alt text-white text-sm md:text-base"></i>
+            </div>
+            <span class="text-lg md:text-xl font-bold">MAXX <span class="text-blue-400">HOSTING</span></span>
+        </div>
+        <div class="hidden lg:flex gap-6 text-sm">
+            <a href="#features" class="text-gray-400 hover:text-white transition">Features</a>
+            <a href="#pricing" class="text-gray-400 hover:text-white transition">Pricing</a>
+            <a href="#how" class="text-gray-400 hover:text-white transition">How It Works</a>
+            <a href="#faq" class="text-gray-400 hover:text-white transition">FAQ</a>
+        </div>
+
+        <!-- Auth-aware right side -->
+        <div id="navGuest" class="flex items-center gap-2">
+            <button onclick="openAuth('login')" class="text-gray-400 hover:text-white text-xs md:text-sm px-3 py-2 hidden sm:block">Login</button>
+            <button onclick="openAuth('register')" class="btn-blue text-xs md:text-sm !py-2 !px-4 md:!py-2.5 md:!px-5">
+                <i class="fas fa-rocket"></i> <span class="hidden sm:inline">Get Started</span>
+            </button>
+        </div>
+        <div id="navUser" class="hidden items-center gap-2">
+            <button onclick="gotoPanel()" class="btn-blue text-xs md:text-sm !py-2 !px-3 hidden sm:inline-flex">
+                <i class="fas fa-gauge"></i> <span class="hidden md:inline">My Panel</span>
+            </button>
+            <div class="user-menu">
+                <button onclick="toggleUserMenu(event)" class="flex items-center gap-2 pl-1 pr-3 py-1 rounded-xl bg-white/[0.05] border border-gray-700 hover:bg-white/[0.09] transition">
+                    <div id="navAvatar" class="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 grid place-items-center text-[11px] md:text-xs font-bold">U</div>
+                    <span id="navUsername" class="text-xs md:text-sm font-semibold hidden sm:block">User</span>
+                    <i class="fas fa-chevron-down text-[9px] text-gray-500"></i>
+                </button>
+                <div class="user-menu-panel" id="userMenuPanel">
+                    <div class="px-3 py-2 border-b border-gray-800 mb-1">
+                        <p class="text-sm font-bold" id="menuUsername">User</p>
+                        <p class="text-[11px] text-gray-500 truncate" id="menuEmail">user@mail.com</p>
+                        <span id="menuPlanBadge" class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400">Free Plan</span>
+                    </div>
+                    <button onclick="gotoPanel()"><i class="fas fa-gauge text-blue-400"></i> My Panel</button>
+                    <button onclick="openMyOrders()"><i class="fas fa-receipt text-violet-400"></i> My Orders</button>
+                    <button onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'});closeUserMenu()"><i class="fas fa-crown text-amber-400"></i> Upgrade Plan</button>
+                    <div class="h-px bg-gray-800 my-1"></div>
+                    <button onclick="logout()" style="color:#f87171"><i class="fas fa-right-from-bracket"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="pt-24 md:pt-32 pb-16 md:pb-20 px-4 md:px-6 hero-glow">
+    <div class="container mx-auto text-center max-w-4xl">
+        <div class="inline-block bg-blue-500/10 border border-blue-500/30 rounded-full px-3 md:px-4 py-1 md:py-1.5 text-xs text-blue-400 mb-4 md:mb-6">
+            🚀 Free Python Bot Hosting Platform
+        </div>
+        <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-4 md:mb-6 leading-tight">
+            Host Your <span class="gradient-text">Python Bots</span><br>For Free Forever!
+        </h1>
+        <p class="text-gray-400 text-sm md:text-lg lg:text-xl mb-8 md:mb-10 max-w-2xl mx-auto px-2">
+            The easiest way to host your Telegram/Discord bots. Create an account, pick a plan, and deploy instantly. 24/7 uptime, instant setup!
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center">
+            <button onclick="openAuth('register')" class="btn-blue text-sm md:text-base w-full sm:w-auto justify-center">
+                <i class="fas fa-rocket"></i> Get Started Free
+            </button>
+            <a href="https://t.me/styen18" target="_blank" class="btn-dark text-sm md:text-base w-full sm:w-auto justify-center">
+                <i class="fab fa-telegram"></i> Contact Developer
+            </a>
+        </div>
+        <div class="grid grid-cols-3 gap-4 md:gap-6 mt-12 md:mt-16 max-w-lg mx-auto">
+            <div><div class="stat-number" id="statPanels">500+</div><div class="text-gray-500 text-[10px] md:text-xs">Active Panels</div></div>
+            <div><div class="stat-number">24/7</div><div class="text-gray-500 text-[10px] md:text-xs">Uptime</div></div>
+            <div><div class="stat-number">Free</div><div class="text-gray-500 text-[10px] md:text-xs">Forever</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="py-16 md:py-20 px-4 md:px-6">
+    <div class="container mx-auto max-w-6xl">
+        <div class="text-center mb-12 md:mb-16">
+            <h2 class="text-2xl md:text-4xl font-bold mb-3 md:mb-4">Why Choose <span class="gradient-text">MAXX HOSTING</span>?</h2>
+            <p class="text-gray-400 text-sm md:text-base">Everything you need to host your Python bots</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div class="card p-4 md:p-6"><div class="feature-icon bg-blue-500/20 text-blue-400 mb-3 md:mb-4"><i class="fas fa-bolt"></i></div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Instant Setup</h3><p class="text-gray-400 text-xs md:text-sm">Create your panel in seconds. No complex configuration needed.</p></div>
+            <div class="card p-4 md:p-6"><div class="feature-icon bg-green-500/20 text-green-400 mb-3 md:mb-4"><i class="fas fa-shield-halved"></i></div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">24/7 Uptime</h3><p class="text-gray-400 text-xs md:text-sm">Your bots run around the clock with automatic crash recovery.</p></div>
+            <div class="card p-4 md:p-6"><div class="feature-icon bg-purple-500/20 text-purple-400 mb-3 md:mb-4"><i class="fas fa-gift"></i></div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Referral Rewards</h3><p class="text-gray-400 text-xs md:text-sm">Get a FREE panel for every 5 referrals. Unlimited rewards!</p></div>
+            <div class="card p-4 md:p-6"><div class="feature-icon bg-yellow-500/20 text-yellow-400 mb-3 md:mb-4"><i class="fas fa-file-code"></i></div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">File Manager</h3><p class="text-gray-400 text-xs md:text-sm">Upload, edit, rename files directly from browser with ZIP support.</p></div>
+            <div class="card p-4 md:p-6"><div class="feature-icon bg-red-500/20 text-red-400 mb-3 md:mb-4"><i class="fas fa-terminal"></i></div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Web Console</h3><p class="text-gray-400 text-xs md:text-sm">Real-time log viewer. See your bot output instantly.</p></div>
+            <div class="card p-4 md:p-6"><div class="feature-icon bg-cyan-500/20 text-cyan-400 mb-3 md:mb-4"><i class="fas fa-gauge"></i></div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Resource Monitor</h3><p class="text-gray-400 text-xs md:text-sm">Track CPU, RAM, and Network usage in real-time.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section id="how" class="py-16 md:py-20 px-4 md:px-6 bg-[#0e1018]">
+    <div class="container mx-auto max-w-4xl text-center">
+        <h2 class="text-2xl md:text-4xl font-bold mb-12 md:mb-16">How It <span class="gradient-text">Works</span></h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
+            <div><div class="w-14 h-14 md:w-16 md:h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mb-3 md:mb-4">1</div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Create Account</h3><p class="text-gray-400 text-xs md:text-sm">Register free in seconds — no credit card needed.</p></div>
+            <div><div class="w-14 h-14 md:w-16 md:h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mb-3 md:mb-4">2</div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Choose a Plan</h3><p class="text-gray-400 text-xs md:text-sm">Pick free, standard, or premium — upgrade anytime.</p></div>
+            <div><div class="w-14 h-14 md:w-16 md:h-16 bg-blue-600 rounded-2xl flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mb-3 md:mb-4">3</div><h3 class="font-bold text-base md:text-lg mb-1 md:mb-2">Deploy &amp; Run</h3><p class="text-gray-400 text-xs md:text-sm">Upload your bot file and hit Start. Done!</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing (dynamic) -->
+<section id="pricing" class="py-16 md:py-20 px-4 md:px-6">
+    <div class="container mx-auto max-w-5xl">
+        <div class="text-center mb-12 md:mb-16">
+            <h2 class="text-2xl md:text-4xl font-bold mb-3 md:mb-4">Simple <span class="gradient-text">Pricing</span></h2>
+            <p class="text-gray-400 text-sm md:text-base">Get started for free, upgrade when needed</p>
+        </div>
+        <div id="pricingGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"></div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="py-16 md:py-20 px-4 md:px-6 bg-[#0e1018]">
+    <div class="container mx-auto max-w-3xl">
+        <div class="text-center mb-12 md:mb-16"><h2 class="text-2xl md:text-4xl font-bold mb-3 md:mb-4">Frequently <span class="gradient-text">Asked Questions</span></h2></div>
+        <div class="space-y-3 md:space-y-4">
+            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">🤔 How do I get a free panel?</h3><p class="text-gray-400 text-xs md:text-sm">Register an account and pick the Free plan. You can unlock more by sharing your referral link with 5 friends!</p></div>
+            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">⚡ How fast is the setup?</h3><p class="text-gray-400 text-xs md:text-sm">Instant! As soon as you create a panel, it's ready to use. Just upload your bot file and click Start.</p></div>
+            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">🔄 What happens after expiry?</h3><p class="text-gray-400 text-xs md:text-sm">Your panel expires. But you can get another one by referring 5 more people! Or buy a longer plan.</p></div>
+            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">🐍 What Python version?</h3><p class="text-gray-400 text-xs md:text-sm">Python 3.12+ with auto pip install support. All your requirements.txt packages will be installed automatically!</p></div>
+            <div class="card p-4 md:p-6"><h3 class="font-bold text-sm md:text-base mb-1 md:mb-2">💳 How do I pay for a plan?</h3><p class="text-gray-400 text-xs md:text-sm">After registering, click "Buy Now" on any paid plan. Contact @styen18 on Telegram with your order ID to complete payment.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 md:py-20 px-4 md:px-6 text-center">
+    <div class="container mx-auto max-w-3xl">
+        <h2 class="text-2xl md:text-4xl font-bold mb-4 md:mb-6">Ready to <span class="gradient-text">Get Started</span>?</h2>
+        <p class="text-gray-400 text-sm md:text-base mb-8 md:mb-10">Join hundreds of developers hosting their bots for free!</p>
+        <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
+            <button onclick="openAuth('register')" class="btn-blue text-sm md:text-base w-full sm:w-auto justify-center"><i class="fas fa-rocket"></i> Get Started Free</button>
+            <a href="https://t.me/styen18" target="_blank" class="btn-dark text-sm md:text-base w-full sm:w-auto justify-center"><i class="fab fa-telegram"></i> Contact Developer</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-gray-800 py-8 md:py-10 px-4 md:px-6">
+    <div class="container mx-auto max-w-6xl">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                    <div class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-blue-400 rounded-lg md:rounded-xl flex items-center justify-center"><i class="fas fa-cloud-upload-alt text-white text-sm md:text-base"></i></div>
+                    <span class="text-lg md:text-xl font-bold">MAXX <span class="text-blue-400">HOSTING</span></span>
+                </div>
+                <p class="text-gray-500 text-xs md:text-sm">Free Python Bot Hosting Platform. Made with ❤️ in Bangladesh.</p>
+            </div>
+            <div><h4 class="font-bold text-sm md:text-base mb-3 md:mb-4">Quick Links</h4><ul class="text-gray-500 text-xs md:text-sm space-y-1.5 md:space-y-2">
+                <li><a href="https://t.me/zip_extrctor_bot" target="_blank" class="hover:text-blue-400">Telegram Bot</a></li>
+                <li><a href="https://t.me/styen18" target="_blank" class="hover:text-blue-400">Support</a></li>
+                <li><a href="https://t.me/styen18" target="_blank" class="hover:text-blue-400">Channel</a></li>
+                <li><a href="https://t.me/fflike1" target="_blank" class="hover:text-blue-400">Group</a></li>
+            </ul></div>
+            <div><h4 class="font-bold text-sm md:text-base mb-3 md:mb-4">Contact</h4><ul class="text-gray-500 text-xs md:text-sm space-y-1.5 md:space-y-2">
+                <li><i class="fab fa-telegram-plane mr-2"></i> @styen18</li>
+                <li><i class="fas fa-globe mr-2"></i> MAXX-hosting.onrender.com</li>
+            </ul></div>
+        </div>
+        <div class="border-t border-gray-800 pt-4 md:pt-6 text-center text-gray-600 text-[10px] md:text-xs">&copy; 2026 MAXX HOSTING. All rights reserved.</div>
+    </div>
+</footer>
+
+<!-- ═══════════ AUTH MODAL ═══════════ -->
+<div id="authModal" class="modal">
+    <div class="modal-card relative" style="max-width:440px">
+        <button onclick="closeAuth()" class="close-x"><i class="fas fa-times text-sm"></i></button>
+        <div class="text-center mb-5">
+            <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-blue-600 to-blue-400 grid place-items-center mb-3 shadow-lg">
+                <i class="fas fa-cloud-upload-alt text-white"></i>
+            </div>
+            <h3 class="text-xl font-extrabold">MAXX <span class="text-blue-400">HOSTING</span></h3>
+            <p class="text-gray-500 text-xs mt-1" id="authSubtitle">Welcome back! Login to continue.</p>
+        </div>
+
+        <div class="flex gap-1 p-1 bg-black/30 rounded-xl mb-4">
+            <button class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')"><i class="fas fa-right-to-bracket mr-1.5 text-xs"></i>Login</button>
+            <button class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')"><i class="fas fa-user-plus mr-1.5 text-xs"></i>Register</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" onsubmit="submitLogin(event)" class="space-y-3">
+            <div>
+                <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Username or Email</label>
+                <input type="text" id="loginIdentifier" class="auth-input" placeholder="Enter username or email" autocomplete="username" required>
+            </div>
+            <div>
+                <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Password</label>
+                <div class="relative">
+                    <input type="password" id="loginPassword" class="auth-input pr-10" placeholder="Enter password" autocomplete="current-password" required>
+                    <button type="button" onclick="togglePass('loginPassword',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"><i class="fas fa-eye text-xs"></i></button>
+                </div>
+            </div>
+            <button type="submit" class="btn-blue w-full justify-center !py-3 text-sm"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</button>
+            <p class="text-center text-xs text-gray-500">Don't have an account? <button type="button" onclick="switchAuthTab('register')" class="text-blue-400 hover:underline font-semibold">Register now</button></p>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="registerForm" onsubmit="submitRegister(event)" class="space-y-3 hidden">
+            <div>
+                <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Username</label>
+                <input type="text" id="regUsername" class="auth-input" placeholder="Choose a username" minlength="3" maxlength="20" autocomplete="username" required>
+            </div>
+            <div>
+                <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Email</label>
+                <input type="email" id="regEmail" class="auth-input" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+            <div>
+                <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Password</label>
+                <div class="relative">
+                    <input type="password" id="regPassword" class="auth-input pr-10" placeholder="Min 6 characters" minlength="6" autocomplete="new-password" required>
+                    <button type="button" onclick="togglePass('regPassword',this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"><i class="fas fa-eye text-xs"></i></button>
+                </div>
+            </div>
+            <div>
+                <label class="text-gray-400 text-[11px] font-semibold uppercase tracking-wider mb-1.5 block">Confirm Password</label>
+                <input type="password" id="regConfirm" class="auth-input" placeholder="Re-enter password" autocomplete="new-password" required>
+            </div>
+            <label class="flex items-start gap-2 text-[11px] text-gray-500 cursor-pointer pt-1">
+                <input type="checkbox" id="regTerms" class="mt-0.5 accent-blue-500" required>
+                <span>I agree to the <a href="#" class="text-blue-400">Terms of Service</a> and <a href="#" class="text-blue-400">Privacy Policy</a>.</span>
+            </label>
+            <button type="submit" class="btn-blue w-full justify-center !py-3 text-sm"><i class="fas fa-user-plus"></i> Create Account</button>
+            <p class="text-center text-xs text-gray-500">Already registered? <button type="button" onclick="switchAuthTab('login')" class="text-blue-400 hover:underline font-semibold">Login here</button></p>
+        </form>
+    </div>
+</div>
+
+<!-- ═══════════ BUY MODAL ═══════════ -->
+<div id="buyModal" class="modal">
+    <div class="modal-card relative">
+        <button onclick="closeBuy()" class="close-x"><i class="fas fa-times text-sm"></i></button>
+        <h3 class="text-lg font-extrabold mb-1"><i class="fas fa-shopping-cart text-blue-400 mr-2"></i>Confirm Purchase</h3>
+        <p class="text-gray-500 text-xs mb-4">Review your plan before confirming</p>
+        <div id="buyDetails" class="plan-highlight mb-4"></div>
+        <div class="bg-black/30 rounded-xl p-3 mb-4 text-[11px] text-gray-400 space-y-1">
+            <p><i class="fas fa-info-circle text-blue-400 mr-1.5"></i>Payment is completed manually via Telegram.</p>
+            <p><i class="fab fa-telegram text-blue-400 mr-1.5"></i>Contact <a href="https://t.me/styen18" target="_blank" class="text-blue-400 font-semibold">@styen18</a> with your Order ID.</p>
+        </div>
+        <button onclick="confirmPurchase()" class="btn-blue w-full justify-center !py-3 text-sm"><i class="fas fa-check"></i> Confirm Order</button>
+        <button onclick="closeBuy()" class="btn-dark w-full justify-center !py-2.5 text-sm mt-2">Cancel</button>
+    </div>
+</div>
+
+<!-- ═══════════ ORDERS MODAL ═══════════ -->
+<div id="ordersModal" class="modal">
+    <div class="modal-card relative" style="max-width:520px">
+        <button onclick="closeOrders()" class="close-x"><i class="fas fa-times text-sm"></i></button>
+        <h3 class="text-lg font-extrabold mb-1"><i class="fas fa-receipt text-violet-400 mr-2"></i>My Orders</h3>
+        <p class="text-gray-500 text-xs mb-4">Your purchase history</p>
+        <div id="ordersList" class="space-y-2 max-h-[400px] overflow-y-auto"></div>
+    </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   STORAGE HELPERS
+   ═══════════════════════════════════════════════════════ */
+const DEFAULT_PLANS = [
+    { id: 'free',     name: 'Free',     icon: '🆓', price: 0, period: 'Via Referrals',   ram: '1GB', disk: '1GB', cpu: '30%', validDays: 3,  features: ['5 Referrals Required','3 Days Validity','1GB RAM / 1GB Disk','30% CPU Limit'], popular: false, active: true },
+    { id: 'standard', name: 'Standard', icon: '⭐', price: 2, period: '7 Days Panel',    ram: '1GB', disk: '1GB', cpu: '50%', validDays: 7,  features: ['No Referrals Needed','7 Days Validity','1GB RAM / 1GB Disk','50% CPU Limit'],   popular: true,  active: true },
+    { id: 'premium',  name: 'Premium',  icon: '💎', price: 5, period: '30 Days Panel',   ram: '2GB', disk: '2GB', cpu: '80%', validDays: 30, features: ['No Referrals Needed','30 Days Validity','2GB RAM / 2GB Disk','80% CPU Limit'], popular: false, active: true }
+];
+
+const store = {
+    get: (k, def) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch(e){ return def; } },
+    set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+};
+
+function getPlans(){ let p = store.get('maxx_plans', null); if(!p || !Array.isArray(p) || !p.length){ store.set('maxx_plans', DEFAULT_PLANS); p = DEFAULT_PLANS; } return p; }
+function getUsers(){ return store.get('maxx_users', []); }
+function saveUsers(u){ store.set('maxx_users', u); }
+function getSession(){ return store.get('maxx_session', null); }
+function saveSession(s){ store.set('maxx_session', s); }
+function clearSession(){ localStorage.removeItem('maxx_session'); }
+function getOrders(){ return store.get('maxx_orders', []); }
+function saveOrders(o){ store.set('maxx_orders', o); }
+
+/* hash (client-side only — not for production) */
+async function hashPwd(p){
+    const buf = new TextEncoder().encode(p);
+    const h = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════════════ */
+function toast(msg, type='info', dur=3500){
+    const icons = { success:'fa-check', error:'fa-xmark', info:'fa-circle-info', warn:'fa-triangle-exclamation' };
+    const colors = { success:'#10b981', error:'#ef4444', info:'#3b82f6', warn:'#f59e0b' };
+    const c = colors[type], i = icons[type];
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.innerHTML = `<div style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:${c}22;color:${c};flex:none"><i class="fas ${i}" style="font-size:10px"></i></div><span style="flex:1">${msg}</span>`;
+    document.getElementById('toastWrap').appendChild(el);
+    setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, dur);
+}
+
+/* ═══════════════════════════════════════════════════════
+   RENDER PLANS
+   ═══════════════════════════════════════════════════════ */
+function renderPlans(){
+    const plans = getPlans().filter(p => p.active !== false);
+    const grid = document.getElementById('pricingGrid');
+    if(!plans.length){ grid.innerHTML = '<p class="text-center text-gray-500 col-span-full">No plans available.</p>'; return; }
+
+    grid.innerHTML = plans.map(p => {
+        const isFree = Number(p.price) === 0;
+        const btnClass = p.popular ? 'btn-blue' : 'btn-dark';
+        const btnLabel = isFree ? 'Get Free' : 'Buy Now';
+        return `
+        <div class="pricing-card ${p.popular ? 'popular' : ''} p-6 md:p-8 text-center">
+            ${p.popular ? '<div class="popular-badge">🔥 Most Popular</div>' : ''}
+            <div class="text-3xl md:text-4xl mb-3 md:mb-4">${p.icon || '🎁'}</div>
+            <h3 class="font-bold text-lg md:text-xl mb-1 md:mb-2">${p.name}</h3>
+            <p class="text-gray-400 text-xs md:text-sm mb-4 md:mb-6">${p.period || ''}</p>
+            <div class="text-3xl md:text-4xl font-extrabold mb-4 md:mb-6">$${p.price}</div>
+            <ul class="text-xs md:text-sm text-gray-400 space-y-2 md:space-y-3 mb-6 md:mb-8 text-left">
+                ${(p.features||[]).map(f => `<li><i class="fas fa-check text-green-400 mr-2"></i> ${f}</li>`).join('')}
+            </ul>
+            <button onclick="buyPlan('${p.id}')" class="${btnClass} w-full justify-center text-sm md:text-base">${btnLabel}</button>
+        </div>`;
+    }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   AUTH MODAL
+   ═══════════════════════════════════════════════════════ */
+let pendingPlanId = null;
+
+function openAuth(tab='login'){
+    document.getElementById('authModal').classList.add('show');
+    switchAuthTab(tab);
+    document.body.style.overflow = 'hidden';
+}
+function closeAuth(){
+    document.getElementById('authModal').classList.remove('show');
+    document.body.style.overflow = '';
+}
+function switchAuthTab(tab){
+    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+    document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+    document.getElementById('authSubtitle').textContent = tab === 'login'
+        ? 'Welcome back! Login to continue.'
+        : 'Create your free account in seconds.';
+}
+function togglePass(id, btn){
+    const i = document.getElementById(id);
+    const e = btn.querySelector('i');
+    if(i.type === 'password'){ i.type = 'text'; e.className = 'fas fa-eye-slash text-xs'; }
+    else { i.type = 'password'; e.className = 'fas fa-eye text-xs'; }
+}
+
+async function submitRegister(e){
+    e.preventDefault();
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const pass = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regConfirm').value;
+
+    if(!/^[a-zA-Z0-9_]{3,20}$/.test(username)){ toast('Username: 3-20 chars (a-z, 0-9, _)','error'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ toast('Enter a valid email','error'); return; }
+    if(pass.length < 6){ toast('Password must be at least 6 characters','error'); return; }
+    if(pass !== confirm){ toast('Passwords do not match','error'); return; }
+
+    const users = getUsers();
+    if(users.some(u => u.username.toLowerCase() === username.toLowerCase())){ toast('Username already taken','error'); return; }
+    if(users.some(u => u.email === email)){ toast('Email already registered','error'); return; }
+
+    const hashed = await hashPwd(pass);
+    const newUser = { username, email, password: hashed, plan: 'free', createdAt: new Date().toISOString() };
+    users.push(newUser);
+    saveUsers(users);
+
+    saveSession({ username: newUser.username, email: newUser.email, plan: newUser.plan, loginAt: Date.now() });
+    toast('🎉 Account created! Welcome to MAXX HOSTING', 'success');
+    closeAuth();
+    refreshAuthUI();
+    e.target.reset();
+
+    // If there's a pending plan to buy, open buy modal
+    if(pendingPlanId){ setTimeout(() => { openBuy(pendingPlanId); pendingPlanId = null; }, 400); }
+}
+
+async function submitLogin(e){
+    e.preventDefault();
+    const id = document.getElementById('loginIdentifier').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+
+    const users = getUsers();
+    const user = users.find(u => u.username.toLowerCase() === id.toLowerCase() || u.email === id.toLowerCase());
+    if(!user){ toast('Invalid credentials','error'); return; }
+
+    const hashed = await hashPwd(pass);
+    if(user.password !== hashed){ toast('Invalid credentials','error'); return; }
+
+    saveSession({ username: user.username, email: user.email, plan: user.plan || 'free', loginAt: Date.now() });
+    toast('Welcome back, ' + user.username + '!', 'success');
+    closeAuth();
+    refreshAuthUI();
+    e.target.reset();
+
+    if(pendingPlanId){ setTimeout(() => { openBuy(pendingPlanId); pendingPlanId = null; }, 400); }
+}
+
+function logout(){
+    clearSession();
+    closeUserMenu();
+    refreshAuthUI();
+    toast('Logged out successfully','info');
+}
+
+/* ═══════════════════════════════════════════════════════
+   AUTH UI STATE
+   ═══════════════════════════════════════════════════════ */
+function refreshAuthUI(){
+    const session = getSession();
+    const navGuest = document.getElementById('navGuest');
+    const navUser = document.getElementById('navUser');
+
+    if(session){
+        navGuest.classList.add('hidden');
+        navUser.classList.remove('hidden');
+        navUser.classList.add('flex');
+        const letter = session.username[0].toUpperCase();
+        document.getElementById('navAvatar').textContent = letter;
+        document.getElementById('navUsername').textContent = session.username;
+        document.getElementById('menuUsername').textContent = session.username;
+        document.getElementById('menuEmail').textContent = session.email;
+        const badge = document.getElementById('menuPlanBadge');
+        badge.textContent = (session.plan || 'free').charAt(0).toUpperCase() + (session.plan || 'free').slice(1) + ' Plan';
+    } else {
+        navGuest.classList.remove('hidden');
+        navUser.classList.add('hidden');
+        navUser.classList.remove('flex');
+    }
+}
+
+function toggleUserMenu(e){
+    e.stopPropagation();
+    document.getElementById('userMenuPanel').classList.toggle('show');
+}
+function closeUserMenu(){ document.getElementById('userMenuPanel').classList.remove('show'); }
+document.addEventListener('click', e => {
+    if(!e.target.closest('.user-menu')) closeUserMenu();
+});
+
+/* ═══════════════════════════════════════════════════════
+   BUY FLOW
+   ═══════════════════════════════════════════════════════ */
+function buyPlan(planId){
+    const plan = getPlans().find(p => p.id === planId);
+    if(!plan){ toast('Plan not found','error'); return; }
+
+    const session = getSession();
+    if(!session){
+        // Free plan → prompt register, others → prompt auth too
+        pendingPlanId = planId;
+        openAuth('register');
+        toast('Create an account to continue','info');
+        return;
+    }
+
+    if(Number(plan.price) === 0){
+        // Free plan — no purchase needed, direct to Telegram bot
+        toast('Free plan activated! Visit our Telegram bot to set it up.','success');
+        setTimeout(() => window.open('https://t.me/zip_extrctor_bot','_blank'), 1200);
+        return;
+    }
+
+    openBuy(planId);
+}
+
+function openBuy(planId){
+    const plan = getPlans().find(p => p.id === planId);
+    if(!plan) return;
+    const session = getSession();
+    if(!session){ pendingPlanId = planId; openAuth('login'); return; }
+
+    document.getElementById('buyDetails').innerHTML = `
+        <div class="flex items-center gap-3 mb-3">
+            <div class="text-3xl">${plan.icon}</div>
+            <div>
+                <p class="font-bold text-base">${plan.name}</p>
+                <p class="text-[11px] text-gray-400">${plan.period}</p>
+            </div>
+            <div class="ml-auto text-right">
+                <p class="text-2xl font-extrabold text-blue-400">$${plan.price}</p>
+            </div>
+        </div>
+        <ul class="text-xs text-gray-300 space-y-1.5">
+            ${(plan.features||[]).map(f => `<li><i class="fas fa-check text-green-400 mr-2"></i>${f}</li>`).join('')}
+        </ul>
+    `;
+    document.getElementById('buyModal').classList.add('show');
+    document.getElementById('buyModal').dataset.planId = planId;
+    document.body.style.overflow = 'hidden';
+}
+
+function closeBuy(){
+    document.getElementById('buyModal').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+function confirmPurchase(){
+    const planId = document.getElementById('buyModal').dataset.planId;
+    const plan = getPlans().find(p => p.id === planId);
+    const session = getSession();
+    if(!plan || !session) return;
+
+    const orderId = 'MAX-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+    const order = {
+        id: orderId,
+        username: session.username,
+        email: session.email,
+        planId: plan.id,
+        planName: plan.name,
+        price: plan.price,
+        purchasedAt: new Date().toISOString(),
+        status: 'pending'
+    };
+
+    const orders = getOrders();
+    orders.push(order);
+    saveOrders(orders);
+
+    // Update user's current plan
+    const users = getUsers();
+    const idx = users.findIndex(u => u.username === session.username);
+    if(idx >= 0){ users[idx].plan = plan.id; saveUsers(users); }
+    session.plan = plan.id;
+    saveSession(session);
+    refreshAuthUI();
+
+    closeBuy();
+
+    // Show order summary
+    const html = `
+        <div class="text-center py-2">
+            <div class="w-14 h-14 mx-auto rounded-full bg-green-500/20 grid place-items-center mb-3">
+                <i class="fas fa-check text-2xl text-green-400"></i>
+            </div>
+            <h3 class="text-lg font-extrabold mb-1">Order Confirmed!</h3>
+            <p class="text-gray-400 text-xs mb-4">Your order has been created successfully.</p>
+            <div class="bg-black/40 rounded-xl p-3 text-left text-xs font-mono mb-4">
+                <p class="text-gray-500 mb-1">Order ID:</p>
+                <p class="text-blue-400 font-bold break-all">${orderId}</p>
+                <p class="text-gray-500 mt-2 mb-1">Plan:</p>
+                <p class="text-white">${plan.name} — $${plan.price}</p>
+            </div>
+            <p class="text-[11px] text-gray-500 mb-4">Send this Order ID to <a href="https://t.me/styen18" target="_blank" class="text-blue-400 font-semibold">@styen18</a> on Telegram to complete payment &amp; activate your plan.</p>
+            <a href="https://t.me/styen18" target="_blank" class="btn-blue w-full justify-center !py-2.5 text-sm"><i class="fab fa-telegram"></i> Open Telegram</a>
+        </div>
+    `;
+
+    // Reuse buy modal for confirmation
+    const modalCard = document.querySelector('#buyModal .modal-card');
+    const originalHTML = modalCard.innerHTML;
+    modalCard.innerHTML = '<button onclick="closeBuy();location.reload()" class="close-x"><i class="fas fa-times text-sm"></i></button>' + html;
+
+    document.getElementById('buyModal').classList.add('show');
+    toast('Order created successfully!','success',4000);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ORDERS MODAL
+   ═══════════════════════════════════════════════════════ */
+function openMyOrders(){
+    closeUserMenu();
+    const session = getSession();
+    if(!session){ openAuth('login'); return; }
+    const orders = getOrders().filter(o => o.username === session.username);
+    const list = document.getElementById('ordersList');
+    if(!orders.length){
+        list.innerHTML = `<div class="text-center py-10 text-gray-500">
+            <i class="fas fa-receipt text-3xl mb-2 block opacity-40"></i>
+            <p class="text-sm">No orders yet</p>
+            <p class="text-xs mt-1">Purchase a plan to see it here.</p>
+        </div>`;
+    } else {
+        list.innerHTML = orders.slice().reverse().map(o => `
+            <div class="bg-black/30 rounded-xl p-3 text-xs">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-white">${o.planName}</span>
+                    <span class="font-mono text-blue-400 font-semibold">$${o.price}</span>
+                </div>
+                <p class="text-gray-500 font-mono text-[10px] break-all mb-1">${o.id}</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-500 text-[10px]">${new Date(o.purchasedAt).toLocaleDateString()}</span>
+                    <span class="pill text-[9px] px-2 py-0.5 rounded-full font-bold ${o.status === 'pending' ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}">${o.status.toUpperCase()}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+    document.getElementById('ordersModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+function closeOrders(){
+    document.getElementById('ordersModal').classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+function gotoPanel(){
+    closeUserMenu();
+    const session = getSession();
+    if(!session){ openAuth('login'); return; }
+    // Redirect to user panel (adjust path if different)
+    window.location.href = '/panel';
+}
+
+/* ═══════════════════════════════════════════════════════
+   MODAL CLOSE ON OVERLAY
+   ═══════════════════════════════════════════════════════ */
+['authModal','buyModal','ordersModal'].forEach(id => {
+    document.getElementById(id).addEventListener('click', e => {
+        if(e.target.id === id){
+            if(id === 'authModal') closeAuth();
+            if(id === 'buyModal') closeBuy();
+            if(id === 'ordersModal') closeOrders();
+        }
+    });
+});
+document.addEventListener('keydown', e => {
+    if(e.key === 'Escape'){
+        closeAuth(); closeBuy(); closeOrders(); closeUserMenu();
+    }
+});
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════ */
+renderPlans();
+refreshAuthUI();
+
+// Sync across tabs — if admin updates plans, refresh landing
+window.addEventListener('storage', e => {
+    if(e.key === 'maxx_plans') renderPlans();
+    if(e.key === 'maxx_session') refreshAuthUI();
+});
+</script>
+</body>
+</html>
