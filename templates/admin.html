@@ -1,624 +1,1812 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin | MAXX HOSTING</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { background-color: #0a0c12; color: #ffffff; font-family: 'Segoe UI', sans-serif; }
-        .glass { background: rgba(18, 20, 28, 0.8); backdrop-filter: blur(10px); }
-        .gradient-border { border: 1px solid rgba(59, 130, 246, 0.3); }
-        .pulse { animation: pulse 2s infinite; }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .hover-glow:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-        input[type="range"] {
-            -webkit-appearance: none;
-            height: 8px;
-            border-radius: 4px;
-            background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
-            outline: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-            border: 2px solid white;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAXX HOSTING — Admin Control Panel</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','sans-serif'], mono: ['JetBrains Mono','monospace'] },
+      colors: { accent: 'rgb(var(--accent) / <alpha-value>)' }
+    }
+  }
+}
+</script>
+
+<style>
+  :root{
+    --accent: 59 130 246;
+    --bg: #06080f;
+    --panel: #0d1018;
+    --panel2: #131824;
+    --line: rgba(255,255,255,.07);
+    --muted: #7b869b;
+  }
+  *{ -webkit-tap-highlight-color: transparent; }
+  html{ scroll-behavior:smooth; }
+  body{
+    font-family:'Inter',sans-serif;
+    background: var(--bg);
+    color:#e9edf7;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(900px 500px at 12% -8%, rgb(var(--accent) / .16), transparent 60%),
+      radial-gradient(700px 420px at 92% 4%, rgba(139,92,246,.12), transparent 62%),
+      radial-gradient(800px 500px at 50% 108%, rgba(16,185,129,.07), transparent 60%);
+    transition: background .5s ease;
+  }
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:#242c3d; border-radius:99px; border:2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover{ background:#33405a; }
+
+  .card{
+    background: linear-gradient(170deg, rgba(22,27,40,.92), rgba(13,16,24,.92));
+    border:1px solid var(--line);
+    border-radius:18px;
+    position:relative;
+    backdrop-filter: blur(12px);
+  }
+  .card-glow::after{
+    content:''; position:absolute; inset:-1px; border-radius:18px; padding:1px;
+    background:linear-gradient(140deg, rgb(var(--accent) / .55), transparent 40%, transparent 60%, rgba(139,92,246,.4));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events:none; opacity:.55; transition:opacity .3s;
+  }
+  .card-glow:hover::after{ opacity:1; }
+
+  .lift{ transition: transform .28s cubic-bezier(.2,.8,.3,1), box-shadow .28s, border-color .28s; }
+  .lift:hover{ transform: translateY(-3px); box-shadow: 0 18px 45px -18px rgb(var(--accent) / .55); border-color: rgb(var(--accent) / .35); }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem;
+        border-radius:12px; font-weight:600; font-size:.83rem; padding:.62rem 1.05rem;
+        transition: all .22s cubic-bezier(.2,.8,.3,1); cursor:pointer; border:1px solid transparent; white-space:nowrap; }
+  .btn:active{ transform: scale(.97); }
+  .btn-primary{ background:linear-gradient(135deg, rgb(var(--accent)), rgb(var(--accent) / .68)); color:#fff;
+                box-shadow:0 10px 28px -12px rgb(var(--accent) / .95); }
+  .btn-primary:hover{ filter:brightness(1.12); box-shadow:0 14px 34px -10px rgb(var(--accent) / .95); }
+  .btn-ghost{ background:rgba(255,255,255,.045); border-color:var(--line); color:#c3cbdb; }
+  .btn-ghost:hover{ background:rgba(255,255,255,.09); color:#fff; border-color:rgba(255,255,255,.16); }
+  .btn-danger{ background:rgba(239,68,68,.13); border-color:rgba(239,68,68,.3); color:#f87171; }
+  .btn-danger:hover{ background:rgba(239,68,68,.22); color:#fca5a5; }
+
+  .field{
+    width:100%; background:#0a0d14; border:1px solid #212836; border-radius:12px;
+    padding:.68rem .95rem; font-size:.86rem; color:#e9edf7; outline:none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .field::placeholder{ color:#4d586b; }
+  .field:focus{ border-color: rgb(var(--accent) / .85); box-shadow: 0 0 0 3.5px rgb(var(--accent) / .16); background:#0c1018; }
+  select.field{ appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b869b' stroke-width='2.5'%3e%3cpath d='M6 9l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat:no-repeat; background-position:right .7rem center; background-size:1rem; padding-right:2.2rem; }
+  .lbl{ display:block; font-size:.68rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
+
+  .nav-item{ display:flex; align-items:center; gap:.8rem; padding:.68rem .85rem; border-radius:12px;
+             color:#8d97ab; font-size:.86rem; font-weight:500; cursor:pointer; position:relative;
+             transition: all .2s; border:1px solid transparent; }
+  .nav-item:hover{ background:rgba(255,255,255,.05); color:#e9edf7; }
+  .nav-item.active{ background:linear-gradient(90deg, rgb(var(--accent) / .18), transparent); color:#fff; border-color: rgb(var(--accent) / .25); }
+  .nav-item.active::before{ content:''; position:absolute; left:-10px; top:22%; height:56%; width:3px; border-radius:99px; background: rgb(var(--accent)); box-shadow:0 0 14px rgb(var(--accent)); }
+  .nav-item i{ width:18px; text-align:center; font-size:.9rem; }
+
+  .stat-ico{ width:46px; height:46px; border-radius:14px; display:grid; place-items:center; font-size:1.05rem; }
+
+  .pill{ display:inline-flex; align-items:center; gap:.35rem; font-size:.68rem; font-weight:700;
+         padding:.26rem .6rem; border-radius:999px; letter-spacing:.02em; }
+  .dot{ width:6px; height:6px; border-radius:50%; }
+
+  .pulse-ring{ animation: pulseRing 2s infinite; }
+  @keyframes pulseRing{ 0%{ box-shadow:0 0 0 0 rgba(16,185,129,.55);} 70%{ box-shadow:0 0 0 7px rgba(16,185,129,0);} 100%{ box-shadow:0 0 0 0 rgba(16,185,129,0);} }
+
+  input[type=range]{ -webkit-appearance:none; height:7px; border-radius:99px; width:100%;
+    background: linear-gradient(90deg, #10b981, #f59e0b 55%, #ef4444); outline:none; }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; width:20px; height:20px; border-radius:50%;
+    background:#fff; border:3px solid rgb(var(--accent)); cursor:pointer; box-shadow:0 3px 12px rgba(0,0,0,.6);
+    transition: transform .18s; }
+  input[type=range]::-webkit-slider-thumb:hover{ transform:scale(1.18); }
+
+  .switch{ position:relative; width:42px; height:23px; border-radius:99px; background:#232b3b; cursor:pointer; transition:.25s; flex:none; }
+  .switch::after{ content:''; position:absolute; top:3px; left:3px; width:17px; height:17px; border-radius:50%;
+                  background:#7b869b; transition:.25s cubic-bezier(.2,.8,.3,1); }
+  .switch.on{ background: rgb(var(--accent) / .85); }
+  .switch.on::after{ left:22px; background:#fff; }
+
+  .row-in{ animation: rowIn .45s cubic-bezier(.2,.8,.3,1) backwards; }
+  @keyframes rowIn{ from{ opacity:0; transform: translateY(8px);} to{ opacity:1; transform:none; } }
+
+  .fade-in{ animation: fadeIn .45s ease both; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+
+  .page{ display:none; }
+  .page.active{ display:block; animation: fadeIn .4s ease both; }
+
+  .toast-wrap{ position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; }
+  .toast{ display:flex; align-items:center; gap:.7rem; padding:.8rem 1rem; border-radius:14px; font-size:.82rem; font-weight:500;
+          background:rgba(19,24,36,.97); border:1px solid var(--line); box-shadow:0 20px 45px -18px #000;
+          backdrop-filter:blur(14px); animation: toastIn .35s cubic-bezier(.2,.8,.3,1); min-width:250px; }
+  @keyframes toastIn{ from{ opacity:0; transform: translateX(40px) scale(.96);} to{ opacity:1; transform:none; } }
+  .toast.out{ animation: toastOut .3s ease forwards; }
+  @keyframes toastOut{ to{ opacity:0; transform: translateX(40px) scale(.96);} }
+
+  .drawer{ position:fixed; top:0; right:0; height:100%; width:min(500px,100%); z-index:80;
+           background:linear-gradient(180deg,#0f131c,#0a0d14); border-left:1px solid var(--line);
+           transform: translateX(105%); transition: transform .4s cubic-bezier(.2,.8,.3,1); overflow-y:auto; }
+  .drawer.open{ transform:none; }
+  .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(4px); z-index:70; opacity:0; pointer-events:none; transition:opacity .35s; }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+
+  .tab{ padding:.5rem .9rem; border-radius:10px; font-size:.8rem; font-weight:600; color:#8d97ab; cursor:pointer; transition:.2s; }
+  .tab:hover{ background:rgba(255,255,255,.05); color:#fff; }
+  .tab.active{ background: rgb(var(--accent) / .18); color: rgb(var(--accent)); }
+
+  .swal2-popup{ font-family:'Inter',sans-serif !important; border:1px solid rgba(255,255,255,.09) !important; border-radius:18px !important; }
+
+  #loginScreen{ position:fixed; inset:0; z-index:200; display:grid; place-items:center; padding:1rem;
+                background: radial-gradient(800px 500px at 50% 0%, rgb(var(--accent) / .17), transparent 65%), #06080f; }
+  .login-card{ width:min(420px,100%); background:linear-gradient(170deg, rgba(23,28,42,.96), rgba(12,15,23,.98));
+               border:1px solid rgba(255,255,255,.09); border-radius:22px; padding:2.2rem;
+               box-shadow: 0 40px 100px -40px rgb(var(--accent) / .8), 0 0 0 1px rgba(255,255,255,.03) inset; }
+
+  .skel{ background:linear-gradient(90deg,#161b26,#1e2534,#161b26); background-size:200% 100%; animation:sk 1.3s infinite; }
+  @keyframes sk{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+  .bar{ transition: height .9s cubic-bezier(.2,.8,.3,1); }
+
+  @media (max-width:1023px){
+    #sidebar{ transform: translateX(-105%); }
+    #sidebar.open{ transform:none; }
+  }
+</style>
 </head>
-<body class="bg-[#0a0c12] text-white">
 
-    <!-- Header -->
-    <header class="bg-[#0e1018] border-b border-blue-900/30 px-6 py-4 flex justify-between items-center sticky top-0 z-10 backdrop-blur-sm">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-400 rounded-xl flex items-center justify-center shadow-lg hover-glow transition">
-                <i class="fas fa-cloud-upload-alt text-xl text-white"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold">MAXX <span class="text-blue-400">HOSTING</span></h1>
-                <p class="text-xs text-gray-500">Admin Control Panel</p>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <span class="text-sm text-gray-400 bg-[#1a1d27] px-3 py-1 rounded-full">
-                <i class="fas fa-user-shield mr-1"></i> admin
-            </span>
-            <a href="/logout" class="text-red-400 hover:text-red-300 transition bg-red-500/10 px-3 py-1 rounded-full">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </div>
-    </header>
+<body class="antialiased">
 
-    <div class="container mx-auto p-6 max-w-7xl">
-        
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
-            <div class="bg-[#12141c] rounded-xl gradient-border p-5 hover-glow transition">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-400 text-sm">Total Users</p>
-                        <p class="text-3xl font-bold" id="totalUsers">{{ users|length }}</p>
-                    </div>
-                    <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-users text-xl text-blue-400"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-[#12141c] rounded-xl border border-green-500/20 p-5 hover-glow transition">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-400 text-sm">Total Servers</p>
-                        <p class="text-3xl font-bold" id="totalServers">{{ total_servers }}</p>
-                    </div>
-                    <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-server text-xl text-green-400"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-[#12141c] rounded-xl border border-yellow-500/20 p-5 hover-glow transition">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-400 text-sm">Running</p>
-                        <p class="text-3xl font-bold text-yellow-400" id="totalRunning">{{ total_running }}</p>
-                    </div>
-                    <div class="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-play-circle text-xl text-yellow-400 pulse"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-[#12141c] rounded-xl border border-purple-500/20 p-5 hover-glow transition">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-400 text-sm">Stopped</p>
-                        <p class="text-3xl font-bold text-purple-400" id="totalStopped">{{ total_servers - total_running }}</p>
-                    </div>
-                    <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-stop-circle text-xl text-purple-400"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Create Server Form -->
-        <div class="bg-[#12141c] rounded-xl gradient-border p-6 mb-8 hover-glow transition">
-            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                <i class="fas fa-plus-circle text-blue-400"></i> Create New Server
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="createForm">
-                <!-- Basic Info -->
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Username *</label>
-                    <input type="text" id="newUsername" placeholder="Enter username" 
-                        class="w-full bg-[#0c0e14] border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 outline-none transition">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Password *</label>
-                    <input type="text" id="newPassword" placeholder="Enter password" 
-                        class="w-full bg-[#0c0e14] border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 outline-none transition">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Server Type</label>
-                    <select id="serverType" 
-                        class="w-full bg-[#0c0e14] border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 outline-none transition">
-                        <option value="python">🐍 Python Bot</option>
-                        <option value="node">💚 Node.js</option>
-                        <option value="static">📄 Static Website</option>
-                    </select>
-                </div>
-                
-                <!-- Resources -->
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">RAM</label>
-                    <select id="ram" 
-                        class="w-full bg-[#0c0e14] border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 outline-none transition">
-                        <option value="128MB">128 MB</option>
-                        <option value="256MB">256 MB</option>
-                        <option value="512MB" selected>512 MB</option>
-                        <option value="1GB">1 GB</option>
-                        <option value="2GB">2 GB</option>
-                        <option value="4GB">4 GB</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Disk Space</label>
-                    <select id="disk" 
-                        class="w-full bg-[#0c0e14] border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 outline-none transition">
-                        <option value="512MB">512 MB</option>
-                        <option value="1GB" selected>1 GB</option>
-                        <option value="2GB">2 GB</option>
-                        <option value="5GB">5 GB</option>
-                        <option value="10GB">10 GB</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Expiry (Days)</label>
-                    <input type="number" id="expiryDays" placeholder="30" value="30" min="1" max="365"
-                        class="w-full bg-[#0c0e14] border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 outline-none transition">
-                </div>
-
-                <!-- CPU Rate Limit -->
-                <div class="md:col-span-3">
-                    <label class="block text-xs text-gray-500 mb-2 flex items-center gap-2">
-                        <i class="fas fa-tachometer-alt text-blue-400"></i> 
-                        CPU Rate Limit: <span id="cpuLimitValue" class="text-blue-400 font-bold">80%</span>
-                    </label>
-                    <div class="flex items-center gap-4">
-                        <input type="range" id="cpuLimit" min="10" max="100" value="80" 
-                            class="w-full" oninput="document.getElementById('cpuLimitValue').innerText = this.value + '%'">
-                        <div class="flex gap-2">
-                            <button onclick="setQuickCPU(30)" class="bg-green-600/20 hover:bg-green-600 px-2 py-1 rounded text-xs text-green-400 transition">30%</button>
-                            <button onclick="setQuickCPU(50)" class="bg-yellow-600/20 hover:bg-yellow-600 px-2 py-1 rounded text-xs text-yellow-400 transition">50%</button>
-                            <button onclick="setQuickCPU(80)" class="bg-blue-600/20 hover:bg-blue-600 px-2 py-1 rounded text-xs text-blue-400 transition">80%</button>
-                            <button onclick="setQuickCPU(100)" class="bg-red-600/20 hover:bg-red-600 px-2 py-1 rounded text-xs text-red-400 transition">100%</button>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 text-xs mt-2">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        Server will auto-stop if CPU usage exceeds this limit (10-second average)
-                    </p>
-                </div>
-            </div>
-
-            <!-- Quick Template Buttons -->
-            <div class="mt-5 flex flex-wrap gap-2">
-                <span class="text-xs text-gray-500 flex items-center mr-2">
-                    <i class="fas fa-bolt mr-1"></i> Quick Templates:
-                </span>
-                <button onclick="quickTemplate('discord')" 
-                    class="bg-indigo-600/20 hover:bg-indigo-600/40 px-3 py-1.5 rounded-lg text-xs transition border border-indigo-500/30">
-                    🤖 Discord Bot
-                </button>
-                <button onclick="quickTemplate('telegram')" 
-                    class="bg-blue-600/20 hover:bg-blue-600/40 px-3 py-1.5 rounded-lg text-xs transition border border-blue-500/30">
-                    📨 Telegram Bot
-                </button>
-                <button onclick="quickTemplate('flask')" 
-                    class="bg-green-600/20 hover:bg-green-600/40 px-3 py-1.5 rounded-lg text-xs transition border border-green-500/30">
-                    🌐 Flask App
-                </button>
-                <button onclick="quickTemplate('node')" 
-                    class="bg-yellow-600/20 hover:bg-yellow-600/40 px-3 py-1.5 rounded-lg text-xs transition border border-yellow-500/30">
-                    💚 Node.js App
-                </button>
-            </div>
-
-            <button onclick="createServer()" 
-                class="mt-5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 px-6 py-2.5 rounded-lg font-bold transition transform hover:scale-105 flex items-center gap-2 shadow-lg">
-                <i class="fas fa-check"></i> Create Server
-            </button>
-        </div>
-
-        <!-- Users & Servers List -->
-        <div class="bg-[#12141c] rounded-xl gradient-border overflow-hidden">
-            <div class="p-5 border-b border-gray-800 flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl font-bold"><i class="fas fa-list mr-2"></i>User & Server List</h2>
-                    <p class="text-gray-500 text-xs mt-1">Manage all users and their servers</p>
-                </div>
-                <button onclick="location.reload()" class="bg-gray-700 hover:bg-gray-600 px-3 py-1.5 rounded-lg text-xs transition">
-                    <i class="fas fa-sync-alt mr-1"></i> Refresh
-                </button>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-[#0c0e14]">
-                        <tr class="text-left text-gray-400 text-sm">
-                            <th class="p-4">User</th>
-                            <th class="p-4">Password</th>
-                            <th class="p-4">Server Link</th>
-                            <th class="p-4">Config</th>
-                            <th class="p-4">CPU Limit</th>
-                            <th class="p-4">Status</th>
-                            <th class="p-4">Expiry</th>
-                            <th class="p-4">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if users|length == 0 %}
-                        <tr>
-                            <td colspan="8" class="p-8 text-center text-gray-500">
-                                <i class="fas fa-inbox text-3xl mb-3 block"></i>
-                                No users found. Create your first server!
-                            </td>
-                        </tr>
-                        {% endif %}
-                        
-                        {% for user in users %}
-                            {% for server in user.servers %}
-                            <tr class="border-b border-gray-800 hover:bg-[#1a1d27] transition">
-                                <!-- User Info -->
-                                <td class="p-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                                            <span class="text-xs font-bold text-blue-400">{{ user.username[0] | upper }}</span>
-                                        </div>
-                                        <span class="font-mono text-sm">{{ user.username }}</span>
-                                    </div>
-                                </td>
-                                
-                                <!-- Password -->
-                                <td class="p-4">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-gray-400 text-sm font-mono" id="pass-{{ server.server_id }}">••••••••</span>
-                                        <button onclick="togglePassword('{{ server.server_id }}', '{{ user.password }}')" 
-                                            class="text-gray-500 hover:text-gray-300 text-xs">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                                
-                                <!-- Server Link -->
-                                <td class="p-4">
-                                    <a href="{{ server.login_url }}" target="_blank" 
-                                        class="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1">
-                                        <i class="fas fa-external-link-alt text-xs"></i>
-                                        {{ server.server_id[:12] }}...
-                                    </a>
-                                </td>
-                                
-                                <!-- Config -->
-                                <td class="p-4 text-xs">
-                                    <span class="bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-full">{{ server.type }}</span>
-                                    <span class="text-gray-500 mx-1">|</span>
-                                    <span class="text-gray-400">{{ server.ram }}</span>
-                                    <span class="text-gray-500 mx-1">|</span>
-                                    <span class="text-gray-400">{{ server.disk }}</span>
-                                </td>
-                                
-                                <!-- CPU Limit -->
-                                <td class="p-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-16 bg-gray-800 rounded-full h-2 overflow-hidden">
-                                            <div class="h-full rounded-full transition-all duration-300" 
-                                                style="width: {{ server.cpu_limit | default(80) }}%; 
-                                                    background: {% if server.cpu_limit | default(80) <= 30 %}#10b981
-                                                    {% elif server.cpu_limit | default(80) <= 60 %}#f59e0b
-                                                    {% elif server.cpu_limit | default(80) <= 80 %}#f97316
-                                                    {% else %}#ef4444{% endif %};">
-                                            </div>
-                                        </div>
-                                        <span class="text-xs font-bold 
-                                            {% if server.cpu_limit | default(80) <= 30 %}text-green-400
-                                            {% elif server.cpu_limit | default(80) <= 60 %}text-yellow-400
-                                            {% elif server.cpu_limit | default(80) <= 80 %}text-orange-400
-                                            {% else %}text-red-400{% endif %}">
-                                            {{ server.cpu_limit | default(80) }}%
-                                        </span>
-                                        <button onclick="changeCPULimit('{{ server.server_id }}', {{ server.cpu_limit | default(80) }})" 
-                                            class="text-gray-500 hover:text-blue-400 text-xs" title="Change CPU Limit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                                
-                                <!-- Status -->
-                                <td class="p-4">
-                                    {% if server.rate_limit_exceeded %}
-                                    <span class="px-2 py-1 rounded-full text-xs bg-orange-500/20 text-orange-400 flex items-center gap-1 w-fit">
-                                        <i class="fas fa-exclamation-triangle"></i> Rate Limited
-                                    </span>
-                                    {% elif server.status == 'running' %}
-                                    <span class="px-2 py-1 rounded-full text-xs bg-green-500/20 text-green-400 flex items-center gap-1 w-fit">
-                                        <i class="fas fa-circle text-[6px]"></i> Running
-                                    </span>
-                                    {% else %}
-                                    <span class="px-2 py-1 rounded-full text-xs bg-red-500/20 text-red-400 flex items-center gap-1 w-fit">
-                                        <i class="fas fa-circle text-[6px]"></i> Stopped
-                                    </span>
-                                    {% endif %}
-                                </td>
-                                
-                                <!-- Expiry -->
-                                <td class="p-4">
-                                    <span class="text-yellow-400 text-xs">
-                                        <i class="far fa-calendar-alt mr-1"></i>
-                                        {{ server.expiry[:10] if server.expiry else 'N/A' }}
-                                    </span>
-                                </td>
-                                
-                                <!-- Actions -->
-                                <td class="p-4">
-                                    <div class="flex gap-2">
-                                        <button onclick="changeCPULimit('{{ server.server_id }}', {{ server.cpu_limit | default(80) }})" 
-                                            class="text-blue-400 hover:text-blue-300 text-sm bg-blue-500/10 px-2 py-1 rounded transition"
-                                            title="Change CPU Limit">
-                                            <i class="fas fa-tachometer-alt"></i>
-                                        </button>
-                                        <button onclick="deleteServer('{{ user.username }}', '{{ server.server_id }}')" 
-                                            class="text-red-400 hover:text-red-300 text-sm bg-red-500/10 px-2 py-1 rounded transition"
-                                            title="Delete Server">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!-- ══════════════════ LOGIN SCREEN ══════════════════ -->
+<div id="loginScreen">
+  <div class="login-card fade-in">
+    <div class="flex flex-col items-center text-center mb-7">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-accent/60 grid place-items-center shadow-2xl mb-4"
+           style="box-shadow:0 20px 50px -18px rgb(var(--accent) / .9)">
+        <i class="fas fa-cloud-upload-alt text-2xl text-white"></i>
+      </div>
+      <h1 class="text-2xl font-extrabold tracking-tight">MAXX <span class="text-accent">HOSTING</span></h1>
+      <p class="text-xs text-[#7b869b] mt-1 tracking-widest uppercase font-semibold">Admin Control Panel</p>
     </div>
 
-    <script>
-        // Quick CPU Preset
-        function setQuickCPU(value) {
-            document.getElementById('cpuLimit').value = value;
-            document.getElementById('cpuLimitValue').innerText = value + '%';
-        }
+    <div class="space-y-4">
+      <div>
+        <label class="lbl">Username</label>
+        <div class="relative">
+          <i class="fas fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-sm"></i>
+          <input id="loginUser" type="text" autocomplete="username" placeholder="Enter username"
+                 class="field pl-10" spellcheck="false">
+        </div>
+      </div>
+      <div>
+        <label class="lbl">Password</label>
+        <div class="relative">
+          <i class="fas fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-sm"></i>
+          <input id="loginPass" type="password" autocomplete="current-password" placeholder="Enter password"
+                 class="field pl-10 pr-10">
+          <button type="button" onclick="toggleLoginPass()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] hover:text-white transition">
+            <i id="eyeIcon" class="fas fa-eye text-sm"></i>
+          </button>
+        </div>
+      </div>
 
-        // Quick Template
-        function quickTemplate(type) {
-            document.getElementById('serverType').value = 'python';
-            
-            if (type === 'discord') {
-                document.getElementById('newUsername').value = 'discord_bot_' + Math.random().toString(36).substr(2, 4);
-                document.getElementById('ram').value = '256MB';
-                document.getElementById('cpuLimit').value = 50;
-                document.getElementById('cpuLimitValue').innerText = '50%';
-            } else if (type === 'telegram') {
-                document.getElementById('newUsername').value = 'telegram_bot_' + Math.random().toString(36).substr(2, 4);
-                document.getElementById('ram').value = '128MB';
-                document.getElementById('cpuLimit').value = 30;
-                document.getElementById('cpuLimitValue').innerText = '30%';
-            } else if (type === 'flask') {
-                document.getElementById('newUsername').value = 'flask_app_' + Math.random().toString(36).substr(2, 4);
-                document.getElementById('ram').value = '512MB';
-                document.getElementById('cpuLimit').value = 80;
-                document.getElementById('cpuLimitValue').innerText = '80%';
-            } else if (type === 'node') {
-                document.getElementById('serverType').value = 'node';
-                document.getElementById('newUsername').value = 'node_app_' + Math.random().toString(36).substr(2, 4);
-                document.getElementById('ram').value = '256MB';
-                document.getElementById('cpuLimit').value = 60;
-                document.getElementById('cpuLimitValue').innerText = '60%';
-            }
-            
-            document.getElementById('newPassword').value = generatePassword();
-        }
+      <div class="flex items-center justify-between text-xs pt-1">
+        <label class="flex items-center gap-2 text-[#7b869b] cursor-pointer select-none">
+          <input type="checkbox" id="rememberMe" class="accent-accent w-3.5 h-3.5 rounded">
+          Remember me
+        </label>
+        <span id="attemptInfo" class="text-[#4d586b]"></span>
+      </div>
 
-        // Generate Random Password
-        function generatePassword() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let password = '';
-            for (let i = 0; i < 12; i++) {
-                password += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return password;
-        }
+      <button onclick="doLogin()" id="loginBtn" class="btn btn-primary w-full !py-3 !text-sm mt-2">
+        <i class="fas fa-arrow-right-to-bracket"></i> Sign In Securely
+      </button>
 
-        // Toggle Password
-        function togglePassword(serverId, password) {
-            const passElement = document.getElementById('pass-' + serverId);
-            if (passElement.innerText === '••••••••') {
-                passElement.innerText = password;
-            } else {
-                passElement.innerText = '••••••••';
-            }
-        }
+      <p class="text-center text-[10px] text-[#4d586b] pt-2 leading-relaxed">
+        Protected by MAXX Shield&trade; &bull; Session encrypted<br>
+        Unauthorized access is strictly prohibited
+      </p>
+    </div>
+  </div>
+</div>
 
-        // Change CPU Limit
-        function changeCPULimit(serverId, currentLimit) {
-            Swal.fire({
-                title: 'Change CPU Rate Limit',
-                text: `Current limit: ${currentLimit}%`,
-                input: 'range',
-                inputAttributes: {
-                    min: '10',
-                    max: '100',
-                    step: '5'
-                },
-                inputValue: currentLimit,
-                background: '#12141c',
-                color: '#fff',
-                confirmButtonColor: '#3b82f6',
-                showCancelButton: true,
-                inputValue: currentLimit,
-                didOpen: () => {
-                    const range = Swal.getInput();
-                    const valueDisplay = document.createElement('span');
-                    valueDisplay.style.cssText = 'display:block;text-align:center;font-size:2em;font-weight:bold;color:#3b82f6;margin-top:10px;';
-                    valueDisplay.textContent = range.value + '%';
-                    range.parentNode.insertBefore(valueDisplay, range.nextSibling);
-                    
-                    range.addEventListener('input', () => {
-                        valueDisplay.textContent = range.value + '%';
-                    });
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const newLimit = result.value;
-                    fetch(`/admin/set_rate_limit/${serverId}`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({cpu_limit: parseInt(newLimit)})
-                    })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Updated!',
-                                html: `CPU Limit set to <strong>${newLimit}%</strong>`,
-                                icon: 'success',
-                                background: '#12141c',
-                                color: '#fff'
-                            });
-                            setTimeout(() => location.reload(), 1000);
-                        } else {
-                            Swal.fire('Error', data.error, 'error');
-                        }
-                    });
-                }
-            });
-        }
+<!-- ══════════════════ APP ══════════════════ -->
+<div id="app" class="hidden relative z-10">
 
-        // Create Server
-        function createServer() {
-            const data = {
-                username: document.getElementById('newUsername').value.trim(),
-                password: document.getElementById('newPassword').value.trim(),
-                server_type: document.getElementById('serverType').value,
-                ram: document.getElementById('ram').value,
-                disk: document.getElementById('disk').value,
-                expiry_days: parseInt(document.getElementById('expiryDays').value) || 30,
-                cpu_limit: parseInt(document.getElementById('cpuLimit').value) || 80
-            };
-            
-            if (!data.username || !data.password) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Username and password are required!',
-                    icon: 'error',
-                    background: '#12141c',
-                    color: '#fff'
-                });
-                return;
-            }
-            
-            if (data.cpu_limit < 10 || data.cpu_limit > 100) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'CPU limit must be between 10% and 100%!',
-                    icon: 'error',
-                    background: '#12141c',
-                    color: '#fff'
-                });
-                return;
-            }
-            
-            Swal.fire({
-                title: 'Creating Server...',
-                html: 'Please wait...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-                background: '#12141c',
-                color: '#fff'
-            });
-            
-            fetch('/admin/create_server', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        title: '🎉 Server Created!',
-                        html: `
-                            <div class="text-left space-y-2">
-                                <p><strong>Username:</strong> ${data.username}</p>
-                                <p><strong>Password:</strong> ${data.password}</p>
-                                <p><strong>CPU Limit:</strong> ${data.cpu_limit || '80'}%</p>
-                                <p><strong>Login URL:</strong> <a href="${data.login_url}" target="_blank" class="text-blue-400">${data.login_url}</a></p>
-                                <p><strong>Host:</strong> ${data.hostname}</p>
-                            </div>
-                        `,
-                        icon: 'success',
-                        background: '#12141c',
-                        color: '#fff',
-                        confirmButtonColor: '#3b82f6'
-                    });
-                    
-                    // Clear form
-                    document.getElementById('newUsername').value = '';
-                    document.getElementById('newPassword').value = '';
-                    document.getElementById('cpuLimit').value = 80;
-                    document.getElementById('cpuLimitValue').innerText = '80%';
-                    
-                    setTimeout(() => location.reload(), 3000);
-                } else {
-                    Swal.fire('Error', data.error || 'Something went wrong', 'error');
-                }
-            })
-            .catch(err => {
-                Swal.fire('Error', 'Could not connect to server', 'error');
-            });
-        }
-        
-        // Delete Server
-        function deleteServer(username, serverId) {
-            Swal.fire({
-                title: 'Delete Server?',
-                html: `
-                    <p>Are you sure you want to delete this server?</p>
-                    <p class="text-red-400 text-sm mt-2"><strong>User:</strong> ${username}</p>
-                    <p class="text-red-400 text-sm"><strong>Server ID:</strong> ${serverId}</p>
-                    <p class="text-yellow-400 text-xs mt-3">⚠️ This will delete all files and cannot be undone!</p>
-                `,
-                icon: 'warning',
-                background: '#12141c',
-                color: '#fff',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#374151',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/admin/delete_server/${username}/${serverId}`, {method: 'POST'})
-                        .then(() => {
-                            Swal.fire({
-                                title: 'Deleted!',
-                                text: 'Server has been deleted.',
-                                icon: 'success',
-                                background: '#12141c',
-                                color: '#fff'
-                            });
-                            setTimeout(() => location.reload(), 1000);
-                        });
-                }
-            });
-        }
+  <!-- ░░ SIDEBAR ░░ -->
+  <aside id="sidebar"
+    class="fixed top-0 left-0 h-full w-[260px] z-50 flex flex-col bg-[#0a0d14]/95 backdrop-blur-xl border-r border-[var(--line)] transition-transform duration-300">
+    <div class="px-5 py-5 flex items-center gap-3 border-b border-[var(--line)]">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/55 grid place-items-center shadow-lg flex-none">
+        <i class="fas fa-cloud-upload-alt text-white"></i>
+      </div>
+      <div class="min-w-0">
+        <h1 class="text-[15px] font-extrabold leading-tight truncate">MAXX <span class="text-accent">HOSTING</span></h1>
+        <p class="text-[10px] text-[#7b869b] tracking-wider uppercase font-semibold">Admin Panel</p>
+      </div>
+      <button onclick="closeSidebar()" class="lg:hidden ml-auto text-[#7b869b] hover:text-white">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
 
-        // Auto refresh stats
-        function refreshStats() {
-            location.reload();
-        }
-        
-        // Shortcut keys
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'r') {
-                e.preventDefault();
-                location.reload();
-            }
-            if (e.ctrlKey && e.key === 'n') {
-                e.preventDefault();
-                document.getElementById('newUsername').focus();
-            }
-        });
-    </script>
+    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+      <p class="px-3 pb-2 text-[10px] font-bold tracking-[.14em] text-[#4d586b] uppercase">Main</p>
+      <div class="nav-item active" data-page="dashboard" onclick="gotoPage('dashboard')">
+        <i class="fas fa-chart-pie"></i> Dashboard
+      </div>
+      <div class="nav-item" data-page="servers" onclick="gotoPage('servers')">
+        <i class="fas fa-server"></i> Servers
+        <span class="ml-auto text-[10px] font-bold bg-accent/20 text-accent px-2 py-0.5 rounded-md">{{ total_servers }}</span>
+      </div>
+      <div class="nav-item" data-page="create" onclick="gotoPage('create')">
+        <i class="fas fa-plus-circle"></i> Create Server
+      </div>
+
+      <p class="px-3 pt-4 pb-2 text-[10px] font-bold tracking-[.14em] text-[#4d586b] uppercase">System</p>
+      <div class="nav-item" data-page="users" onclick="gotoPage('users')">
+        <i class="fas fa-users"></i> Users
+        <span class="ml-auto text-[10px] font-bold bg-white/10 text-[#8d97ab] px-2 py-0.5 rounded-md">{{ users|length }}</span>
+      </div>
+      <div class="nav-item" data-page="activity" onclick="gotoPage('activity')">
+        <i class="fas fa-wave-square"></i> Activity
+      </div>
+      <div class="nav-item" data-page="settings" onclick="gotoPage('settings')">
+        <i class="fas fa-sliders"></i> Settings
+      </div>
+    </nav>
+
+    <div class="p-3 border-t border-[var(--line)]">
+      <div class="rounded-xl bg-gradient-to-br from-accent/15 to-purple-500/10 border border-accent/20 p-3">
+        <div class="flex items-center gap-2 mb-1.5">
+          <i class="fas fa-bolt text-accent text-xs"></i>
+          <span class="text-[11px] font-bold">Node Status</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-[10px] text-[#8d97ab]">
+          <span class="dot bg-green-400 pulse-ring"></span> All systems operational
+        </div>
+        <div class="mt-2 h-1 rounded-full bg-black/40 overflow-hidden">
+          <div class="h-full w-[92%] bg-gradient-to-r from-accent to-emerald-400 rounded-full"></div>
+        </div>
+        <p class="text-[9px] text-[#4d586b] mt-1">92% uptime this month</p>
+      </div>
+    </div>
+  </aside>
+
+  <div id="sidebarOverlay" onclick="closeSidebar()" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+
+  <!-- ░░ MAIN ░░ -->
+  <div class="lg:ml-[260px] min-h-screen flex flex-col">
+
+    <!-- TOPBAR -->
+    <header class="sticky top-0 z-30 bg-[#06080f]/80 backdrop-blur-xl border-b border-[var(--line)]">
+      <div class="px-4 sm:px-6 py-3 flex items-center gap-3">
+        <button onclick="openSidebar()" class="lg:hidden text-[#8d97ab] hover:text-white text-lg">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="relative flex-1 max-w-md hidden sm:block">
+          <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-xs"></i>
+          <input id="globalSearch" type="text" placeholder="Search users, servers, IDs…"
+                 oninput="globalSearchHandler(this.value)"
+                 class="field !py-2 !pl-9 !text-[13px] !rounded-xl">
+          <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-[#4d586b] border border-[#2a3244] rounded px-1.5 py-0.5 hidden md:block">/</kbd>
+        </div>
+
+        <div class="flex items-center gap-2 ml-auto">
+          <!-- accent picker -->
+          <div class="hidden md:flex items-center gap-1.5 bg-white/[.04] border border-[var(--line)] rounded-xl px-2 py-1.5">
+            <span class="text-[9px] font-bold text-[#4d586b] tracking-wider mr-0.5">THEME</span>
+            <button onclick="setAccent(59,130,246)" class="w-4 h-4 rounded-full bg-blue-500 ring-2 ring-white/0 hover:ring-white/60 transition"></button>
+            <button onclick="setAccent(139,92,246)" class="w-4 h-4 rounded-full bg-violet-500 ring-2 ring-white/0 hover:ring-white/60 transition"></button>
+            <button onclick="setAccent(16,185,129)" class="w-4 h-4 rounded-full bg-emerald-500 ring-2 ring-white/0 hover:ring-white/60 transition"></button>
+            <button onclick="setAccent(244,63,94)" class="w-4 h-4 rounded-full bg-rose-500 ring-2 ring-white/0 hover:ring-white/60 transition"></button>
+            <button onclick="setAccent(245,158,11)" class="w-4 h-4 rounded-full bg-amber-500 ring-2 ring-white/0 hover:ring-white/60 transition"></button>
+          </div>
+
+          <button onclick="gotoPage('create')" class="btn btn-primary !py-2 !px-3.5 hidden sm:inline-flex">
+            <i class="fas fa-plus text-xs"></i> New Server
+          </button>
+
+          <div class="relative">
+            <button onclick="toggleNotif()" class="w-9 h-9 rounded-xl bg-white/[.04] border border-[var(--line)] grid place-items-center text-[#8d97ab] hover:text-white hover:bg-white/[.08] transition relative">
+              <i class="fas fa-bell text-sm"></i>
+              <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-[#06080f]"></span>
+            </button>
+            <div id="notifPanel" class="hidden absolute right-0 mt-2 w-72 card p-2 shadow-2xl">
+              <p class="px-2 py-1.5 text-[10px] font-bold tracking-widest text-[#4d586b] uppercase">Notifications</p>
+              <div class="px-2 py-2.5 rounded-lg hover:bg-white/[.04] flex gap-2.5 items-start">
+                <div class="w-7 h-7 rounded-lg bg-emerald-500/15 grid place-items-center flex-none"><i class="fas fa-check text-emerald-400 text-[10px]"></i></div>
+                <div><p class="text-[11px] font-semibold">Panel upgraded</p><p class="text-[10px] text-[#7b869b]">Premium UI/UX applied successfully.</p></div>
+              </div>
+              <div class="px-2 py-2.5 rounded-lg hover:bg-white/[.04] flex gap-2.5 items-start">
+                <div class="w-7 h-7 rounded-lg bg-accent/15 grid place-items-center flex-none"><i class="fas fa-server text-accent text-[10px]"></i></div>
+                <div><p class="text-[11px] font-semibold">{{ total_running }} servers running</p><p class="text-[10px] text-[#7b869b]">Out of {{ total_servers }} total instances.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative">
+            <button onclick="toggleProfile()" class="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-xl bg-white/[.04] border border-[var(--line)] hover:bg-white/[.08] transition">
+              <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-accent to-accent/50 grid place-items-center text-[11px] font-bold" id="avatarLetter">A</div>
+              <span class="text-[12px] font-semibold hidden sm:block" id="profileName">admin</span>
+              <i class="fas fa-chevron-down text-[9px] text-[#4d586b]"></i>
+            </button>
+            <div id="profilePanel" class="hidden absolute right-0 mt-2 w-56 card p-1.5 shadow-2xl">
+              <div class="px-2.5 py-2 border-b border-[var(--line)] mb-1">
+                <p class="text-[12px] font-bold" id="profileName2">admin</p>
+                <p class="text-[10px] text-[#7b869b]" id="profileRole">Administrator</p>
+              </div>
+              <button onclick="gotoPage('settings');toggleProfile()" class="w-full text-left px-2.5 py-2 rounded-lg text-[12px] text-[#c3cbdb] hover:bg-white/[.06] flex items-center gap-2">
+                <i class="fas fa-user-gear text-[11px] w-4"></i> Account settings
+              </button>
+              <button onclick="gotoPage('settings');toggleProfile()" class="w-full text-left px-2.5 py-2 rounded-lg text-[12px] text-[#c3cbdb] hover:bg-white/[.06] flex items-center gap-2">
+                <i class="fas fa-key text-[11px] w-4"></i> API keys
+              </button>
+              <div class="h-px bg-[var(--line)] my-1"></div>
+              <button onclick="doLogout()" class="w-full text-left px-2.5 py-2 rounded-lg text-[12px] text-rose-400 hover:bg-rose-500/10 flex items-center gap-2">
+                <i class="fas fa-right-from-bracket text-[11px] w-4"></i> Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-1 p-4 sm:p-6 max-w-[1500px] w-full mx-auto">
+
+      <!-- ══════ PAGE : DASHBOARD ══════ -->
+      <section id="page-dashboard" class="page active">
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Dashboard Overview</h2>
+            <p class="text-[13px] text-[#7b869b] mt-0.5">Real-time infrastructure &amp; server analytics</p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="location.reload()" class="btn btn-ghost"><i class="fas fa-rotate text-xs"></i> Refresh</button>
+            <button onclick="gotoPage('create')" class="btn btn-primary"><i class="fas fa-plus text-xs"></i> Create</button>
+          </div>
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div class="card card-glow lift p-4 sm:p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-[11px] font-semibold tracking-wide text-[#7b869b] uppercase">Total Users</p>
+                <p class="text-3xl font-extrabold mt-1.5 tabular-nums">{{ users|length }}</p>
+                <p class="text-[10px] text-emerald-400 mt-1.5 font-semibold"><i class="fas fa-arrow-trend-up mr-1"></i>Active accounts</p>
+              </div>
+              <div class="stat-ico bg-accent/15 text-accent"><i class="fas fa-users"></i></div>
+            </div>
+          </div>
+
+          <div class="card card-glow lift p-4 sm:p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-[11px] font-semibold tracking-wide text-[#7b869b] uppercase">Total Servers</p>
+                <p class="text-3xl font-extrabold mt-1.5 tabular-nums">{{ total_servers }}</p>
+                <p class="text-[10px] text-[#7b869b] mt-1.5 font-semibold"><i class="fas fa-layer-group mr-1"></i>Provisioned</p>
+              </div>
+              <div class="stat-ico bg-emerald-500/15 text-emerald-400"><i class="fas fa-server"></i></div>
+            </div>
+          </div>
+
+          <div class="card card-glow lift p-4 sm:p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-[11px] font-semibold tracking-wide text-[#7b869b] uppercase">Running</p>
+                <p class="text-3xl font-extrabold mt-1.5 text-emerald-400 tabular-nums">{{ total_running }}</p>
+                <p class="text-[10px] text-emerald-400/80 mt-1.5 font-semibold"><span class="dot bg-emerald-400 inline-block pulse-ring"></span> Live now</p>
+              </div>
+              <div class="stat-ico bg-emerald-500/15 text-emerald-400"><i class="fas fa-play"></i></div>
+            </div>
+          </div>
+
+          <div class="card card-glow lift p-4 sm:p-5">
+            <div class="flex items-start justify-between">
+              <div>
+                <p class="text-[11px] font-semibold tracking-wide text-[#7b869b] uppercase">Stopped</p>
+                <p class="text-3xl font-extrabold mt-1.5 text-rose-400 tabular-nums">{{ total_servers - total_running }}</p>
+                <p class="text-[10px] text-[#7b869b] mt-1.5 font-semibold"><i class="fas fa-pause mr-1"></i>Idle instances</p>
+              </div>
+              <div class="stat-ico bg-rose-500/15 text-rose-400"><i class="fas fa-stop"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="grid lg:grid-cols-3 gap-4 mb-6">
+          <div class="card p-5 lg:col-span-2">
+            <div class="flex items-center justify-between mb-5">
+              <div>
+                <h3 class="font-bold text-[15px]">Servers by Runtime</h3>
+                <p class="text-[11px] text-[#7b869b]">Distribution across all accounts</p>
+              </div>
+              <i class="fas fa-chart-simple text-accent"></i>
+            </div>
+            <div id="typeChart" class="flex items-end justify-around gap-4 h-44 px-2">
+              <!-- injected -->
+            </div>
+          </div>
+
+          <div class="card p-5">
+            <h3 class="font-bold text-[15px] mb-1">Status Split</h3>
+            <p class="text-[11px] text-[#7b869b] mb-4">Live fleet health</p>
+            <div class="relative grid place-items-center h-40">
+              <div id="donut" class="w-36 h-36 rounded-full transition-all duration-700"
+                   style="background: conic-gradient(#334155 0 100%)">
+                <div class="absolute inset-0 grid place-items-center">
+                  <div class="w-[104px] h-[104px] rounded-full bg-[#0d1018] grid place-items-center">
+                    <div class="text-center">
+                      <p class="text-2xl font-extrabold tabular-nums">{{ total_servers }}</p>
+                      <p class="text-[9px] text-[#7b869b] uppercase tracking-wider font-bold">Total</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-center gap-4 mt-4 text-[10px] font-semibold">
+              <span class="flex items-center gap-1.5"><span class="dot bg-emerald-400"></span>Running</span>
+              <span class="flex items-center gap-1.5"><span class="dot bg-rose-400"></span>Stopped</span>
+              <span class="flex items-center gap-1.5"><span class="dot bg-amber-400"></span>Limited</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT -->
+        <div class="card overflow-hidden">
+          <div class="p-5 border-b border-[var(--line)] flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-[15px]">Recent Servers</h3>
+              <p class="text-[11px] text-[#7b869b]">Latest provisioned instances</p>
+            </div>
+            <button onclick="gotoPage('servers')" class="btn btn-ghost !py-1.5 !px-3 !text-[11px]">View all <i class="fas fa-arrow-right text-[9px]"></i></button>
+          </div>
+          <div class="p-3 grid sm:grid-cols-2 xl:grid-cols-3 gap-3" id="recentGrid">
+            {% set ns = namespace(count=0) %}
+            {% for user in users %}
+              {% for server in user.servers %}
+                {% if ns.count < 6 %}
+                  {% set ns.count = ns.count + 1 %}
+                  <div class="rounded-xl border border-[var(--line)] bg-white/[.02] p-3.5 hover:bg-white/[.05] transition cursor-pointer"
+                       onclick="gotoPage('servers')">
+                    <div class="flex items-center gap-2 mb-2">
+                      <div class="w-7 h-7 rounded-lg bg-accent/15 grid place-items-center text-[10px] font-bold text-accent">{{ user.username[0]|upper }}</div>
+                      <span class="font-mono text-[12px] truncate">{{ user.username }}</span>
+                      <span class="ml-auto pill {% if server.status == 'running' %}bg-emerald-500/15 text-emerald-400{% else %}bg-rose-500/15 text-rose-400{% endif %}">
+                        <span class="dot {% if server.status == 'running' %}bg-emerald-400{% else %}bg-rose-400{% endif %}"></span>
+                        {{ server.status|capitalize }}
+                      </span>
+                    </div>
+                    <p class="font-mono text-[10px] text-[#4d586b] truncate">{{ server.server_id }}</p>
+                    <div class="flex gap-1.5 mt-2.5 flex-wrap">
+                      <span class="pill bg-accent/10 text-accent">{{ server.type }}</span>
+                      <span class="pill bg-white/[.06] text-[#8d97ab]">{{ server.ram }}</span>
+                      <span class="pill bg-white/[.06] text-[#8d97ab]">{{ server.disk }}</span>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+            {% if ns.count == 0 %}
+              <div class="col-span-full py-10 text-center text-[#4d586b]">
+                <i class="fas fa-inbox text-3xl mb-2 block opacity-40"></i>
+                <p class="text-sm">No servers yet — create your first one.</p>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════ PAGE : SERVERS ══════ -->
+      <section id="page-servers" class="page">
+        <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Server Management</h2>
+            <p class="text-[13px] text-[#7b869b] mt-0.5">Full control over every user instance</p>
+          </div>
+          <button onclick="gotoPage('create')" class="btn btn-primary"><i class="fas fa-plus text-xs"></i> Create Server</button>
+        </div>
+
+        <!-- toolbar -->
+        <div class="card p-3.5 mb-4 flex flex-wrap items-center gap-2.5">
+          <div class="relative flex-1 min-w-[180px]">
+            <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-[#4d586b] text-xs"></i>
+            <input id="tableSearch" type="text" placeholder="Filter by user, ID or type…" oninput="filterTable()"
+                   class="field !py-2 !pl-9 !text-[13px]">
+          </div>
+          <select id="filterStatus" onchange="filterTable()" class="field !py-2 !text-[13px] !w-auto">
+            <option value="">All Status</option>
+            <option value="running">Running</option>
+            <option value="stopped">Stopped</option>
+            <option value="limited">Rate Limited</option>
+          </select>
+          <select id="filterType" onchange="filterTable()" class="field !py-2 !text-[13px] !w-auto">
+            <option value="">All Types</option>
+            <option value="python">Python</option>
+            <option value="node">Node.js</option>
+            <option value="static">Static</option>
+          </select>
+          <button onclick="location.reload()" class="btn btn-ghost !py-2"><i class="fas fa-rotate text-xs"></i> Refresh</button>
+          <div id="bulkBar" class="hidden items-center gap-2 pl-2 ml-auto border-l border-[var(--line)]">
+            <span class="text-[11px] font-semibold text-accent"><span id="selCount">0</span> selected</span>
+            <button onclick="bulkAction('restart')" class="btn btn-ghost !py-1.5 !px-2.5 !text-[11px]"><i class="fas fa-rotate-right"></i></button>
+            <button onclick="bulkDelete()" class="btn btn-danger !py-1.5 !px-2.5 !text-[11px]"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left" id="serverTable">
+              <thead class="bg-white/[.03] text-[10px] uppercase tracking-wider text-[#7b869b] font-bold">
+                <tr>
+                  <th class="p-3.5 w-10"><input type="checkbox" id="selectAll" onchange="toggleAll(this)" class="accent-accent w-3.5 h-3.5 rounded cursor-pointer"></th>
+                  <th class="p-3.5">User</th>
+                  <th class="p-3.5 hidden md:table-cell">Password</th>
+                  <th class="p-3.5 hidden lg:table-cell">Server ID</th>
+                  <th class="p-3.5 hidden xl:table-cell">Config</th>
+                  <th class="p-3.5">CPU Limit</th>
+                  <th class="p-3.5">Status</th>
+                  <th class="p-3.5 hidden lg:table-cell">Expiry</th>
+                  <th class="p-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="text-[13px]">
+                {% if users|length == 0 %}
+                <tr>
+                  <td colspan="9" class="p-14 text-center">
+                    <div class="inline-grid place-items-center w-16 h-16 rounded-2xl bg-white/[.04] mb-3">
+                      <i class="fas fa-server text-2xl text-[#3b465c]"></i>
+                    </div>
+                    <p class="text-sm text-[#7b869b]">No servers found</p>
+                    <p class="text-[11px] text-[#4d586b] mt-1">Create your first server to get started</p>
+                  </td>
+                </tr>
+                {% endif %}
+
+                {% for user in users %}
+                  {% for server in user.servers %}
+                  {% set cl = server.cpu_limit | default(80) %}
+                  <tr class="row-in border-t border-[var(--line)] hover:bg-white/[.035] transition group"
+                      data-user="{{ user.username }}"
+                      data-server="{{ server.server_id }}"
+                      data-pass="{{ user.password }}"
+                      data-type="{{ server.type }}"
+                      data-ram="{{ server.ram }}"
+                      data-disk="{{ server.disk }}"
+                      data-cpu="{{ cl }}"
+                      data-status="{% if server.rate_limit_exceeded %}limited{% elif server.status == 'running' %}running{% else %}stopped{% endif %}"
+                      data-expiry="{{ server.expiry[:10] if server.expiry else 'N/A' }}"
+                      data-url="{{ server.login_url }}"
+                      style="animation-delay:{{ loop.index0 * 22 }}ms">
+
+                    <td class="p-3.5">
+                      <input type="checkbox" onchange="updateBulk()" class="rowCheck accent-accent w-3.5 h-3.5 rounded cursor-pointer">
+                    </td>
+
+                    <!-- USER -->
+                    <td class="p-3.5">
+                      <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-accent/30 to-accent/10 border border-accent/25 grid place-items-center text-[11px] font-bold text-accent flex-none">
+                          {{ user.username[0] | upper }}
+                        </div>
+                        <div class="min-w-0">
+                          <p class="font-semibold truncate">{{ user.username }}</p>
+                          <p class="text-[10px] text-[#4d586b] md:hidden font-mono">{{ server.server_id[:10] }}…</p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- PASSWORD -->
+                    <td class="p-3.5 hidden md:table-cell">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-[12px] text-[#8d97ab]" id="pass-{{ server.server_id }}">••••••••</span>
+                        <button onclick="togglePassword('{{ server.server_id }}', this)" class="text-[#4d586b] hover:text-accent transition text-[11px]">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="copyText('{{ user.password }}')" class="text-[#4d586b] hover:text-emerald-400 transition text-[11px]">
+                          <i class="fas fa-copy"></i>
+                        </button>
+                      </div>
+                    </td>
+
+                    <!-- SERVER ID -->
+                    <td class="p-3.5 hidden lg:table-cell">
+                      <a href="{{ server.login_url }}" target="_blank"
+                         class="inline-flex items-center gap-1.5 text-accent hover:text-accent/70 font-mono text-[11px] transition">
+                        <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
+                        {{ server.server_id[:14] }}…
+                      </a>
+                    </td>
+
+                    <!-- CONFIG -->
+                    <td class="p-3.5 hidden xl:table-cell">
+                      <div class="flex flex-wrap gap-1">
+                        <span class="pill bg-accent/10 text-accent">{{ server.type }}</span>
+                        <span class="pill bg-white/[.06] text-[#8d97ab]"><i class="fas fa-memory text-[8px]"></i> {{ server.ram }}</span>
+                        <span class="pill bg-white/[.06] text-[#8d97ab]"><i class="fas fa-hard-drive text-[8px]"></i> {{ server.disk }}</span>
+                      </div>
+                    </td>
+
+                    <!-- CPU -->
+                    <td class="p-3.5">
+                      <button onclick="changeCPULimit('{{ server.server_id }}', {{ cl }})" class="flex items-center gap-2 group/cpu">
+                        <div class="w-14 h-1.5 rounded-full bg-white/[.08] overflow-hidden">
+                          <div class="h-full rounded-full transition-all duration-500"
+                               style="width: {{ cl }}%;
+                               background: {% if cl <= 30 %}#10b981{% elif cl <= 60 %}#f59e0b{% elif cl <= 80 %}#f97316{% else %}#ef4444{% endif %}"></div>
+                        </div>
+                        <span class="text-[11px] font-bold tabular-nums
+                          {% if cl <= 30 %}text-emerald-400{% elif cl <= 60 %}text-amber-400{% elif cl <= 80 %}text-orange-400{% else %}text-rose-400{% endif %}">
+                          {{ cl }}%
+                        </span>
+                        <i class="fas fa-pen text-[9px] text-[#3b465c] group-hover/cpu:text-accent transition"></i>
+                      </button>
+                    </td>
+
+                    <!-- STATUS -->
+                    <td class="p-3.5">
+                      {% if server.rate_limit_exceeded %}
+                        <span class="pill bg-amber-500/15 text-amber-400"><i class="fas fa-triangle-exclamation text-[9px]"></i> Limited</span>
+                      {% elif server.status == 'running' %}
+                        <span class="pill bg-emerald-500/15 text-emerald-400"><span class="dot bg-emerald-400 pulse-ring"></span> Running</span>
+                      {% else %}
+                        <span class="pill bg-rose-500/15 text-rose-400"><span class="dot bg-rose-400"></span> Stopped</span>
+                      {% endif %}
+                    </td>
+
+                    <!-- EXPIRY -->
+                    <td class="p-3.5 hidden lg:table-cell">
+                      <span class="text-[11px] text-[#8d97ab] font-medium">
+                        <i class="far fa-calendar mr-1 text-[10px] text-[#4d586b]"></i>
+                        {{ server.expiry[:10] if server.expiry else 'N/A' }}
+                      </span>
+                    </td>
+
+                    <!-- ACTIONS -->
+                    <td class="p-3.5">
+                      <div class="flex items-center justify-end gap-1.5">
+                        <button onclick="openDrawer(this)" title="Details"
+                          class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-accent/20 hover:text-accent text-[#8d97ab] grid place-items-center transition text-[11px]">
+                          <i class="fas fa-ellipsis"></i>
+                        </button>
+                        <button onclick="changeCPULimit('{{ server.server_id }}', {{ cl }})" title="CPU Limit"
+                          class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-accent/20 hover:text-accent text-[#8d97ab] grid place-items-center transition text-[11px]">
+                          <i class="fas fa-gauge-high"></i>
+                        </button>
+                        <button onclick="deleteServer('{{ user.username }}', '{{ server.server_id }}')" title="Delete"
+                          class="w-7 h-7 rounded-lg bg-white/[.05] hover:bg-rose-500/20 hover:text-rose-400 text-[#8d97ab] grid place-items-center transition text-[11px]">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="px-4 py-3 border-t border-[var(--line)] flex items-center justify-between text-[11px] text-[#7b869b]">
+            <span>Showing <span id="visibleCount" class="text-white font-semibold">{{ total_servers }}</span> of {{ total_servers }} servers</span>
+            <span class="hidden sm:block">MAXX Hosting &bull; v2.0 Premium</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════ PAGE : CREATE ══════ -->
+      <section id="page-create" class="page">
+        <div class="mb-6">
+          <h2 class="text-2xl font-extrabold tracking-tight">Create New Server</h2>
+          <p class="text-[13px] text-[#7b869b] mt-0.5">Provision a container with full resource control</p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+          <!-- main form -->
+          <div class="lg:col-span-2 space-y-4">
+
+            <!-- credentials -->
+            <div class="card card-glow p-5">
+              <h3 class="font-bold text-[15px] mb-4 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-lg bg-accent/15 grid place-items-center"><i class="fas fa-user-lock text-accent text-[10px]"></i></span>
+                Account Credentials
+              </h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="lbl">Username <span class="text-rose-400">*</span></label>
+                  <input id="newUsername" type="text" placeholder="e.g. my_bot_01" class="field" spellcheck="false">
+                </div>
+                <div>
+                  <label class="lbl flex items-center justify-between">
+                    <span>Password <span class="text-rose-400">*</span></span>
+                    <button onclick="fillGeneratedPass()" class="text-accent hover:text-accent/70 text-[10px] font-bold normal-case tracking-normal">
+                      <i class="fas fa-wand-magic-sparkles mr-0.5"></i> Generate
+                    </button>
+                  </label>
+                  <div class="relative">
+                    <input id="newPassword" type="text" placeholder="Strong password" class="field pr-10 font-mono !text-[12px]" spellcheck="false">
+                    <button onclick="copyText(document.getElementById('newPassword').value)" class="absolute right-3 top-1/2 -translate-y-1/2 text-[#4d586b] hover:text-emerald-400 transition text-xs">
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </div>
+                  <div class="flex gap-1 mt-1.5" id="strengthBars">
+                    <div class="h-1 flex-1 rounded-full bg-white/10"></div>
+                    <div class="h-1 flex-1 rounded-full bg-white/10"></div>
+                    <div class="h-1 flex-1 rounded-full bg-white/10"></div>
+                    <div class="h-1 flex-1 rounded-full bg-white/10"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- runtime -->
+            <div class="card card-glow p-5">
+              <h3 class="font-bold text-[15px] mb-4 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-lg bg-emerald-500/15 grid place-items-center"><i class="fas fa-microchip text-emerald-400 text-[10px]"></i></span>
+                Runtime &amp; Environment
+              </h3>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="lbl">Server Type</label>
+                  <select id="serverType" class="field">
+                    <option value="python">🐍 Python Application</option>
+                    <option value="node">💚 Node.js Application</option>
+                    <option value="static">📄 Static Website</option>
+                    <option value="java">☕ Java (JAR)</option>
+                    <option value="go">🐹 Go Binary</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="lbl">Deployment Node / Region</label>
+                  <select id="region" class="field">
+                    <option value="in-mumbai">🇮🇳 India — Mumbai (Low latency)</option>
+                    <option value="sg-singapore">🇸🇬 Singapore</option>
+                    <option value="us-east">🇺🇸 US East (Virginia)</option>
+                    <option value="eu-frankfurt">🇩🇪 EU — Frankfurt</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="lbl">Startup File</label>
+                  <input id="startupFile" type="text" value="main.py" class="field font-mono !text-[12px]">
+                </div>
+                <div>
+                  <label class="lbl">Expiry (Days)</label>
+                  <input id="expiryDays" type="number" value="30" min="1" max="365" class="field">
+                </div>
+              </div>
+            </div>
+
+            <!-- resources -->
+            <div class="card card-glow p-5">
+              <h3 class="font-bold text-[15px] mb-4 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-lg bg-violet-500/15 grid place-items-center"><i class="fas fa-gauge-high text-violet-400 text-[10px]"></i></span>
+                Resource Allocation
+              </h3>
+              <div class="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <label class="lbl">RAM</label>
+                  <select id="ram" class="field">
+                    <option value="128MB">128 MB</option>
+                    <option value="256MB">256 MB</option>
+                    <option value="512MB" selected>512 MB</option>
+                    <option value="1GB">1 GB</option>
+                    <option value="2GB">2 GB</option>
+                    <option value="4GB">4 GB</option>
+                    <option value="8GB">8 GB</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="lbl">Disk Space</label>
+                  <select id="disk" class="field">
+                    <option value="512MB">512 MB</option>
+                    <option value="1GB" selected>1 GB</option>
+                    <option value="2GB">2 GB</option>
+                    <option value="5GB">5 GB</option>
+                    <option value="10GB">10 GB</option>
+                    <option value="20GB">20 GB</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="lbl">CPU Cores</label>
+                  <select id="cpuCores" class="field">
+                    <option value="0.5">0.5 Core</option>
+                    <option value="1" selected>1 Core</option>
+                    <option value="2">2 Cores</option>
+                    <option value="4">4 Cores</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- CPU LIMIT -->
+              <div class="mt-5 pt-5 border-t border-[var(--line)]">
+                <label class="lbl flex items-center justify-between">
+                  <span><i class="fas fa-tachometer-alt text-accent mr-1.5"></i> CPU Rate Limit</span>
+                  <span id="cpuLimitValue" class="text-accent font-extrabold text-base tracking-normal normal-case">80%</span>
+                </label>
+                <input type="range" id="cpuLimit" min="10" max="100" value="80"
+                       oninput="document.getElementById('cpuLimitValue').innerText = this.value + '%'">
+                <div class="flex gap-2 mt-3 flex-wrap">
+                  <button onclick="setQuickCPU(30)" class="btn btn-ghost !py-1 !px-2.5 !text-[10px] !text-emerald-400 !border-emerald-500/25">30%</button>
+                  <button onclick="setQuickCPU(50)" class="btn btn-ghost !py-1 !px-2.5 !text-[10px] !text-amber-400 !border-amber-500/25">50%</button>
+                  <button onclick="setQuickCPU(80)" class="btn btn-ghost !py-1 !px-2.5 !text-[10px] !text-accent !border-accent/25">80%</button>
+                  <button onclick="setQuickCPU(100)" class="btn btn-ghost !py-1 !px-2.5 !text-[10px] !text-rose-400 !border-rose-500/25">100%</button>
+                </div>
+                <p class="text-[10px] text-[#4d586b] mt-2.5">
+                  <i class="fas fa-circle-info mr-1"></i>
+                  Container auto-stops if CPU usage exceeds this limit for 10 seconds.
+                </p>
+              </div>
+            </div>
+
+            <!-- advanced options -->
+            <div class="card card-glow p-5">
+              <h3 class="font-bold text-[15px] mb-4 flex items-center gap-2">
+                <span class="w-6 h-6 rounded-lg bg-amber-500/15 grid place-items-center"><i class="fas fa-sliders text-amber-400 text-[10px]"></i></span>
+                Advanced Options
+              </h3>
+
+              <div class="space-y-3">
+                <div class="flex items-center justify-between py-1.5">
+                  <div><p class="text-[13px] font-semibold">Auto Restart</p><p class="text-[10px] text-[#7b869b]">Restart automatically on crash</p></div>
+                  <div class="switch on" onclick="this.classList.toggle('on')"></div>
+                </div>
+                <div class="flex items-center justify-between py-1.5">
+                  <div><p class="text-[13px] font-semibold">Daily Backups</p><p class="text-[10px] text-[#7b869b]">Automatic snapshot every 24h</p></div>
+                  <div class="switch on" onclick="this.classList.toggle('on')"></div>
+                </div>
+                <div class="flex items-center justify-between py-1.5">
+                  <div><p class="text-[13px] font-semibold">Public Access</p><p class="text-[10px] text-[#7b869b]">Expose port to the internet</p></div>
+                  <div class="switch on" onclick="this.classList.toggle('on')"></div>
+                </div>
+                <div class="flex items-center justify-between py-1.5">
+                  <div><p class="text-[13px] font-semibold">Free SSL Certificate</p><p class="text-[10px] text-[#7b869b]">Let's Encrypt auto-provisioning</p></div>
+                  <div class="switch" onclick="this.classList.toggle('on')"></div>
+                </div>
+              </div>
+
+              <!-- env vars -->
+              <div class="mt-5 pt-5 border-t border-[var(--line)]">
+                <div class="flex items-center justify-between mb-2.5">
+                  <label class="lbl !mb-0">Environment Variables</label>
+                  <button onclick="addEnvRow()" class="text-accent hover:text-accent/70 text-[10px] font-bold">
+                    <i class="fas fa-plus mr-0.5"></i> Add
+                  </button>
+                </div>
+                <div id="envRows" class="space-y-2"></div>
+                <p class="text-[10px] text-[#4d586b] mt-2">Secrets are encrypted at rest (AES-256).</p>
+              </div>
+            </div>
+
+            <!-- submit -->
+            <div class="card p-4 flex flex-wrap items-center gap-3">
+              <button onclick="createServer()" class="btn btn-primary !py-2.5 flex-1 sm:flex-none">
+                <i class="fas fa-rocket text-xs"></i> Deploy Server
+              </button>
+              <button onclick="resetForm()" class="btn btn-ghost !py-2.5">
+                <i class="fas fa-rotate-left text-xs"></i> Reset
+              </button>
+              <p class="text-[10px] text-[#4d586b] sm:ml-auto">
+                <i class="fas fa-shield-halved mr-1"></i> Deployment usually takes 10–25 seconds
+              </p>
+            </div>
+          </div>
+
+          <!-- sidebar -->
+          <div class="space-y-4">
+            <!-- templates -->
+            <div class="card p-5">
+              <h3 class="font-bold text-[14px] mb-1">Quick Templates</h3>
+              <p class="text-[11px] text-[#7b869b] mb-3.5">One-click pre-configuration</p>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="quickTemplate('discord')" class="rounded-xl border border-indigo-500/25 bg-indigo-500/10 hover:bg-indigo-500/20 p-2.5 text-center transition">
+                  <i class="fab fa-discord text-indigo-400 text-lg mb-1 block"></i>
+                  <span class="text-[10px] font-semibold">Discord Bot</span>
+                </button>
+                <button onclick="quickTemplate('telegram')" class="rounded-xl border border-sky-500/25 bg-sky-500/10 hover:bg-sky-500/20 p-2.5 text-center transition">
+                  <i class="fab fa-telegram text-sky-400 text-lg mb-1 block"></i>
+                  <span class="text-[10px] font-semibold">Telegram Bot</span>
+                </button>
+                <button onclick="quickTemplate('flask')" class="rounded-xl border border-emerald-500/25 bg-emerald-500/10 hover:bg-emerald-500/20 p-2.5 text-center transition">
+                  <i class="fas fa-flask text-emerald-400 text-lg mb-1 block"></i>
+                  <span class="text-[10px] font-semibold">Flask App</span>
+                </button>
+                <button onclick="quickTemplate('node')" class="rounded-xl border border-lime-500/25 bg-lime-500/10 hover:bg-lime-500/20 p-2.5 text-center transition">
+                  <i class="fab fa-node-js text-lime-400 text-lg mb-1 block"></i>
+                  <span class="text-[10px] font-semibold">Node.js App</span>
+                </button>
+                <button onclick="quickTemplate('minecraft')" class="rounded-xl border border-amber-500/25 bg-amber-500/10 hover:bg-amber-500/20 p-2.5 text-center transition">
+                  <i class="fas fa-cube text-amber-400 text-lg mb-1 block"></i>
+                  <span class="text-[10px] font-semibold">Minecraft</span>
+                </button>
+                <button onclick="quickTemplate('static')" class="rounded-xl border border-fuchsia-500/25 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 p-2.5 text-center transition">
+                  <i class="fas fa-globe text-fuchsia-400 text-lg mb-1 block"></i>
+                  <span class="text-[10px] font-semibold">Static Site</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- live preview -->
+            <div class="card p-5">
+              <h3 class="font-bold text-[14px] mb-3">Deployment Summary</h3>
+              <div class="space-y-2 text-[12px]">
+                <div class="flex justify-between"><span class="text-[#7b869b]">Type</span><span id="sumType" class="font-semibold">python</span></div>
+                <div class="flex justify-between"><span class="text-[#7b869b]">Region</span><span id="sumRegion" class="font-semibold">in-mumbai</span></div>
+                <div class="flex justify-between"><span class="text-[#7b869b]">RAM</span><span id="sumRam" class="font-semibold">512MB</span></div>
+                <div class="flex justify-between"><span class="text-[#7b869b]">Disk</span><span id="sumDisk" class="font-semibold">1GB</span></div>
+                <div class="flex justify-between"><span class="text-[#7b869b]">CPU</span><span id="sumCpu" class="font-semibold text-accent">80%</span></div>
+                <div class="flex justify-between"><span class="text-[#7b869b]">Expiry</span><span id="sumExpiry" class="font-semibold">30 days</span></div>
+              </div>
+              <div class="mt-4 pt-4 border-t border-[var(--line)] flex items-center justify-between">
+                <span class="text-[11px] text-[#7b869b]">Estimated cost</span>
+                <span class="text-[15px] font-extrabold text-emerald-400">FREE</span>
+              </div>
+            </div>
+
+            <div class="card p-4 border-accent/25" style="background:linear-gradient(160deg, rgb(var(--accent) / .12), transparent)">
+              <div class="flex gap-2.5">
+                <i class="fas fa-lightbulb text-accent mt-0.5"></i>
+                <div>
+                  <p class="text-[12px] font-bold mb-1">Pro Tip</p>
+                  <p class="text-[11px] text-[#8d97ab] leading-relaxed">Set a CPU limit of 50–80% for bots to prevent resource abuse while keeping them stable.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════ PAGE : USERS ══════ -->
+      <section id="page-users" class="page">
+        <div class="mb-6">
+          <h2 class="text-2xl font-extrabold tracking-tight">User Accounts</h2>
+          <p class="text-[13px] text-[#7b869b] mt-0.5">All registered hosting users</p>
+        </div>
+        <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {% for user in users %}
+          <div class="card card-glow lift p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-accent/35 to-accent/10 border border-accent/25 grid place-items-center text-base font-extrabold text-accent">
+                {{ user.username[0] | upper }}
+              </div>
+              <div class="min-w-0">
+                <p class="font-bold text-[14px] truncate">{{ user.username }}</p>
+                <p class="text-[10px] text-[#7b869b] font-mono truncate">{{ user.password }}</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="rounded-lg bg-white/[.04] p-2.5 text-center">
+                <p class="text-lg font-extrabold">{{ user.servers|length }}</p>
+                <p class="text-[9px] text-[#7b869b] uppercase tracking-wider font-bold">Servers</p>
+              </div>
+              <div class="rounded-lg bg-white/[.04] p-2.5 text-center">
+                <p class="text-lg font-extrabold text-emerald-400">
+                  {{ user.servers | selectattr('status','equalto','running') | list | length }}
+                </p>
+                <p class="text-[9px] text-[#7b869b] uppercase tracking-wider font-bold">Running</p>
+              </div>
+            </div>
+            <div class="mt-3 flex gap-2">
+              <button onclick="copyText('{{ user.password }}')" class="btn btn-ghost flex-1 !py-1.5 !text-[11px]">
+                <i class="fas fa-copy text-[10px]"></i> Copy Pass
+              </button>
+              <button onclick="gotoPage('servers')" class="btn btn-ghost flex-1 !py-1.5 !text-[11px]">
+                <i class="fas fa-server text-[10px]"></i> Servers
+              </button>
+            </div>
+          </div>
+          {% endfor %}
+          {% if users|length == 0 %}
+          <div class="col-span-full card p-14 text-center">
+            <i class="fas fa-users-slash text-3xl text-[#3b465c] mb-3 block"></i>
+            <p class="text-sm text-[#7b869b]">No users registered yet</p>
+          </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- ══════ PAGE : ACTIVITY ══════ -->
+      <section id="page-activity" class="page">
+        <div class="mb-6">
+          <h2 class="text-2xl font-extrabold tracking-tight">Activity Log</h2>
+          <p class="text-[13px] text-[#7b869b] mt-0.5">Recent system &amp; deployment events</p>
+        </div>
+        <div class="card p-5">
+          <div class="relative pl-6 space-y-5 before:content-[''] before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-px before:bg-[var(--line)]">
+            <div class="relative">
+              <span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/15"></span>
+              <p class="text-[13px] font-semibold">Panel upgraded to Premium UI v2.0</p>
+              <p class="text-[11px] text-[#7b869b]">New dashboard, themes &amp; advanced provisioning</p>
+            </div>
+            <div class="relative">
+              <span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-accent ring-4 ring-accent/15"></span>
+              <p class="text-[13px] font-semibold">{{ total_servers }} servers currently provisioned</p>
+              <p class="text-[11px] text-[#7b869b]">{{ total_running }} running &bull; {{ total_servers - total_running }} stopped</p>
+            </div>
+            {% for user in users %}
+            <div class="relative">
+              <span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-violet-500 ring-4 ring-violet-500/15"></span>
+              <p class="text-[13px] font-semibold">Account <span class="font-mono text-accent">{{ user.username }}</span> has {{ user.servers|length }} server(s)</p>
+              <p class="text-[11px] text-[#7b869b]">Managed under MAXX Hosting infrastructure</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════ PAGE : SETTINGS ══════ -->
+      <section id="page-settings" class="page">
+        <div class="mb-6">
+          <h2 class="text-2xl font-extrabold tracking-tight">Settings</h2>
+          <p class="text-[13px] text-[#7b869b] mt-0.5">Panel preferences &amp; security</p>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-4">
+          <div class="card p-5">
+            <h3 class="font-bold text-[15px] mb-4"><i class="fas fa-palette text-accent mr-2"></i>Appearance</h3>
+            <p class="text-[11px] text-[#7b869b] mb-3">Accent color</p>
+            <div class="flex gap-2.5">
+              <button onclick="setAccent(59,130,246)" class="w-10 h-10 rounded-xl bg-blue-500 hover:scale-110 transition shadow-lg"></button>
+              <button onclick="setAccent(139,92,246)" class="w-10 h-10 rounded-xl bg-violet-500 hover:scale-110 transition shadow-lg"></button>
+              <button onclick="setAccent(16,185,129)" class="w-10 h-10 rounded-xl bg-emerald-500 hover:scale-110 transition shadow-lg"></button>
+              <button onclick="setAccent(244,63,94)" class="w-10 h-10 rounded-xl bg-rose-500 hover:scale-110 transition shadow-lg"></button>
+              <button onclick="setAccent(245,158,11)" class="w-10 h-10 rounded-xl bg-amber-500 hover:scale-110 transition shadow-lg"></button>
+              <button onclick="setAccent(6,182,212)" class="w-10 h-10 rounded-xl bg-cyan-500 hover:scale-110 transition shadow-lg"></button>
+            </div>
+          </div>
+
+          <div class="card p-5">
+            <h3 class="font-bold text-[15px] mb-4"><i class="fas fa-bell text-accent mr-2"></i>Notifications</h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[13px]">Server crash alerts</span>
+                <div class="switch on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-[13px]">CPU limit warnings</span>
+                <div class="switch on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-[13px]">Expiry reminders</span>
+                <div class="switch on" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card p-5">
+            <h3 class="font-bold text-[15px] mb-4"><i class="fas fa-shield-halved text-accent mr-2"></i>Security</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="lbl">Current Password</label>
+                <input type="password" placeholder="••••••••" class="field">
+              </div>
+              <div>
+                <label class="lbl">New Password</label>
+                <input type="password" placeholder="••••••••" class="field">
+              </div>
+              <button onclick="toast('Password update requires backend support','info')" class="btn btn-primary w-full !py-2">
+                <i class="fas fa-key text-xs"></i> Update Password
+              </button>
+            </div>
+          </div>
+
+          <div class="card p-5">
+            <h3 class="font-bold text-[15px] mb-4"><i class="fas fa-key text-accent mr-2"></i>API Access</h3>
+            <p class="text-[11px] text-[#7b869b] mb-2">Use this key for automation</p>
+            <div class="flex gap-2">
+              <input type="text" readonly value="maxx_live_sk_9f2a7c41e8b34d6f0a19"
+                     class="field font-mono !text-[11px] !py-2">
+              <button onclick="copyText('maxx_live_sk_9f2a7c41e8b34d6f0a19')" class="btn btn-ghost !px-3"><i class="fas fa-copy"></i></button>
+            </div>
+            <p class="text-[10px] text-[#4d586b] mt-2"><i class="fas fa-triangle-exclamation mr-1 text-amber-400"></i>Never share this key publicly.</p>
+          </div>
+
+          <div class="card p-5 lg:col-span-2 border-rose-500/25" style="background:linear-gradient(160deg, rgba(244,63,94,.08), transparent)">
+            <h3 class="font-bold text-[15px] mb-3 text-rose-400"><i class="fas fa-triangle-exclamation mr-2"></i>Danger Zone</h3>
+            <p class="text-[11px] text-[#8d97ab] mb-3">Sign out of this session on the current device.</p>
+            <button onclick="doLogout()" class="btn btn-danger"><i class="fas fa-right-from-bracket text-xs"></i> Sign Out</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="px-6 py-5 border-t border-[var(--line)] text-center text-[11px] text-[#4d586b]">
+      &copy; 2025 MAXX HOSTING &bull; Premium Admin Panel v2.0 &bull; All rights reserved
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════ DRAWER ══════════ -->
+<div id="overlay" class="overlay" onclick="closeDrawer()"></div>
+<div id="drawer" class="drawer">
+  <div class="sticky top-0 z-10 bg-[#0f131c]/95 backdrop-blur-xl border-b border-[var(--line)] px-5 py-4 flex items-center gap-3">
+    <div class="w-9 h-9 rounded-xl bg-accent/15 grid place-items-center"><i class="fas fa-server text-accent text-sm"></i></div>
+    <div class="min-w-0">
+      <p class="font-bold text-[14px] truncate" id="dTitle">Server</p>
+      <p class="text-[10px] text-[#7b869b] font-mono truncate" id="dSub">—</p>
+    </div>
+    <button onclick="closeDrawer()" class="ml-auto w-8 h-8 rounded-lg hover:bg-white/10 grid place-items-center text-[#8d97ab] hover:text-white transition">
+      <i class="fas fa-times text-sm"></i>
+    </button>
+  </div>
+
+  <div class="p-5">
+    <div class="flex gap-1.5 mb-5 bg-white/[.03] p-1 rounded-xl">
+      <div class="tab active flex-1 text-center" data-tab="overview" onclick="switchTab('overview')">Overview</div>
+      <div class="tab flex-1 text-center" data-tab="console" onclick="switchTab('console')">Console</div>
+      <div class="tab flex-1 text-center" data-tab="actions" onclick="switchTab('actions')">Actions</div>
+    </div>
+
+    <div id="tab-overview" class="space-y-3">
+      <div class="rounded-xl bg-white/[.03] border border-[var(--line)] p-4 space-y-3">
+        <div class="flex justify-between text-[12px]"><span class="text-[#7b869b]">Owner</span><span class="font-semibold" id="dUser">—</span></div>
+        <div class="flex justify-between text-[12px] items-center"><span class="text-[#7b869b]">Password</span>
+          <span class="flex items-center gap-2"><span class="font-mono text-[12px]" id="dPass">—</span>
+          <button onclick="copyText(document.getElementById('dPass').innerText)" class="text-[#4d586b] hover:text-emerald-400"><i class="fas fa-copy text-[10px]"></i></button></span>
+        </div>
+        <div class="flex justify-between text-[12px]"><span class="text-[#7b869b]">Type</span><span class="font-semibold" id="dType">—</span></div>
+        <div class="flex justify-between text-[12px]"><span class="text-[#7b869b]">RAM</span><span class="font-semibold" id="dRam">—</span></div>
+        <div class="flex justify-between text-[12px]"><span class="text-[#7b869b]">Disk</span><span class="font-semibold" id="dDisk">—</span></div>
+        <div class="flex justify-between text-[12px]"><span class="text-[#7b869b]">CPU Limit</span><span class="font-semibold text-accent" id="dCpu">—</span></div>
+        <div class="flex justify-between text-[12px]"><span class="text-[#7b869b]">Expiry</span><span class="font-semibold" id="dExpiry">—</span></div>
+        <div class="flex justify-between text-[12px] items-center"><span class="text-[#7b869b]">Status</span><span id="dStatus">—</span></div>
+      </div>
+
+      <a id="dLink" href="#" target="_blank" class="btn btn-primary w-full !py-2.5">
+        <i class="fas fa-arrow-up-right-from-square text-xs"></i> Open Server Panel
+      </a>
+    </div>
+
+    <div id="tab-console" class="hidden">
+      <div class="rounded-xl bg-black/60 border border-[var(--line)] p-4 font-mono text-[11px] leading-relaxed h-64 overflow-y-auto text-emerald-400" id="consoleBox">
+        <p class="text-[#4d586b]"># MAXX container console</p>
+        <p>[boot] initializing container…</p>
+        <p>[boot] mounting volume /data</p>
+        <p>[net ] binding port 8080</p>
+        <p class="text-emerald-300">[ready] application listening</p>
+      </div>
+      <div class="flex gap-2 mt-3">
+        <input type="text" placeholder="Type a command…" class="field font-mono !text-[11px]"
+               onkeydown="if(event.key==='Enter'){pushConsole(this.value);this.value=''}">
+        <button onclick="pushConsole(document.querySelector('#tab-console input').value)" class="btn btn-ghost !px-3"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+
+    <div id="tab-actions" class="hidden space-y-2">
+      <button onclick="serverAction('start')" class="btn btn-ghost w-full !py-2.5 !justify-start"><i class="fas fa-play text-emerald-400 w-5"></i> Start Server</button>
+      <button onclick="serverAction('restart')" class="btn btn-ghost w-full !py-2.5 !justify-start"><i class="fas fa-rotate-right text-accent w-5"></i> Restart Server</button>
+      <button onclick="serverAction('stop')" class="btn btn-ghost w-full !py-2.5 !justify-start"><i class="fas fa-stop text-amber-400 w-5"></i> Stop Server</button>
+      <button onclick="serverAction('backup')" class="btn btn-ghost w-full !py-2.5 !justify-start"><i class="fas fa-database text-violet-400 w-5"></i> Create Backup</button>
+      <div class="h-px bg-[var(--line)] my-2"></div>
+      <button onclick="deleteServer(document.getElementById('dUser').innerText, document.getElementById('dSub').innerText)" class="btn btn-danger w-full !py-2.5 !justify-start">
+        <i class="fas fa-trash w-5"></i> Delete Server
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- toasts -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   AUTH  —  admin / admin123  &  MAXX / MAXX@2010
+   ═══════════════════════════════════════════ */
+const ACCOUNTS = [
+  { user: 'admin', pass: 'admin123',  role: 'Administrator', name: 'admin' },
+  { user: 'MAXX',  pass: 'MAXX@2010', role: 'Super Admin',   name: 'MAXX'  }
+];
+
+let attempts = 0;
+
+function toggleLoginPass(){
+  const i = document.getElementById('loginPass');
+  const e = document.getElementById('eyeIcon');
+  if(i.type === 'password'){ i.type='text'; e.className='fas fa-eye-slash text-sm'; }
+  else { i.type='password'; e.className='fas fa-eye text-sm'; }
+}
+
+function doLogin(){
+  const u  = document.getElementById('loginUser').value.trim();
+  const p  = document.getElementById('loginPass').value;
+  const btn = document.getElementById('loginBtn');
+
+  if(!u || !p){ shake(); toast('Enter username and password','error'); return; }
+
+  btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Verifying…';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const found = ACCOUNTS.find(a =>
+      a.user.toLowerCase() === u.toLowerCase() && a.pass === p
+    );
+
+    if(found){
+      const remember = document.getElementById('rememberMe').checked;
+      const payload = JSON.stringify({ user: found.user, role: found.role });
+      (remember ? localStorage : sessionStorage).setItem('maxx_auth', payload);
+      launchApp(found);
+      toast('Welcome back, ' + found.user + '!', 'success');
+    } else {
+      attempts++;
+      btn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Sign In Securely';
+      btn.disabled = false;
+      document.getElementById('attemptInfo').textContent = attempts >= 3 ? 'Too many attempts' : '';
+      shake();
+      toast('Invalid credentials. Access denied.', 'error');
+    }
+  }, 750);
+}
+
+function shake(){
+  const c = document.querySelector('.login-card');
+  c.animate([
+    {transform:'translateX(0)'},{transform:'translateX(-9px)'},
+    {transform:'translateX(9px)'},{transform:'translateX(-6px)'},
+    {transform:'translateX(6px)'},{transform:'translateX(0)'}
+  ], {duration:380, easing:'ease-in-out'});
+}
+
+function launchApp(acc){
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('profileName').textContent  = acc.user;
+  document.getElementById('profileName2').textContent = acc.user;
+  document.getElementById('profileRole').textContent  = acc.role;
+  document.getElementById('avatarLetter').textContent = acc.user[0].toUpperCase();
+  document.body.style.overflow = '';
+  initDashboard();
+}
+
+function doLogout(){
+  Swal.fire({
+    title:'Sign out?', text:'You will need to log in again.',
+    icon:'question', background:'#12141c', color:'#fff',
+    showCancelButton:true, confirmButtonColor:'#ef4444', cancelButtonColor:'#374151',
+    confirmButtonText:'Yes, sign out'
+  }).then(r => {
+    if(r.isConfirmed){
+      localStorage.removeItem('maxx_auth');
+      sessionStorage.removeItem('maxx_auth');
+      location.reload();
+    }
+  });
+}
+
+/* auto-login restore */
+(function(){
+  const saved = localStorage.getItem('maxx_auth') || sessionStorage.getItem('maxx_auth');
+  if(saved){ try{ launchApp(JSON.parse(saved)); }catch(e){} }
+  document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+  document.getElementById('loginUser').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginPass').focus(); });
+})();
+
+/* ═══════════════ THEME ═══════════════ */
+function setAccent(r,g,b){
+  document.documentElement.style.setProperty('--accent', r+' '+g+' '+b);
+  localStorage.setItem('maxx_accent', [r,g,b].join(','));
+  toast('Accent theme updated','success');
+}
+(function(){
+  const s = localStorage.getItem('maxx_accent');
+  if(s){ const [r,g,b] = s.split(','); document.documentElement.style.setProperty('--accent', r+' '+g+' '+b); }
+})();
+
+/* ═══════════════ NAVIGATION ═══════════════ */
+function gotoPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + id);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === id));
+  closeSidebar();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.remove('hidden');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.add('hidden');
+}
+
+/* dropdowns */
+function toggleNotif(){
+  document.getElementById('notifPanel').classList.toggle('hidden');
+  document.getElementById('profilePanel').classList.add('hidden');
+}
+function toggleProfile(){
+  document.getElementById('profilePanel').classList.toggle('hidden');
+  document.getElementById('notifPanel').classList.add('hidden');
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('#notifPanel') && !e.target.closest('button[onclick="toggleNotif()"]'))
+    document.getElementById('notifPanel')?.classList.add('hidden');
+  if(!e.target.closest('#profilePanel') && !e.target.closest('button[onclick="toggleProfile()"]'))
+    document.getElementById('profilePanel')?.classList.add('hidden');
+});
+
+/* ═══════════════ TOASTS ═══════════════ */
+function toast(msg, type='info'){
+  const colors = { success:'#10b981', error:'#ef4444', info:'rgb(var(--accent))', warn:'#f59e0b' };
+  const icons  = { success:'fa-check', error:'fa-xmark', info:'fa-circle-info', warn:'fa-triangle-exclamation' };
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = '<div style="width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:' +
+      (colors[type] || colors.info) + '22;color:' + (colors[type] || colors.info) +
+      ';flex:none"><i class="fas ' + (icons[type] || icons.info) + '" style="font-size:10px"></i></div><span>' + msg + '</span>';
+  document.getElementById('toastWrap').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3200);
+}
+
+/* ═══════════════ CLIPBOARD ═══════════════ */
+function copyText(txt){
+  if(!txt) return;
+  navigator.clipboard.writeText(txt).then(() => toast('Copied to clipboard', 'success'))
+    .catch(() => toast('Copy failed', 'error'));
+}
+
+/* ═══════════════ PASSWORD ═══════════════ */
+function togglePassword(id, btn){
+  const el = document.getElementById('pass-' + id);
+  const row = btn.closest('tr');
+  const real = row ? row.dataset.pass : '';
+  if(el.innerText === '••••••••'){ el.innerText = real; btn.innerHTML = '<i class="fas fa-eye-slash"></i>'; }
+  else { el.innerText = '••••••••'; btn.innerHTML = '<i class="fas fa-eye"></i>'; }
+}
+function generatePassword(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+  let p = '';
+  for(let i=0;i<14;i++) p += chars[Math.floor(Math.random()*chars.length)];
+  return p;
+}
+function fillGeneratedPass(){
+  const p = generatePassword();
+  document.getElementById('newPassword').value = p;
+  updateStrength(p);
+  toast('Strong password generated','success');
+}
+document.getElementById('newPassword')?.addEventListener('input', e => updateStrength(e.target.value));
+function updateStrength(v){
+  const bars = document.querySelectorAll('#strengthBars div');
+  let s = 0;
+  if(v.length >= 8) s++;
+  if(/[A-Z]/.test(v) && /[a-z]/.test(v)) s++;
+  if(/[0-9]/.test(v)) s++;
+  if(/[^A-Za-z0-9]/.test(v)) s++;
+  const colors = ['#ef4444','#f59e0b','#3b82f6','#10b981'];
+  bars.forEach((b,i) => b.style.background = i < s ? colors[s-1] : 'rgba(255,255,255,.1)');
+}
+
+/* ═══════════════ CPU PRESETS ═══════════════ */
+function setQuickCPU(v){
+  document.getElementById('cpuLimit').value = v;
+  document.getElementById('cpuLimitValue').innerText = v + '%';
+  updateSummary();
+}
+
+/* ═══════════════ QUICK TEMPLATES ═══════════════ */
+function quickTemplate(type){
+  const set = (id, val) => { const e = document.getElementById(id); if(e) e.value = val; };
+
+  if(type === 'discord'){
+    set('serverType','python'); set('ram','256MB'); set('cpuLimit',50); set('startupFile','bot.py');
+    set('newUsername','discord_bot_' + Math.random().toString(36).slice(2,6));
+  } else if(type === 'telegram'){
+    set('serverType','python'); set('ram','128MB'); set('cpuLimit',30); set('startupFile','main.py');
+    set('newUsername','telegram_bot_' + Math.random().toString(36).slice(2,6));
+  } else if(type === 'flask'){
+    set('serverType','python'); set('ram','512MB'); set('cpuLimit',80); set('startupFile','app.py');
+    set('newUsername','flask_app_' + Math.random().toString(36).slice(2,6));
+  } else if(type === 'node'){
+    set('serverType','node'); set('ram','256MB'); set('cpuLimit',60); set('startupFile','index.js');
+    set('newUsername','node_app_' + Math.random().toString(36).slice(2,6));
+  } else if(type === 'minecraft'){
+    set('serverType','java'); set('ram','2GB'); set('disk','5GB'); set('cpuLimit',90); set('startupFile','server.jar');
+    set('newUsername','mc_server_' + Math.random().toString(36).slice(2,6));
+  } else if(type === 'static'){
+    set('serverType','static'); set('ram','128MB'); set('disk','1GB'); set('cpuLimit',40); set('startupFile','index.html');
+    set('newUsername','site_' + Math.random().toString(36).slice(2,6));
+  }
+
+  document.getElementById('cpuLimitValue').innerText = document.getElementById('cpuLimit').value + '%';
+  const p = generatePassword();
+  document.getElementById('newPassword').value = p;
+  updateStrength(p);
+  updateSummary();
+  toast('Template applied — ready to deploy','success');
+}
+
+/* ═══════════════ ENV VARS ═══════════════ */
+function addEnvRow(k='', v=''){
+  const wrap = document.getElementById('envRows');
+  const row = document.createElement('div');
+  row.className = 'flex gap-2';
+  row.innerHTML =
+    '<input type="text" placeholder="KEY" value="' + k + '" class="field font-mono !text-[11px] !py-1.5" style="flex:0 0 38%">' +
+    '<input type="text" placeholder="value" value="' + v + '" class="field font-mono !text-[11px] !py-1.5 flex-1">' +
+    '<button onclick="this.parentNode.remove()" class="btn btn-ghost !px-2.5 !py-1.5 !text-rose-400"><i class="fas fa-xmark text-[10px]"></i></button>';
+  wrap.appendChild(row);
+}
+
+/* ═══════════════ FORM SUMMARY ═══════════════ */
+function updateSummary(){
+  const g = id => document.getElementById(id);
+  const set = (id,v) => { const e = g(id); if(e) e.textContent = v; };
+  set('sumType',   g('serverType')?.value || '—');
+  set('sumRegion', g('region')?.value || '—');
+  set('sumRam',    g('ram')?.value || '—');
+  set('sumDisk',   g('disk')?.value || '—');
+  set('sumCpu',    (g('cpuLimit')?.value || 80) + '%');
+  set('sumExpiry', (g('expiryDays')?.value || 30) + ' days');
+}
+['serverType','region','ram','disk','cpuLimit','expiryDays'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', updateSummary);
+});
+updateSummary();
+
+/* ═══════════════ CREATE SERVER ═══════════════ */
+function resetForm(){
+  ['newUsername','newPassword'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('cpuLimit').value = 80;
+  document.getElementById('cpuLimitValue').innerText = '80%';
+  document.getElementById('envRows').innerHTML = '';
+  updateStrength('');
+  updateSummary();
+  toast('Form reset','info');
+}
+
+function createServer(){
+  const data = {
+    username:    document.getElementById('newUsername').value.trim(),
+    password:    document.getElementById('newPassword').value.trim(),
+    server_type: document.getElementById('serverType').value,
+    region:      document.getElementById('region').value,
+    startup_file:document.getElementById('startupFile').value.trim(),
+    ram:         document.getElementById('ram').value,
+    disk:        document.getElementById('disk').value,
+    cpu_cores:   document.getElementById('cpuCores').value,
+    expiry_days: parseInt(document.getElementById('expiryDays').value) || 30,
+    cpu_limit:   parseInt(document.getElementById('cpuLimit').value) || 80,
+    env: Array.from(document.querySelectorAll('#envRows > div')).map(r => {
+      const i = r.querySelectorAll('input');
+      return i[0].value ? i[0].value + '=' + i[1].value : null;
+    }).filter(Boolean),
+    auto_restart: document.querySelectorAll('.switch')[0]?.classList.contains('on'),
+    backups:      document.querySelectorAll('.switch')[1]?.classList.contains('on'),
+    public:       document.querySelectorAll('.switch')[2]?.classList.contains('on'),
+    ssl:          document.querySelectorAll('.switch')[3]?.classList.contains('on')
+  };
+
+  if(!data.username || !data.password){
+    toast('Username and password are required','error'); return;
+  }
+  if(!/^[a-zA-Z0-9_.-]{3,32}$/.test(data.username)){
+    toast('Username: 3–32 chars (a-z, 0-9, _ . -)','error'); return;
+  }
+  if(data.password.length < 6){
+    toast('Password must be at least 6 characters','error'); return;
+  }
+  if(data.cpu_limit < 10 || data.cpu_limit > 100){
+    toast('CPU limit must be between 10% and 100%','error'); return;
+  }
+
+  Swal.fire({
+    title:'Deploying Server…',
+    html:'<p style="font-size:12px;color:#8d97ab">Provisioning container &amp; allocating resources</p>',
+    allowOutsideClick:false,
+    background:'#12141c', color:'#fff',
+    didOpen: () => Swal.showLoading()
+  });
+
+  fetch('/admin/create_server', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res.success){
+      Swal.fire({
+        title:'🎉 Server Deployed!',
+        html:
+          '<div style="text-align:left;font-size:13px;line-height:1.9">' +
+          '<div style="background:#0a0d14;border:1px solid #212836;border-radius:12px;padding:12px;font-family:monospace;font-size:12px">' +
+          '<b style="color:#8d97ab">User</b> ······ ' + res.username + '<br>' +
+          '<b style="color:#8d97ab">Pass</b> ······ ' + res.password + '<br>' +
+          '<b style="color:#8d97ab">CPU </b> ······ ' + (res.cpu_limit || data.cpu_limit) + '%' +
+          '</div>' +
+          '<p style="margin-top:10px"><a href="' + res.login_url + '" target="_blank" style="color:rgb(var(--accent))">' + res.login_url + '</a></p>' +
+          '</div>',
+        icon:'success', background:'#12141c', color:'#fff', confirmButtonColor:'#3b82f6'
+      });
+      resetForm();
+      setTimeout(() => location.reload(), 2600);
+    } else {
+      Swal.fire({title:'Deployment Failed', text: res.error || 'Unknown error', icon:'error', background:'#12141c', color:'#fff'});
+    }
+  })
+  .catch(() => {
+    Swal.fire({title:'Connection Error', text:'Could not reach the server.', icon:'error', background:'#12141c', color:'#fff'});
+  });
+}
+
+/* ═══════════════ CPU LIMIT CHANGE ═══════════════ */
+function changeCPULimit(serverId, current){
+  Swal.fire({
+    title:'CPU Rate Limit',
+    html:'<p style="font-size:12px;color:#8d97ab;margin-bottom:6px">Auto-stop threshold for this container</p>',
+    input:'range',
+    inputAttributes:{ min:10, max:100, step:5 },
+    inputValue: current,
+    background:'#12141c', color:'#fff',
+    confirmButtonColor:'#3b82f6',
+    showCancelButton:true,
+    confirmButtonText:'Apply Limit',
+    didOpen: () => {
+      const range = Swal.getInput();
+      const disp = document.createElement('div');
+      disp.style.cssText = 'text-align:center;font-size:2rem;font-weight:800;color:rgb(var(--accent));margin-top:14px;font-family:JetBrains Mono,monospace';
+      disp.textContent = range.value + '%';
+      range.parentNode.insertBefore(disp, range.nextSibling);
+      range.addEventListener('input', () => {
+        disp.textContent = range.value + '%';
+        disp.style.color = range.value <= 30 ? '#10b981' : range.value <= 60 ? '#f59e0b' : range.value <= 80 ? '#f97316' : '#ef4444';
+      });
+    }
+  }).then(r => {
+    if(!r.isConfirmed) return;
+    const val = r.value;
+    fetch('/admin/set_rate_limit/' + serverId, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ cpu_limit: parseInt(val) })
+    })
+    .then(x => x.json())
+    .then(d => {
+      if(d.success){
+        toast('CPU limit set to ' + val + '%', 'success');
+        setTimeout(() => location.reload(), 900);
+      } else toast(d.error || 'Update failed', 'error');
+    })
+    .catch(() => toast('Connection error', 'error'));
+  });
+}
+
+/* ═══════════════ DELETE ═══════════════ */
+function deleteServer(username, serverId){
+  Swal.fire({
+    title:'Delete Server?',
+    html:
+      '<div style="text-align:left;font-size:12px;background:#0a0d14;border:1px solid #212836;border-radius:10px;padding:10px;font-family:monospace">' +
+      '<b style="color:#8d97ab">User</b>: ' + username + '<br><b style="color:#8d97ab">ID</b>: ' + serverId + '</div>' +
+      '<p style="margin-top:10px;font-size:12px;color:#f87171">⚠️ All files &amp; data will be permanently deleted.</p>',
+    icon:'warning', background:'#12141c', color:'#fff',
+    showCancelButton:true, confirmButtonColor:'#ef4444', cancelButtonColor:'#374151',
+    confirmButtonText:'Delete Permanently'
+  }).then(r => {
+    if(!r.isConfirmed) return;
+    fetch('/admin/delete_server/' + username + '/' + serverId, { method:'POST' })
+      .then(() => {
+        toast('Server deleted','success');
+        closeDrawer();
+        setTimeout(() => location.reload(), 900);
+      })
+      .catch(() => toast('Delete failed','error'));
+  });
+}
+
+/* ═══════════════ TABLE FILTER / BULK ═══════════════ */
+function filterTable(){
+  const q = (document.getElementById('tableSearch').value || '').toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const tp = document.getElementById('filterType').value;
+  let visible = 0;
+
+  document.querySelectorAll('#serverTable tbody tr[data-server]').forEach(row => {
+    const hay = (row.dataset.user + ' ' + row.dataset.server + ' ' + row.dataset.type).toLowerCase();
+    const okQ  = !q  || hay.includes(q);
+    const okS  = !st || row.dataset.status === st;
+    const okT  = !tp || row.dataset.type === tp;
+    const show = okQ && okS && okT;
+    row.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  const vc = document.getElementById('visibleCount');
+  if(vc) vc.textContent = visible;
+}
+
+function globalSearchHandler(v){
+  document.getElementById('tableSearch').value = v;
+  gotoPage('servers');
+  filterTable();
+}
+
+function toggleAll(cb){
+  document.querySelectorAll('.rowCheck').forEach(c => {
+    if(c.closest('tr').style.display !== 'none') c.checked = cb.checked;
+  });
+  updateBulk();
+}
+function updateBulk(){
+  const sel = document.querySelectorAll('.rowCheck:checked');
+  const bar = document.getElementById('bulkBar');
+  document.getElementById('selCount').textContent = sel.length;
+  bar.classList.toggle('hidden', sel.length === 0);
+  bar.classList.toggle('flex', sel.length > 0);
+}
+function bulkAction(action){
+  const rows = Array.from(document.querySelectorAll('.rowCheck:checked')).map(c => c.closest('tr'));
+  if(!rows.length) return;
+  toast(action.charAt(0).toUpperCase() + action.slice(1) + ' queued for ' + rows.length + ' server(s)', 'info');
+  rows.forEach(r => {
+    fetch('/admin/server_action', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ server_id: r.dataset.server, username: r.dataset.user, action })
+    }).catch(() => {});
+  });
+}
+function bulkDelete(){
+  const rows = Array.from(document.querySelectorAll('.rowCheck:checked')).map(c => c.closest('tr'));
+  if(!rows.length) return;
+  Swal.fire({
+    title:'Delete ' + rows.length + ' server(s)?',
+    text:'This action cannot be undone.',
+    icon:'warning', background:'#12141c', color:'#fff',
+    showCancelButton:true, confirmButtonColor:'#ef4444', cancelButtonColor:'#374151',
+    confirmButtonText:'Delete All'
+  }).then(r => {
+    if(!r.isConfirmed) return;
+    let done = 0;
+    rows.forEach(row => {
+      fetch('/admin/delete_server/' + row.dataset.user + '/' + row.dataset.server, {method:'POST'})
+        .finally(() => { if(++done === rows.length){ toast('Servers deleted','success'); setTimeout(()=>location.reload(),800); } });
+    });
+  });
+}
+
+/* ═══════════════ DRAWER ═══════════════ */
+let currentRow = null;
+function openDrawer(btn){
+  const row = btn.closest('tr');
+  currentRow = row;
+  const d = row.dataset;
+
+  document.getElementById('dTitle').textContent = d.user;
+  document.getElementById('dSub').textContent   = d.server;
+  document.getElementById('dUser').textContent  = d.user;
+  document.getElementById('dPass').textContent  = d.pass;
+  document.getElementById('dType').textContent  = d.type;
+  document.getElementById('dRam').textContent   = d.ram;
+  document.getElementById('dDisk').textContent  = d.disk;
+  document.getElementById('dCpu').textContent   = d.cpu + '%';
+  document.getElementById('dExpiry').textContent= d.expiry;
+  document.getElementById('dLink').href         = d.url;
+
+  const map = {
+    running:'<span class="pill bg-emerald-500/15 text-emerald-400"><span class="dot bg-emerald-400"></span>Running</span>',
+    stopped:'<span class="pill bg-rose-500/15 text-rose-400"><span class="dot bg-rose-400"></span>Stopped</span>',
+    limited:'<span class="pill bg-amber-500/15 text-amber-400"><i class="fas fa-triangle-exclamation text-[9px]"></i>Rate Limited</span>'
+  };
+  document.getElementById('dStatus').innerHTML = map[d.status] || map.stopped;
+
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+  switchTab('overview');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  ['overview','console','actions'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+  });
+}
+function pushConsole(cmd){
+  if(!cmd) return;
+  const box = document.getElementById('consoleBox');
+  const p = document.createElement('p');
+  p.className = 'text-white';
+  p.textContent = '$ ' + cmd;
+  box.appendChild(p);
+  const r = document.createElement('p');
+  r.className = 'text-emerald-400';
+  r.textContent = 'executed (simulated)';
+  box.appendChild(r);
+  box.scrollTop = box.scrollHeight;
+}
+function serverAction(action){
+  if(!currentRow) return;
+  const { server, user } = currentRow.dataset;
+  toast(action.toUpperCase() + ' → ' + server.slice(0,10) + '…', 'info');
+  fetch('/admin/server_action', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ server_id: server, username: user, action })
+  }).catch(() => {});
+}
+
+/* ═══════════════ DASHBOARD CHARTS ═══════════════ */
+function initDashboard(){
+  const rows = Array.from(document.querySelectorAll('#serverTable tbody tr[data-server]'));
+  if(!rows.length) return;
+
+  /* --- type distribution bars --- */
+  const counts = {};
+  rows.forEach(r => { counts[r.dataset.type] = (counts[r.dataset.type] || 0) + 1; });
+  const max = Math.max(...Object.values(counts), 1);
+  const palette = {
+    python:'#3b82f6', node:'#84cc16', static:'#f472b6',
+    java:'#f59e0b', go:'#06b6d4'
+  };
+  const chart = document.getElementById('typeChart');
+  if(chart){
+    chart.innerHTML = Object.entries(counts).map(([t,c]) => {
+      const h = Math.max(12, (c / max) * 100);
+      const col = palette[t] || '#8b5cf6';
+      return '<div class="flex flex-col items-center gap-2 flex-1">' +
+        '<span class="text-[11px] font-extrabold" style="color:' + col + '">' + c + '</span>' +
+        '<div class="bar w-full max-w-[52px] rounded-t-lg" style="height:0;background:linear-gradient(180deg,' + col + ',' + col + '44)" data-h="' + h + '"></div>' +
+        '<span class="text-[10px] text-[#7b869b] font-semibold capitalize">' + t + '</span>' +
+        '</div>';
+    }).join('');
+    setTimeout(() => {
+      chart.querySelectorAll('.bar').forEach(b => { b.style.height = b.dataset.h + '%'; });
+    }, 80);
+  }
+
+  /* --- status donut --- */
+  const run = rows.filter(r => r.dataset.status === 'running').length;
+  const lim = rows.filter(r => r.dataset.status === 'limited').length;
+  const stop = rows.length - run - lim;
+  const total = rows.length || 1;
+  const a = (run/total)*100, b = a + (stop/total)*100;
+  const donut = document.getElementById('donut');
+  if(donut){
+    donut.style.background =
+      'conic-gradient(#10b981 0 ' + a + '%, #f43f5e ' + a + '% ' + b + '%, #f59e0b ' + b + '% 100%)';
+  }
+}
+
+/* ═══════════════ KEYBOARD SHORTCUTS ═══════════════ */
+document.addEventListener('keydown', e => {
+  if(document.getElementById('loginScreen').style.display !== 'none') return;
+
+  if(e.key === '/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){
+    e.preventDefault();
+    document.getElementById('globalSearch')?.focus();
+  }
+  if(e.ctrlKey && e.key.toLowerCase() === 'k'){
+    e.preventDefault(); gotoPage('create'); document.getElementById('newUsername')?.focus();
+  }
+  if(e.ctrlKey && e.key.toLowerCase() === 'r'){
+    e.preventDefault(); location.reload();
+  }
+  if(e.key === 'Escape'){ closeDrawer(); document.getElementById('notifPanel')?.classList.add('hidden'); document.getElementById('profilePanel')?.classList.add('hidden'); }
+});
+
+/* init env example */
+addEnvRow('TZ', 'Asia/Kolkata');
+</script>
 </body>
 </html>
